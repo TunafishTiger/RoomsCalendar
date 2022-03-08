@@ -25,8 +25,8 @@ def main():
     console.print('\n')
     console.print(Panel(' \n This program creates the calendar sheets for our room schedule. \n'
                         ' (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)',
-                        title='Caroline Kennedy Library', subtitle=' :books: :books: :books:'
-                        ' :books: :books: :books: '), width=80)
+                        title='Caroline Kennedy Library', subtitle=' :books: :books: :books: :books: :books:'
+                                                                   ' :books: '), width=80)
     console.print('\n')
 
     while True:
