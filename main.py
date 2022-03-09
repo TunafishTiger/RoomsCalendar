@@ -32,7 +32,7 @@ def main():
     while True:
         try:
             def daterange(first_date, last_date):
-                for n in track(range(int((last_date - first_date).days)), description="[i]Compiling...[/]"):
+                for n in track(range(int((last_date - first_date).days)), description="[i]Compiling calendar...[/]"):
                     yield first_date + timedelta(n)
 
             puttyw = Prompt.ask('What month should be printed?')            # str
@@ -43,8 +43,8 @@ def main():
             else:
                 wanted_year = datetime.today().year
 
-            start_date = date(wanted_year, month_as_number, 0o1)           # date
-            end_date = date(wanted_year, int(month_as_number + 1), 0o1)    # date
+            start_date = date(wanted_year, month_as_number, 0o1)      # date
+            end_date = date(wanted_year, month_as_number + 1, 0o1)    # date
 
             # Debug variables
             # console.print(f'{puttyw} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
@@ -88,7 +88,7 @@ def main():
                     sheet_name
                 ])
 
-            console.print(f'\nThe sheets for {puttyw.upper()} are being sent to the Staff RICOH IM C4500.'
+            console.print(f'\nThe sheets for [cyan]{puttyw.upper()} {wanted_year}[/] are being sent to the Staff RICOH IM C4500.'
                           f'\nYou can close the window and go to collect the calendar.\n\n'
                           f'')
             break
