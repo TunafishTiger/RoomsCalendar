@@ -8,7 +8,6 @@
 
 
 import subprocess
-
 from PIL import Image, ImageFont, ImageDraw
 from datetime import date, datetime, timedelta
 
@@ -16,6 +15,7 @@ from rich.panel import Panel
 from rich.progress import track
 from rich.console import Console
 from rich.prompt import Prompt
+from holidays import country_holidays
 
 
 def main():
@@ -74,13 +74,20 @@ def main():
                 else:
                     img_in_memory = img_weekday.copy()
 
+                draw = ImageDraw.Draw(img_in_memory)
+                draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
+                draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
+
                 # Account for list of holiday closers, if City holiday, draw closure on whatever img_in_memory is
                 # Using the above, we can then account for a list of observed holidays with a fun image on whatever
                 # img_in_memory is
 
-                draw = ImageDraw.Draw(img_in_memory)
-                draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
-                draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
+                us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
+                for day in us_holidays.items():
+                    if us_holidays.items() == "Martin Luther King Jr. Day":
+                        draw.multiline_text((10, 10), "Hello\nWorld", font=yf, fill=(0, 0, 0))
+
+
                 sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.pdf")
                 img_in_memory.save(sheet_name)
 
@@ -90,7 +97,7 @@ def main():
                     '-o media=Custom.11x17in',
                     '-o print-quality=5',
                     '-# 1',
-                    '-r',
+                    #'-r',
                     sheet_name
                 ])
 
