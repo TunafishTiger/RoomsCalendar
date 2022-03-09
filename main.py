@@ -46,6 +46,8 @@ def main():
             start_date = date(wanted_year, month_as_number, 0o1)      # date
             end_date = date(wanted_year, month_as_number + 1, 0o1)    # date
 
+            us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
+
             # Debug variables
             # console.print(f'{puttyw} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
             # console.print(type(puttyw), type(month_as_number), type(days_in_month), type(start_date), type(end_date))
@@ -57,6 +59,10 @@ def main():
             img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
+
+            no_holiday = Image.open('holidays/Blank.png')
+            newyearsday = Image.open('holidays/NewYearsDay.png')
+            halloween = Image.open('holidays/Halloween.png')
 
         except ValueError:
             console.print('\n[i]I\'m sorry. Please express the name of a month.\n\n')
@@ -77,15 +83,15 @@ def main():
                 draw = ImageDraw.Draw(img_in_memory)
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
-                # draw.multiline_text((1000, 1000), f"{single_date} !", font=yf, fill=(0, 0, 0))
 
-                # Account for list of holiday closers, if City holiday, draw closure on whatever img_in_memory is
-                # Using the above, we can then account for a list of observed holidays with a fun image on whatever
-                # img_in_memory is
-
-                us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
+                # Account for holiday closures and inserts
                 if us_holidays.get(f"{single_date}") == "New Year's Day":
-                    draw.multiline_text((100, 100), "Hello\nNew Year...", font=yf, fill=(0, 0, 0))
+                    holiday_insert = newyearsday.copy()
+                elif us_holidays.get(f"{single_date}") == "Halloween":
+                    holiday_insert = halloween.copy()
+                else:
+                    holiday_insert = no_holiday.copy()
+                    img_in_memory.paste(holiday_insert)
 
                 sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.pdf")
                 img_in_memory.save(sheet_name)
