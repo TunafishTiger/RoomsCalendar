@@ -63,6 +63,8 @@ def main():
 
         else:
             for single_date in daterange(start_date, end_date):
+
+                # Account for days of week
                 if single_date.weekday() == 6:
                     img_in_memory = img_sun.copy()
                 elif single_date.weekday() == 5:
@@ -71,6 +73,10 @@ def main():
                     img_in_memory = img_fri.copy()
                 else:
                     img_in_memory = img_weekday.copy()
+
+                # Account for list of holiday closers, if City holiday, draw closure on whatever img_in_memory is
+                # Using the above, we can then account for a list of observed holidays with a fun image on whatever
+                # img_in_memory is
 
                 draw = ImageDraw.Draw(img_in_memory)
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
