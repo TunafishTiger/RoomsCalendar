@@ -88,9 +88,8 @@ def main():
                     sheet_name
                 ])
 
-            console.print(f'\nThe sheets for [cyan]{puttyw.upper()} {wanted_year}[/] are being sent to the Staff RICOH IM C4500.'
-                          f'\nYou can close the window and go to collect the calendar.\n\n'
-                          f'')
+            console.print(f'\nThe sheets for [cyan]{puttyw.upper()} {wanted_year}[/] are being sent to the Staff RICOH'
+                          f' IM C4500.\nYou can close the window and go to collect the calendar.\n\n')
             break
 
 
