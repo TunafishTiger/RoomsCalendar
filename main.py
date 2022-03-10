@@ -39,11 +39,11 @@ def main():
                     yield first_date + timedelta(n)
 
             # Require one question and map native language to month integers.
-            puttyw = Prompt.ask('What month should be printed?')            # str
-            month_as_number = int(datetime.strptime(puttyw, '%B').month)    # int
+            putty = Prompt.ask('What month should be printed?')            # str
+            month_as_number = int(datetime.strptime(putty, '%B').month)    # int
 
             # Always compute January as requested in December.
-            if puttyw in ('January', 'january'):
+            if putty in ('January', 'january'):
                 wanted_year = datetime.today().year + 1
             else:
                 wanted_year = datetime.today().year
@@ -59,8 +59,8 @@ def main():
             #     console.print(day)
 
             # Debug variables
-            # console.print(f'{puttyw} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
-            # console.print(type(puttyw), type(month_as_number), type(days_in_month), type(start_date), type(end_date))
+            # console.print(f'{putty} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
+            # console.print(type(putty), type(month_as_number), type(days_in_month), type(start_date), type(end_date))
 
             # Define our fonts and sizes.
             df = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
@@ -177,7 +177,7 @@ def main():
                 ])
 
             # Fin.
-            console.print(f'\nThe sheets for [cyan]{puttyw.upper()} {wanted_year}[/] are being sent to the Staff RICOH'
+            console.print(f'\nThe sheets for [cyan]{putty.upper()} {wanted_year}[/] are being sent to the Staff RICOH'
                           f' IM C4500.\nYou can close the window and go to collect the calendar.\n\n')
             break
 
