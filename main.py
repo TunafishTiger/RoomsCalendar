@@ -49,7 +49,7 @@ def main():
 
             start_date = date(wanted_year, month_as_number, 0o1)        # date
 
-            # Always compute December including all days of the month.
+            # Always compute December with a range ending on Jan. 1 of next year.
             if putty in ('December', 'december'):
                 end_date = date(wanted_year + 1, month_as_number, 0o1)  # date
             else:
