@@ -47,8 +47,16 @@ def main():
             else:
                 wanted_year = datetime.today().year
 
-            start_date = date(wanted_year, month_as_number, 0o1)      # date
-            end_date = date(wanted_year, month_as_number + 1, 0o1)    # date
+            start_date = date(wanted_year, month_as_number, 0o1)        # date
+
+            # Always compute December including all days of the month.
+            if putty in ('December', 'december'):
+                end_date = date(wanted_year + 1, month_as_number, 0o1)  # date
+            else:
+                end_date = date(wanted_year, month_as_number + 1, 0o1)  # date
+
+
+
 
             # Initialize a list of US federal holidays specific to Michigan.
             us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
