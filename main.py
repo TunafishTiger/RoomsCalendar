@@ -119,7 +119,7 @@ def main():
                     case _:
                         img_in_memory = img_weekday.copy()
 
-                # Throw correct dates onto the calendar sheet.
+                # Place correct dates onto the calendar sheet.
                 draw = ImageDraw.Draw(img_in_memory)
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
