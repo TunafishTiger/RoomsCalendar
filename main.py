@@ -37,15 +37,15 @@ def main():
                 for n in track(range(int((last_date - first_date).days)), description="[i]Compiling calendar...[/]"):
                     yield first_date + timedelta(n)
 
-            # Declare constant. When are we in real time?
-            CURRENT_MONTH = datetime.today().month
+            # When are we in real time?
+            current_month = datetime.today().month
 
             # Require one question and map native language to month integers.
             putty = Prompt.ask('What month should be printed?')
             month_as_number = int(datetime.strptime(putty, '%B').month)
 
             # If we're in December and ask for January, treat it as next year's.
-            if putty in ('January', 'january') and CURRENT_MONTH in ('December', 'december'):
+            if putty in ('January', 'january') and current_month in ('December', 'december'):
                 wanted_year = datetime.today().year + 1
             else:
                 wanted_year = datetime.today().year
