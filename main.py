@@ -55,11 +55,10 @@ def main():
             df = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png")
-            img_fri = Image.open("1_RoomSchedule_Template_Fridays.png")
-            img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png")
-            img_sun = Image.open("3_RoomSchedule_Template_Sundays.png")
-            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png")
+            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
+            img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
+            img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
+            img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
 
             no_holiday = Image.open('holidays/Blank.png').convert("RGBA")
             newyearsday = Image.open('holidays/NewYearsDay.png').convert("RGBA")
@@ -74,7 +73,6 @@ def main():
                 # Account for days of week
                 if single_date.weekday() == 6:
                     img_in_memory = img_sun.copy()
-                    img_in_memory.paste(img_closed.copy())
                 elif single_date.weekday() == 5:
                     img_in_memory = img_sat.copy()
                 elif single_date.weekday() == 4:
@@ -94,7 +92,7 @@ def main():
                 else:
                     holiday_insert = no_holiday.copy()
 
-                img_in_memory.paste(holiday_insert)
+                img_in_memory.paste(holiday_insert, (0,0), mask=holiday_insert)
                 sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.png")
                 img_in_memory.save(sheet_name, format='png')
 
