@@ -48,21 +48,45 @@ def main():
 
             us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
 
+            # Debug holidays
+            # for day in us_holidays.items():
+            #     console.print(day)
+
             # Debug variables
             # console.print(f'{puttyw} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
             # console.print(type(puttyw), type(month_as_number), type(days_in_month), type(start_date), type(end_date))
 
+            # Define our fonts.
             df = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
+            # Define our week.
+            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png").convert("RGB")
             img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
             img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
 
+            # Define our observed holidays and special closures.
             no_holiday = Image.open('holidays/Blank.png').convert("RGBA")
             newyearsday = Image.open('holidays/NewYearsDay.png').convert("RGBA")
+            newyearsdayobserved = Image.open('holidays/NewYearsDayObserved.png').convert("RGBA")
+            mlkday = Image.open('holidays/MLKDay.png').convert("RGBA")
+            washingday = Image.open('holidays/WashingtonsBirthday.png').convert("RGBA")
+            memorialday = Image.open('holidays/MemorialDay.png').convert("RGBA")
+            juneteenthnationalindependenceday = Image.open('holidays/JuneteenthNationalIndependenceDay.png')\
+                .convert("RGBA")
+            independenceday = Image.open('holidays/IndependenceDay.png').convert("RGBA")
+            independencedayobserved = Image.open('holidays/IndependenceDayObserved.png').convert("RGBA")
+            laborday = Image.open('holidays/LaborDay.png').convert("RGBA")
+            columbusday = Image.open('holidays/ColumbusDay.png').convert("RGBA")
+            veteransday = Image.open('holidays/VeteransDay.png').convert("RGBA")
+            veteransdayobserved = Image.open('holidays/VeteransDayObserved.png').convert("RGBA")
+            thanksgiving = Image.open('holidays/ThanksgivingDay.png').convert("RGBA")
+            christmaseve = Image.open('holidays/ChristmasEve.png').convert("RGBA")
+            christmaseveobserved = Image.open('holidays/ChristmasEveObserved.png').convert("RGBA")
             christmasday = Image.open('holidays/Halloween.png').convert("RGBA")
+            newyearseve = Image.open('holidays/NewYearsEve.png').convert("RGBA")
 
         except ValueError:
             console.print('\n[i]I\'m sorry. Please express the name of a month.\n\n')
@@ -70,9 +94,15 @@ def main():
         else:
             for single_date in daterange(start_date, end_date):
 
-                # Account for days of week
+                # Define our filename.
+                sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.png")
+
+                # Account for days of week.
                 if single_date.weekday() == 6:
                     img_in_memory = img_sun.copy()
+                    img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                    img_in_memory.save(sheet_name, format='png')
+                    img_in_memory = Image.open(sheet_name)
                 elif single_date.weekday() == 5:
                     img_in_memory = img_sat.copy()
                 elif single_date.weekday() == 4:
@@ -84,16 +114,45 @@ def main():
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
 
-                # Account for holiday closures and inserts
+                # Account for holiday closures and inserts.
                 if us_holidays.get(f"{single_date}") == "New Year's Day":
                     holiday_insert = newyearsday.copy()
+                elif us_holidays.get(f"{single_date}") == "New Year's Day (Observed)":
+                    holiday_insert = newyearsdayobserved.copy()
+                elif us_holidays.get(f"{single_date}") == "Martin Luther King Jr. Day":
+                    holiday_insert = mlkday.copy()
+                elif us_holidays.get(f"{single_date}") == "Washington's Birthday":
+                    holiday_insert = washingday.copy()
+                elif us_holidays.get(f"{single_date}") == "Memorial Day":
+                    holiday_insert = memorialday.copy()
+                elif us_holidays.get(f"{single_date}") == "Juneteenth National Independence Day":
+                    holiday_insert = juneteenthnationalindependenceday.copy()
+                elif us_holidays.get(f"{single_date}") == "Independence Day":
+                    holiday_insert = independenceday.copy()
+                elif us_holidays.get(f"{single_date}") == "Independence Day (Observed)":
+                    holiday_insert = independencedayobserved.copy()
+                elif us_holidays.get(f"{single_date}") == "Labor Day":
+                    holiday_insert = laborday.copy()
+                elif us_holidays.get(f"{single_date}") == "Columbus Day":
+                    holiday_insert = columbusday.copy()
+                elif us_holidays.get(f"{single_date}") == "Veterans Day":
+                    holiday_insert = veteransday.copy()
+                elif us_holidays.get(f"{single_date}") == "Veterans Day (Observed)":
+                    holiday_insert = veteransdayobserved.copy()
+                elif us_holidays.get(f"{single_date}") == "Thanksgiving":
+                    holiday_insert = thanksgiving.copy()
+                elif us_holidays.get(f"{single_date}") == "Christmas Eve":
+                    holiday_insert = christmaseve.copy()
+                elif us_holidays.get(f"{single_date}") == "Christmas Eve (Observed)":
+                    holiday_insert = christmaseveobserved.copy()
                 elif us_holidays.get(f"{single_date}") == "Christmas Day":
                     holiday_insert = christmasday.copy()
+                elif us_holidays.get(f"{single_date}") == "New Year's Eve":
+                    holiday_insert = newyearseve.copy()
                 else:
                     holiday_insert = no_holiday.copy()
 
-                img_in_memory.paste(holiday_insert, (0,0), mask=holiday_insert)
-                sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.png")
+                img_in_memory.paste(holiday_insert, (0, 0), mask=holiday_insert)
                 img_in_memory.save(sheet_name, format='png')
 
                 # UNIX-type systems.
