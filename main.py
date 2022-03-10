@@ -61,7 +61,7 @@ def main():
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
             # Define our week.
-            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png").convert("RGB")
+            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png").convert("RGBA")
             img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
             img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
@@ -85,7 +85,7 @@ def main():
             thanksgiving = Image.open('holidays/ThanksgivingDay.png').convert("RGBA")
             christmaseve = Image.open('holidays/ChristmasEve.png').convert("RGBA")
             christmaseveobserved = Image.open('holidays/ChristmasEveObserved.png').convert("RGBA")
-            christmasday = Image.open('holidays/Halloween.png').convert("RGBA")
+            christmasday = Image.open('holidays/ChristmasDay.png').convert("RGBA")
             newyearseve = Image.open('holidays/NewYearsEve.png').convert("RGBA")
 
         except ValueError:
