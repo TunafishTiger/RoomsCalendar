@@ -105,7 +105,7 @@ def main():
         except ValueError:
             console.print('\n[i]I\'m sorry. Please express the name of a month.\n\n')
 
-        # Continue... Iterate through our given month...
+        # Iterate through our given month...
         else:
             for single_date in daterange(start_date, end_date):
 
