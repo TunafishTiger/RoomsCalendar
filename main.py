@@ -75,24 +75,24 @@ def main():
 
             # Define our observed holidays and special closures.
             no_holiday = Image.open('holidays/Blank.png').convert("RGBA")
-            newyearsday = Image.open('holidays/NewYearsDay.png').convert("RGBA")
-            newyearsdayobserved = Image.open('holidays/NewYearsDayObserved.png').convert("RGBA")
-            mlkday = Image.open('holidays/MLKDay.png').convert("RGBA")
-            washingday = Image.open('holidays/WashingtonsBirthday.png').convert("RGBA")
-            memorialday = Image.open('holidays/MemorialDay.png').convert("RGBA")
-            juneteenthnationalindependenceday = Image.open('holidays/JuneteenthNationalIndependenceDay.png')\
+            new_years_day = Image.open('holidays/NewYearsDay.png').convert("RGBA")
+            new_years_day_observed = Image.open('holidays/NewYearsDayObserved.png').convert("RGBA")
+            mlk_day = Image.open('holidays/MLKDay.png').convert("RGBA")
+            washingtons_birthday = Image.open('holidays/WashingtonsBirthday.png').convert("RGBA")
+            memorial_day = Image.open('holidays/MemorialDay.png').convert("RGBA")
+            juneteenth_national_independence_day = Image.open('holidays/JuneteenthNationalIndependenceDay.png')\
                 .convert("RGBA")
-            independenceday = Image.open('holidays/IndependenceDay.png').convert("RGBA")
-            independencedayobserved = Image.open('holidays/IndependenceDayObserved.png').convert("RGBA")
-            laborday = Image.open('holidays/LaborDay.png').convert("RGBA")
-            columbusday = Image.open('holidays/ColumbusDay.png').convert("RGBA")
-            veteransday = Image.open('holidays/VeteransDay.png').convert("RGBA")
-            veteransdayobserved = Image.open('holidays/VeteransDayObserved.png').convert("RGBA")
+            independence_day = Image.open('holidays/IndependenceDay.png').convert("RGBA")
+            independence_day_observed = Image.open('holidays/IndependenceDayObserved.png').convert("RGBA")
+            labor_day = Image.open('holidays/LaborDay.png').convert("RGBA")
+            columbus_day = Image.open('holidays/ColumbusDay.png').convert("RGBA")
+            veterans_day = Image.open('holidays/VeteransDay.png').convert("RGBA")
+            veterans_day_observed = Image.open('holidays/VeteransDayObserved.png').convert("RGBA")
             thanksgiving = Image.open('holidays/ThanksgivingDay.png').convert("RGBA")
-            christmaseve = Image.open('holidays/ChristmasEve.png').convert("RGBA")
-            christmaseveobserved = Image.open('holidays/ChristmasEveObserved.png').convert("RGBA")
-            christmasday = Image.open('holidays/ChristmasDay.png').convert("RGBA")
-            newyearseve = Image.open('holidays/NewYearsEve.png').convert("RGBA")
+            christmas_eve = Image.open('holidays/ChristmasEve.png').convert("RGBA")
+            christmas_eve_observed = Image.open('holidays/ChristmasEveObserved.png').convert("RGBA")
+            christmas_day = Image.open('holidays/ChristmasDay.png').convert("RGBA")
+            new_years_eve = Image.open('holidays/NewYearsEve.png').convert("RGBA")
 
         # Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
@@ -127,39 +127,39 @@ def main():
                 # Account for holiday closures and inserts.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
-                        holiday_insert = newyearsday.copy()
+                        holiday_insert = new_years_day.copy()
                     case "New Year's Day (Observed)":
-                        holiday_insert = newyearsdayobserved.copy()
+                        holiday_insert = new_years_day_observed.copy()
                     case "Martin Luther King Jr. Day":
-                        holiday_insert = mlkday.copy()
+                        holiday_insert = mlk_day.copy()
                     case "Washington's Birthday":
-                        holiday_insert = washingday.copy()
+                        holiday_insert = washingtons_birthday.copy()
                     case "Memorial Day":
-                        holiday_insert = memorialday.copy()
+                        holiday_insert = memorial_day.copy()
                     case "Juneteenth National Independence Day":
-                        holiday_insert = juneteenthnationalindependenceday.copy()
+                        holiday_insert = juneteenth_national_independence_day.copy()
                     case "Independence Day":
-                        holiday_insert = independenceday.copy()
+                        holiday_insert = independence_day.copy()
                     case "Independence Day (Observed)":
-                        holiday_insert = independencedayobserved.copy()
+                        holiday_insert = independence_day_observed.copy()
                     case "Labor Day":
-                        holiday_insert = laborday.copy()
+                        holiday_insert = labor_day.copy()
                     case "Columbus Day":
-                        holiday_insert = columbusday.copy()
+                        holiday_insert = columbus_day.copy()
                     case "Veterans Day":
-                        holiday_insert = veteransday.copy()
+                        holiday_insert = veterans_day.copy()
                     case "Veterans Day (Observed)":
-                        holiday_insert = veteransdayobserved.copy()
+                        holiday_insert = veterans_day_observed.copy()
                     case "Thanksgiving":
                         holiday_insert = thanksgiving.copy()
                     case "Christmas Eve":
-                        holiday_insert = christmaseve.copy()
+                        holiday_insert = christmas_eve.copy()
                     case "Christmas Eve (Observed)":
-                        holiday_insert = christmaseveobserved.copy()
+                        holiday_insert = christmas_eve_observed.copy()
                     case "Christmas Day":
-                        holiday_insert = christmasday.copy()
+                        holiday_insert = christmas_day.copy()
                     case "New Year's Eve":
-                        holiday_insert = newyearseve.copy()
+                        holiday_insert = new_years_eve.copy()
                     case _:
                         holiday_insert = no_holiday.copy()
 
