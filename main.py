@@ -38,8 +38,8 @@ def main():
                     yield first_date + timedelta(n)
 
             # Require one question and map native language to month integers.
-            putty = Prompt.ask('What month should be printed?')            # str
-            month_as_number = int(datetime.strptime(putty, '%B').month)    # int
+            putty = Prompt.ask('What month should be printed?')
+            month_as_number = int(datetime.strptime(putty, '%B').month)
 
             # Always compute January as requested in December.
             if putty in ('January', 'january'):
@@ -47,16 +47,13 @@ def main():
             else:
                 wanted_year = datetime.today().year
 
-            start_date = date(wanted_year, month_as_number, 0o1)        # date
+            start_date = date(wanted_year, month_as_number, 0o1)
 
             # Always compute December with a range ending on Jan. 1 of next year.
             if putty in ('December', 'december'):
-                end_date = date(wanted_year + 1, month_as_number, 0o1)  # date
+                end_date = date(wanted_year + 1, month_as_number, 0o1)
             else:
-                end_date = date(wanted_year, month_as_number + 1, 0o1)  # date
-
-
-
+                end_date = date(wanted_year, month_as_number + 1, 0o1)
 
             # Initialize a list of US federal holidays specific to Michigan.
             us_holidays = country_holidays('US', subdiv='MI', years=wanted_year)
