@@ -6,7 +6,6 @@
 #  RoomsCalendarPrinter
 #  main.py
 
-
 import subprocess
 from PIL import Image, ImageFont, ImageDraw
 from datetime import date, datetime, timedelta
