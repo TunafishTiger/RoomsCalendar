@@ -55,14 +55,15 @@ def main():
             df = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
-            img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
-            img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
-            img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
+            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png")
+            img_fri = Image.open("1_RoomSchedule_Template_Fridays.png")
+            img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png")
+            img_sun = Image.open("3_RoomSchedule_Template_Sundays.png")
+            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png")
 
-            no_holiday = Image.open('holidays/Blank.png')
-            newyearsday = Image.open('holidays/NewYearsDay.png')
-            halloween = Image.open('holidays/Halloween.png')
+            no_holiday = Image.open('holidays/Blank.png').convert("RGBA")
+            newyearsday = Image.open('holidays/NewYearsDay.png').convert("RGBA")
+            christmasday = Image.open('holidays/Halloween.png').convert("RGBA")
 
         except ValueError:
             console.print('\n[i]I\'m sorry. Please express the name of a month.\n\n')
@@ -73,6 +74,7 @@ def main():
                 # Account for days of week
                 if single_date.weekday() == 6:
                     img_in_memory = img_sun.copy()
+                    img_in_memory.paste(img_closed.copy())
                 elif single_date.weekday() == 5:
                     img_in_memory = img_sat.copy()
                 elif single_date.weekday() == 4:
@@ -87,14 +89,14 @@ def main():
                 # Account for holiday closures and inserts
                 if us_holidays.get(f"{single_date}") == "New Year's Day":
                     holiday_insert = newyearsday.copy()
-                elif us_holidays.get(f"{single_date}") == "Halloween":
-                    holiday_insert = halloween.copy()
+                elif us_holidays.get(f"{single_date}") == "Christmas Day":
+                    holiday_insert = christmasday.copy()
                 else:
                     holiday_insert = no_holiday.copy()
-                    img_in_memory.paste(holiday_insert)
 
-                sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.pdf")
-                img_in_memory.save(sheet_name)
+                img_in_memory.paste(holiday_insert)
+                sheet_name = single_date.strftime("sheets/X_RoomSchedule_%a-%B-%d-%Y.png")
+                img_in_memory.save(sheet_name, format='png')
 
                 # UNIX-type systems.
                 subprocess.call([
