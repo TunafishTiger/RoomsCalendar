@@ -138,6 +138,9 @@ def main():
                     case "New Year's Day (Observed)":
                         holiday_insert = new_years_day_observed.copy()
                     case "Martin Luther King Jr. Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = mlk_day.copy()
                     case "Washington's Birthday":
                         holiday_insert = washingtons_birthday.copy()
