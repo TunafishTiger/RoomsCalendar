@@ -92,7 +92,7 @@ def main():
             independence_day = Image.open('holidays/IndependenceDay.png').convert("RGBA")
             independence_day_observed = Image.open('holidays/IndependenceDayObserved.png').convert("RGBA")
             labor_day = Image.open('holidays/LaborDay.png').convert("RGBA")
-            indigenous_peoples_day = Image.open('holidays/ColumbusDay.png').convert("RGBA")
+            indigenous_peoples_day = Image.open('holidays/IndigenousPeoplesDay.png').convert("RGBA")
             veterans_day = Image.open('holidays/VeteransDay.png').convert("RGBA")
             veterans_day_observed = Image.open('holidays/VeteransDayObserved.png').convert("RGBA")
             thanksgiving = Image.open('holidays/ThanksgivingDay.png').convert("RGBA")
@@ -131,9 +131,25 @@ def main():
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
 
-                # Account for special closures, like long weekends and in-staffs.
+                # Account for long weekends off around holidays or in-staff days.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
-                    case "2022-01-09":
+                    case "2022-04-16":  # Good Friday weekend.
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+                    case "2022-05-28":  # Memorial Day weekend.
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+                    case "2022-09-03" | "2022-09-05":  # Labor Day weekend.
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+                    case "2022-11-25" | "2022-11-26":  # Thanksgiving Day weekend.
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+                    case "2022-12-23" | "2022-12-24" | "2022-12-26":  # Christmas weekend.
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format='png')
                         img_in_memory = Image.open(sheet_name)
@@ -168,6 +184,9 @@ def main():
                     case "Juneteenth National Independence Day":
                         holiday_insert = juneteenth_national_independence_day.copy()
                     case "Independence Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = independence_day.copy()
                     case "Independence Day (Observed)":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -179,7 +198,7 @@ def main():
                         img_in_memory.save(sheet_name, format='png')
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = labor_day.copy()
-                    case "Indigenous Peoples\' Day":
+                    case "Columbus Day":
                         holiday_insert = indigenous_peoples_day.copy()
                     case "Veterans Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
