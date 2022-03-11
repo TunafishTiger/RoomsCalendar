@@ -54,7 +54,7 @@ def main():
 
             # Always compute December with a range ending on Jan. 1 of next year.
             if putty in ('December', 'december'):
-                end_date = date(wanted_year + 1, month_as_number, 0o1)
+                end_date = date(wanted_year + 1, 0o1, 0o1)
             else:
                 end_date = date(wanted_year, month_as_number + 1, 0o1)
 
