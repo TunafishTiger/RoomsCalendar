@@ -167,6 +167,9 @@ def main():
                     case "Christmas Eve (Observed)":
                         holiday_insert = christmas_eve_observed.copy()
                     case "Christmas Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = christmas_day.copy()
                     case "New Year's Eve":
                         holiday_insert = new_years_eve.copy()
