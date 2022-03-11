@@ -80,19 +80,19 @@ def main():
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
 
-            # Define our observed holidays and special closures.
+            # Define stickers for both our observed holidays and special closures.
             no_holiday = Image.open('holidays/Blank.png').convert("RGBA")
             new_years_day = Image.open('holidays/NewYearsDay.png').convert("RGBA")
             new_years_day_observed = Image.open('holidays/NewYearsDayObserved.png').convert("RGBA")
             mlk_day = Image.open('holidays/MLKDay.png').convert("RGBA")
-            washingtons_birthday = Image.open('holidays/WashingtonsBirthday.png').convert("RGBA")
+            good_friday = Image.open('holidays/GoodFriday.png').convert("RGBA")
             memorial_day = Image.open('holidays/MemorialDay.png').convert("RGBA")
             juneteenth_national_independence_day = Image.open('holidays/JuneteenthNationalIndependenceDay.png')\
                 .convert("RGBA")
             independence_day = Image.open('holidays/IndependenceDay.png').convert("RGBA")
             independence_day_observed = Image.open('holidays/IndependenceDayObserved.png').convert("RGBA")
             labor_day = Image.open('holidays/LaborDay.png').convert("RGBA")
-            columbus_day = Image.open('holidays/ColumbusDay.png').convert("RGBA")
+            indigenous_peoples_day = Image.open('holidays/ColumbusDay.png').convert("RGBA")
             veterans_day = Image.open('holidays/VeteransDay.png').convert("RGBA")
             veterans_day_observed = Image.open('holidays/VeteransDayObserved.png').convert("RGBA")
             thanksgiving = Image.open('holidays/ThanksgivingDay.png').convert("RGBA")
@@ -131,40 +131,80 @@ def main():
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
 
-                # Account for holiday closures and inserts.
+                # Account for special closures, like long weekends and in-staffs.
+                match datetime.strftime(single_date, "%Y-%m-%d"):
+                    case "2022-01-09":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+
+                # Account for holidays, both closed and open.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = new_years_day.copy()
                     case "New Year's Day (Observed)":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = new_years_day_observed.copy()
                     case "Martin Luther King Jr. Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format='png')
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = mlk_day.copy()
-                    case "Washington's Birthday":
-                        holiday_insert = washingtons_birthday.copy()
+                    case "Good Friday":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
+                        holiday_insert = good_friday.copy()
                     case "Memorial Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = memorial_day.copy()
                     case "Juneteenth National Independence Day":
                         holiday_insert = juneteenth_national_independence_day.copy()
                     case "Independence Day":
                         holiday_insert = independence_day.copy()
                     case "Independence Day (Observed)":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = independence_day_observed.copy()
                     case "Labor Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = labor_day.copy()
-                    case "Columbus Day":
-                        holiday_insert = columbus_day.copy()
+                    case "Indigenous Peoples\' Day":
+                        holiday_insert = indigenous_peoples_day.copy()
                     case "Veterans Day":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = veterans_day.copy()
                     case "Veterans Day (Observed)":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = veterans_day_observed.copy()
                     case "Thanksgiving":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = thanksgiving.copy()
                     case "Christmas Eve":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = christmas_eve.copy()
                     case "Christmas Eve (Observed)":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = christmas_eve_observed.copy()
                     case "Christmas Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -172,6 +212,9 @@ def main():
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = christmas_day.copy()
                     case "New Year's Eve":
+                        img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
+                        img_in_memory.save(sheet_name, format='png')
+                        img_in_memory = Image.open(sheet_name)
                         holiday_insert = new_years_eve.copy()
                     case _:
                         holiday_insert = no_holiday.copy()
