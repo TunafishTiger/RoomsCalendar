@@ -131,7 +131,7 @@ def main():
                 draw.text((5000, 460), single_date.strftime("%A"), (0, 0, 0), anchor="rs", font=df)
                 draw.text((5000, 650), single_date.strftime("%B, %d, %Y"), (0, 0, 0), anchor="rs", font=yf)
 
-                # Account for long weekends off around holidays or in-staff days.
+                # Account manually each year for long weekends off around holidays or for in-staff days.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     case "2022-04-16":  # Good Friday weekend.
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -154,7 +154,7 @@ def main():
                         img_in_memory.save(sheet_name, format='png')
                         img_in_memory = Image.open(sheet_name)
 
-                # Account for holidays, both closed and open.
+                # Account for holidays based on algorithm, never needing updating.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
