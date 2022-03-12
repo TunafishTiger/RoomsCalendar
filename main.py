@@ -290,7 +290,7 @@ def main():
                         "-o media=Custom.11x17in",
                         "-o print-quality=5",
                         "-# 1",
-                        # '-r',
+                        '-r',
                         sheet_name,
                     ]
                 )
