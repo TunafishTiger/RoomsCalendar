@@ -35,7 +35,7 @@ def main():
     # Begin 1 infinite loop.
     while True:
         try:
-            # Define an elegant way to compute deltas. Wrap it in console UI output.
+            # Define an elegant way to compute deltas. Wrap iteration in console UI output.
             def daterange(first_date, last_date):
                 for n in track(
                     range(int((last_date - first_date).days)),
@@ -50,7 +50,7 @@ def main():
             putty = Prompt.ask("What month should be printed?")
             month_as_number = int(datetime.strptime(putty, "%B").month)
 
-            # If we're in December and ask for January, treat it as next year's.
+            # If we're in December and ask for January, treat it as next year's January.
             if putty in ("January", "january") and current_month in (
                 "December",
                 "december",
@@ -82,7 +82,7 @@ def main():
             df = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-            # Define our standard week.
+            # Initialize variables for the standard week, reading into memory only once.
             img_closed = Image.open(
                 "4_RoomSchedule_Template_Closed_Overlay.png"
             ).convert("RGBA")
@@ -93,7 +93,7 @@ def main():
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
 
-            # Define stickers for both our observed holidays and special closures.
+            # Define artwork for all of our observed holidays and special closures.
             no_holiday = Image.open("holidays/Blank.png").convert("RGBA")
             new_years_day = Image.open("holidays/NewYearsDay.png").convert("RGBA")
             new_years_day_observed = Image.open(
@@ -135,12 +135,12 @@ def main():
         else:
             for single_date in daterange(start_date, end_date):
 
-                # Define filename.
+                # Define a filename scheme.
                 sheet_name = single_date.strftime(
                     "sheets/X_RoomSchedule_%a-%B-%d-%Y.png"
                 )
 
-                # Account for days of the standard week.
+                # Assign days of the standard week.
                 match single_date.weekday():
                     case 6:
                         img_in_memory = img_sun.copy()
@@ -282,6 +282,8 @@ def main():
                 img_in_memory.save(sheet_name, format="png")
 
                 # We use CUPS for printing, which should be available for all UNIX-type systems.
+                # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
+                # Further networked printer configuration takes place there.
                 subprocess.call(
                     [
                         "lpr",
