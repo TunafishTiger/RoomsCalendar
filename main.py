@@ -71,8 +71,8 @@ def main():
             us_holidays = country_holidays("US", subdiv="MI", years=wanted_year)
 
             # Debug holidays
-            # for day in us_holidays.items():
-            #     console.print(day)
+            for day in us_holidays.items():
+                console.print(day)
 
             # Debug variables
             # console.print(f'{putty} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
@@ -83,12 +83,8 @@ def main():
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
             # Initialize variables for the standard week, reading into memory only once.
-            img_closed = Image.open(
-                "4_RoomSchedule_Template_Closed_Overlay.png"
-            ).convert("RGBA")
-            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert(
-                "RGB"
-            )
+            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png").convert("RGBA")
+            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
             img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
@@ -96,34 +92,19 @@ def main():
             # Define artwork for all of our observed holidays and special closures.
             no_holiday = Image.open("holidays/Blank.png").convert("RGBA")
             new_years_day = Image.open("holidays/NewYearsDay.png").convert("RGBA")
-            new_years_day_observed = Image.open(
-                "holidays/NewYearsDayObserved.png"
-            ).convert("RGBA")
             mlk_day = Image.open("holidays/MLKDay.png").convert("RGBA")
+            valentines_day = Image.open("holidays/ValentinesDay.png").convert("RGBA")
             good_friday = Image.open("holidays/GoodFriday.png").convert("RGBA")
             memorial_day = Image.open("holidays/MemorialDay.png").convert("RGBA")
             juneteenth_national_independence_day = Image.open(
-                "holidays/JuneteenthNationalIndependenceDay.png"
-            ).convert("RGBA")
-            independence_day = Image.open("holidays/IndependenceDay.png").convert(
-                "RGBA"
-            )
-            independence_day_observed = Image.open(
-                "holidays/IndependenceDayObserved.png"
-            ).convert("RGBA")
+                "holidays/JuneteenthNationalIndependenceDay.png").convert("RGBA")
+            independence_day = Image.open("holidays/IndependenceDay.png").convert("RGBA")
             labor_day = Image.open("holidays/LaborDay.png").convert("RGBA")
-            indigenous_peoples_day = Image.open(
-                "holidays/IndigenousPeoplesDay.png"
-            ).convert("RGBA")
+            indigenous_peoples_day = Image.open("holidays/IndigenousPeoplesDay.png").convert("RGBA")
             veterans_day = Image.open("holidays/VeteransDay.png").convert("RGBA")
-            veterans_day_observed = Image.open(
-                "holidays/VeteransDayObserved.png"
-            ).convert("RGBA")
-            thanksgiving = Image.open("holidays/ThanksgivingDay.png").convert("RGBA")
+            halloween = Image.open("holidays/Halloween.png").convert("RGBA")
+            thanksgiving = Image.open("holidays/Thanksgiving.png").convert("RGBA")
             christmas_eve = Image.open("holidays/ChristmasEve.png").convert("RGBA")
-            christmas_eve_observed = Image.open(
-                "holidays/ChristmasEveObserved.png"
-            ).convert("RGBA")
             christmas_day = Image.open("holidays/ChristmasDay.png").convert("RGBA")
             new_years_eve = Image.open("holidays/NewYearsEve.png").convert("RGBA")
 
@@ -171,8 +152,10 @@ def main():
                     font=yf,
                 )
 
-                # Account manually each year for long weekends off around holidays or for in-staff days.
+                # Account manually each year for long weekends around holidays or for in-staff days.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
+                    case "2022-04-14":  # Valentine's Day.
+                        holiday_insert = valentines_day.copy()
                     case "2022-04-16":  # Good Friday weekend.
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -185,6 +168,8 @@ def main():
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
+                    case "2022-10-31":  # Halloween.
+                        holiday_insert = halloween.copy()
                     case "2022-11-25" | "2022-11-26":  # Thanksgiving Day weekend.
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -195,6 +180,7 @@ def main():
                         img_in_memory = Image.open(sheet_name)
 
                 # Account for holidays based on algorithm, never needing updating.
+                # Observed days do not get holiday inserts, only closure status.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -205,7 +191,6 @@ def main():
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
-                        holiday_insert = new_years_day_observed.copy()
                     case "Martin Luther King Jr. Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -232,7 +217,6 @@ def main():
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
-                        holiday_insert = independence_day_observed.copy()
                     case "Labor Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -249,7 +233,6 @@ def main():
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
-                        holiday_insert = veterans_day_observed.copy()
                     case "Thanksgiving":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -264,7 +247,6 @@ def main():
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
-                        holiday_insert = christmas_eve_observed.copy()
                     case "Christmas Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
