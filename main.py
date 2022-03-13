@@ -71,8 +71,8 @@ def main():
             us_holidays = country_holidays("US", subdiv="MI", years=wanted_year)
 
             # Debug holidays
-            for day in us_holidays.items():
-                console.print(day)
+            #   for day in us_holidays.items():
+            #   console.print(day)
 
             # Debug variables
             # console.print(f'{putty} : {month_as_number} : {days_in_month} :: {start_date}, {end_date}')
@@ -96,11 +96,8 @@ def main():
             valentines_day = Image.open("holidays/ValentinesDay.png").convert("RGBA")
             good_friday = Image.open("holidays/GoodFriday.png").convert("RGBA")
             memorial_day = Image.open("holidays/MemorialDay.png").convert("RGBA")
-            juneteenth_national_independence_day = Image.open(
-                "holidays/JuneteenthNationalIndependenceDay.png").convert("RGBA")
             independence_day = Image.open("holidays/IndependenceDay.png").convert("RGBA")
             labor_day = Image.open("holidays/LaborDay.png").convert("RGBA")
-            indigenous_peoples_day = Image.open("holidays/IndigenousPeoplesDay.png").convert("RGBA")
             veterans_day = Image.open("holidays/VeteransDay.png").convert("RGBA")
             halloween = Image.open("holidays/Halloween.png").convert("RGBA")
             thanksgiving = Image.open("holidays/Thanksgiving.png").convert("RGBA")
@@ -151,6 +148,8 @@ def main():
                     anchor="rs",
                     font=yf,
                 )
+
+                holiday_insert = no_holiday.copy()
 
                 # Account manually each year for long weekends around holidays or for in-staff days.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
@@ -206,8 +205,6 @@ def main():
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = memorial_day.copy()
-                    case "Juneteenth National Independence Day":
-                        holiday_insert = juneteenth_national_independence_day.copy()
                     case "Independence Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -222,8 +219,6 @@ def main():
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = labor_day.copy()
-                    case "Columbus Day":
-                        holiday_insert = indigenous_peoples_day.copy()
                     case "Veterans Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
                         img_in_memory.save(sheet_name, format="png")
@@ -258,7 +253,7 @@ def main():
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = new_years_eve.copy()
                     case _:
-                        holiday_insert = no_holiday.copy()
+                        holiday_insert = holiday_insert
 
                 img_in_memory.paste(holiday_insert, (0, 0), mask=holiday_insert)
                 img_in_memory.save(sheet_name, format="png")
@@ -272,7 +267,7 @@ def main():
                         "-o media=Custom.11x17in",
                         "-o print-quality=5",
                         "-# 1",
-                        '-r',
+                        # '-r',
                         sheet_name,
                     ]
                 )
