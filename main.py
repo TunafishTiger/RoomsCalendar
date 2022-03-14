@@ -105,7 +105,7 @@ def main():
             christmas_day = Image.open("holidays/ChristmasDay.png").convert("RGBA")
             new_years_eve = Image.open("holidays/NewYearsEve.png").convert("RGBA")
 
-        # Nuh-uh-uh. You didn't say the magic word.
+            # Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
@@ -149,11 +149,11 @@ def main():
                     font=yf,
                 )
 
-                holiday_insert = no_holiday.copy()
+                holiday_insert = no_holiday
 
                 # Account manually each year for long weekends around holidays or for in-staff days.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
-                    case "2022-04-14":  # Valentine's Day.
+                    case "2022-02-14":  # Valentine's Day.
                         holiday_insert = valentines_day.copy()
                     case "2022-04-16":  # Good Friday weekend.
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -179,7 +179,7 @@ def main():
                         img_in_memory = Image.open(sheet_name)
 
                 # Account for holidays based on algorithm, never needing updating.
-                # Observed days do not get holiday inserts, only closure status.
+                # 'Observed' days do not get holiday inserts, only closure status.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         img_in_memory.paste(img_closed, (0, 0), mask=img_closed)
@@ -252,15 +252,13 @@ def main():
                         img_in_memory.save(sheet_name, format="png")
                         img_in_memory = Image.open(sheet_name)
                         holiday_insert = new_years_eve.copy()
-                    case _:
-                        holiday_insert = holiday_insert
 
                 img_in_memory.paste(holiday_insert, (0, 0), mask=holiday_insert)
                 img_in_memory.save(sheet_name, format="png")
 
                 # We use CUPS for printing, which should be available for all UNIX-type systems.
                 # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
-                # Further networked printer configuration takes place there.
+                # Further networked-printer configuration takes place there.
                 subprocess.call(
                     [
                         "lpr",
