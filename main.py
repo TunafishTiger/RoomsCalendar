@@ -105,7 +105,7 @@ def main():
             christmas_day = Image.open("holidays/ChristmasDay.png").convert("RGBA")
             new_years_eve = Image.open("holidays/NewYearsEve.png").convert("RGBA")
 
-            # Nuh-uh-uh. You didn't say the magic word.
+        # Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
