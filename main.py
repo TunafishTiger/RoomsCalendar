@@ -32,13 +32,13 @@ def main():
     )
     console.print("\n")
 
-    # Declare function to imprint closure.
+    # Declare helper function to imprint closure.
     def closed(img_to_close):
         img_to_close = img_to_close
         img_to_close.paste(img_closed, (0, 0), mask=img_closed)
         img_to_close.save(sheet_name, format="png")
 
-    # Declare function to imprint holiday inserts.
+    # Declare helper function to imprint holiday inserts.
     def insert(img_to_overlay, holiday_insert):
         img_to_overlay = img_to_overlay
         holiday_insert = holiday_insert
@@ -232,7 +232,7 @@ def main():
                         "-o media=Custom.11x17in",
                         "-o print-quality=5",
                         "-# 1",
-                        # '-r',
+                        "-r",
                         sheet_name,
                     ]
                 )
