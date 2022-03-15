@@ -1,4 +1,4 @@
-#  Copyright (c) 2022.
+#  Copyright (c) 2022. Tue Mar 15
 #  Sean Gibson (SeanGibsonBooks@outlook.com)
 
 #  RoomsCalendarPrinter
