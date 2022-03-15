@@ -134,6 +134,7 @@ def main():
                 match single_date.weekday():
                     case 6:
                         img_in_memory = img_sun.copy()
+                        closed(img_in_memory)
                     case 5:
                         img_in_memory = img_sat.copy()
                     case 4:
