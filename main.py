@@ -8,12 +8,11 @@ import subprocess
 from datetime import date, datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
+from holidays import country_holidays
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
 from rich.prompt import Prompt
-
-from holidays import country_holidays
 
 
 def main():
@@ -117,31 +116,19 @@ def main():
             sunday_hours = Image.open("3_Asset_SundayHours.png").convert("RGB")
 
             #  Define constants for artwork to be overlayed.
-            art_new_years_day = Image.open("holidays/NewYearsDay.png").convert("RGBA")
-            art_mlk_day = Image.open("holidays/MLKDay.png").convert("RGBA")
-            art_valentines_day = Image.open("holidays/ValentinesDay.png").convert(
-                "RGBA"
-            )
-            art_goodfriday_day = Image.open("holidays/GoodFriday.png").convert("RGBA")
-            art_memorialday_day = Image.open("holidays/MemorialDay.png").convert("RGBA")
-            art_independenceday_day = Image.open(
-                "holidays/IndependenceDay.png"
-            ).convert("RGBA")
-            art_laborday_day = Image.open("holidays/LaborDay.png").convert("RGBA")
-            art_veteransday_day = Image.open("holidays/VeteransDay.png").convert("RGBA")
-            art_halloween_day = Image.open("holidays/Halloween.png").convert("RGBA")
-            art_thanksgivingday_day = Image.open("holidays/Thanksgiving.png").convert(
-                "RGBA"
-            )
-            art_christmas_eve_day = Image.open("holidays/ChristmasEve.png").convert(
-                "RGBA"
-            )
-            art_christmasday_day = Image.open("holidays/ChristmasDay.png").convert(
-                "RGBA"
-            )
-            art_new_years_eve_day = Image.open("holidays/NewYearsEve.png").convert(
-                "RGBA"
-            )
+            art_new_years_day = Image.open("art/NewYearsDay.png").convert("RGBA")
+            art_mlk_day = Image.open("art/MLKDay.png").convert("RGBA")
+            art_valentines_day = Image.open("art/ValentinesDay.png").convert("RGBA")
+            art_goodfriday_day = Image.open("art/GoodFriday.png").convert("RGBA")
+            art_memorialday_day = Image.open("art/MemorialDay.png").convert("RGBA")
+            art_independenceday_day = Image.open("art/IndependenceDay.png").convert("RGBA")
+            art_laborday_day = Image.open("art/LaborDay.png").convert("RGBA")
+            art_veteransday_day = Image.open("art/VeteransDay.png").convert("RGBA")
+            art_halloween_day = Image.open("art/Halloween.png").convert("RGBA")
+            art_thanksgivingday_day = Image.open("art/Thanksgiving.png").convert("RGBA")
+            art_christmas_eve_day = Image.open("art/ChristmasEve.png").convert("RGBA")
+            art_christmasday_day = Image.open("art/ChristmasDay.png").convert("RGBA")
+            art_new_years_eve_day = Image.open("art/NewYearsEve.png").convert("RGBA")
 
         #  Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
@@ -172,15 +159,15 @@ def main():
                         mutable_calendar_img = weekday_hours.copy()
 
                 #  Draw correct dates as we compose the calendar page.
-                draw = ImageDraw.Draw(mutable_calendar_img)
-                draw.text(
+                draw_dates = ImageDraw.Draw(mutable_calendar_img)
+                draw_dates.text(
                     (5000, 460),
                     single_date.strftime("%A"),
                     (0, 0, 0),
                     anchor="rs",
                     font=date_font,
                 )
-                draw.text(
+                draw_dates.text(
                     (5000, 650),
                     single_date.strftime("%B, %d, %Y"),
                     (0, 0, 0),
@@ -196,19 +183,26 @@ def main():
                 #  This section needs its dates verified by hand each year based on
                 #  the list we are given by the City for when we will be closed.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
-                    case "2022-02-14":  # Valentine's Day.
-                        overlay_artwork(mutable_calendar_img, art_valentines_day.copy())
-                    case "2022-04-16":  # Good Friday weekend.
+                    # Valentine's Day.
+                    case "2022-02-14":
+                        overlay_artwork(mutable_calendar_img, art_valentines_day)
+                    # Good Friday weekend.
+                    case "2022-04-16":
                         overlay_closed_status(mutable_calendar_img)
-                    case "2022-05-28":  # Memorial Day weekend.
+                    # Memorial Day weekend.
+                    case "2022-05-28":
                         overlay_closed_status(mutable_calendar_img)
-                    case "2022-09-03" | "2022-09-05":  # Labor Day weekend.
+                    # Labor Day weekend.
+                    case "2022-09-03" | "2022-09-05":
                         overlay_closed_status(mutable_calendar_img)
-                    case "2022-10-31":  # Halloween.
-                        overlay_artwork(mutable_calendar_img, art_halloween_day.copy())
-                    case "2022-11-25" | "2022-11-26":  # Thanksgiving Day weekend.
+                    # Halloween.
+                    case "2022-10-31":
+                        overlay_artwork(mutable_calendar_img, art_halloween_day)
+                    # Thanksgiving Day weekend.
+                    case "2022-11-25" | "2022-11-26":
                         overlay_closed_status(mutable_calendar_img)
-                    case "2022-12-23" | "2022-12-24" | "2022-12-26":  # Christmas weekend.
+                    # Christmas weekend.
+                    case "2022-12-23" | "2022-12-24" | "2022-12-26":
                         overlay_closed_status(mutable_calendar_img)
 
                 #  This section is based on algorithms for major federal holidays.
@@ -216,59 +210,45 @@ def main():
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_new_years_day.copy())
+                        overlay_artwork(mutable_calendar_img, art_new_years_day)
                     case "New Year's Day (Observed)":
                         overlay_closed_status(mutable_calendar_img)
                     case "Martin Luther King Jr. Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_mlk_day.copy())
+                        overlay_artwork(mutable_calendar_img, art_mlk_day)
                     case "Good Friday":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_goodfriday_day.copy())
+                        overlay_artwork(mutable_calendar_img, art_goodfriday_day)
                     case "Memorial Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_memorialday_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_memorialday_day)
                     case "Independence Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_independenceday_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_independenceday_day)
                     case "Independence Day (Observed)":
                         overlay_closed_status(mutable_calendar_img)
                     case "Labor Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_laborday_day.copy())
+                        overlay_artwork(mutable_calendar_img, art_laborday_day)
                     case "Veterans Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_veteransday_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_veteransday_day)
                     case "Veterans Day (Observed)":
                         overlay_closed_status(mutable_calendar_img)
                     case "Thanksgiving":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_thanksgivingday_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_thanksgivingday_day)
                     case "Christmas Eve":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_christmas_eve_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_christmas_eve_day)
                     case "Christmas Eve (Observed)":
                         overlay_closed_status(mutable_calendar_img)
                     case "Christmas Day":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_christmasday_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_christmasday_day)
                     case "New Year's Eve":
                         overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(
-                            mutable_calendar_img, art_new_years_eve_day.copy()
-                        )
+                        overlay_artwork(mutable_calendar_img, art_new_years_eve_day)
 
                 #  Save our transformed calendar page onto the filesystem.
                 #  Mostly for debugging purposes.
