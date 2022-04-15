@@ -1,22 +1,22 @@
-#  Copyright (c) 2022. Thu April 14
+#  Copyright (c) 2022.
 #  Sean Gibson (SeanGibsonBooks@outlook.com)
 
 #  RoomsCalendarPrinter
 #  main.py
 
 import subprocess
-from PIL import Image, ImageFont, ImageDraw
 from datetime import date, datetime, timedelta
 
+from PIL import Image, ImageDraw, ImageFont
+from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
-from rich.console import Console
 from rich.prompt import Prompt
+
 from holidays import country_holidays
 
 
 def main():
-
     # Say hello and request communication.
     console = Console()
 
