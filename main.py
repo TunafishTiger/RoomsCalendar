@@ -8,12 +8,11 @@ import subprocess
 from datetime import date, datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
+from holidays import country_holidays
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
 from rich.prompt import Prompt
-
-from holidays import country_holidays
 
 
 def main():
@@ -25,7 +24,8 @@ def main():
         Panel(
             " \n This program creates the calendar sheets for our room schedule. \n"
             " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)",
-            title="Caroline Kennedy Library", subtitle=" :books: :books: :books: :books: :books:" " :books: ",
+            title="Caroline Kennedy Library",
+            subtitle=" :books: :books: :books: :books: :books:" " :books: ",
         ),
         width=80,
     )
@@ -95,8 +95,12 @@ def main():
             yf = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
             # Initialize variables for the standard week, reading into memory only once.
-            img_closed = Image.open("4_RoomSchedule_Template_Closed_Overlay.png").convert("RGBA")
-            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert("RGB")
+            img_closed = Image.open(
+                "4_RoomSchedule_Template_Closed_Overlay.png"
+            ).convert("RGBA")
+            img_weekday = Image.open("0_RoomSchedule_Template_Weekdays.png").convert(
+                "RGB"
+            )
             img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert("RGB")
             img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert("RGB")
             img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert("RGB")
@@ -107,7 +111,9 @@ def main():
             valentines_day = Image.open("holidays/ValentinesDay.png").convert("RGBA")
             good_friday = Image.open("holidays/GoodFriday.png").convert("RGBA")
             memorial_day = Image.open("holidays/MemorialDay.png").convert("RGBA")
-            independence_day = Image.open("holidays/IndependenceDay.png").convert("RGBA")
+            independence_day = Image.open("holidays/IndependenceDay.png").convert(
+                "RGBA"
+            )
             labor_day = Image.open("holidays/LaborDay.png").convert("RGBA")
             veterans_day = Image.open("holidays/VeteransDay.png").convert("RGBA")
             halloween = Image.open("holidays/Halloween.png").convert("RGBA")
