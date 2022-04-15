@@ -17,7 +17,7 @@ from holidays import country_holidays
 
 
 def main():
-    # Say hello and request communication.
+    #  Say hello and request communication.
     console = Console()
 
     console.print("\n")
@@ -32,20 +32,20 @@ def main():
     )
     console.print("\n")
 
-    # Declare helper function to imprint closure.
+    #  Declare helper function to imprint closure.
     def overlay_closed_status(base_image):
         base_image = base_image
-        base_image.paste(status_img_closed, (0, 0), mask=status_img_closed)
+        base_image.paste(status_closed, (0, 0), mask=status_closed)
         base_image.save(calendar_page_name, format="png")
 
-    # Declare helper function to imprint holiday inserts.
+    #  Declare helper function to imprint holiday inserts.
     def overlay_artwork(base_image, art_to_use):
         base_image = base_image
         art_to_use = art_to_use
         base_image.paste(art_to_use, (0, 0), mask=art_to_use)
         base_image.save(calendar_page_name, format="png")
 
-    # Define an elegant way to compute deltas. Wrap iteration in console UI output.
+    #  Define an elegant way to compute deltas. Wrap iteration in console UI output.
     def daterange_to_print(first_date, last_date):
         for n in track(
             range(int((last_date - first_date).days)),
@@ -53,14 +53,14 @@ def main():
         ):
             yield first_date + timedelta(n)
 
-    # Begin 1 infinite loop.
+    #  Begin 1 infinite loop.
     while True:
         try:
 
-            # When are we in real time?
+            #  When are we in real time?
             current_month = datetime.today().month
 
-            # Require one question and map native language to month integers.
+            #  Require one question and map native language to month integers.
             month_the_user_requested_to_print = Prompt.ask(
                 "What month should be printed?"
             )
@@ -68,7 +68,7 @@ def main():
                 datetime.strptime(month_the_user_requested_to_print, "%B").month
             )
 
-            # If we're in December and ask for January, treat it as next year's January.
+            #  If we're in December and ask for January, treat it as next year's January.
             if month_the_user_requested_to_print in (
                 "January",
                 "january",
@@ -82,7 +82,7 @@ def main():
 
             printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
 
-            # Always compute December with a range ending on Jan. 1 of next year.
+            #  Always compute December with a range ending on Jan. 1 of next year.
             if month_the_user_requested_to_print in ("December", "december"):
                 printing_end_date = date(year_we_want_to_print_for + 1, 0o1, 0o1)
             else:
@@ -90,43 +90,33 @@ def main():
                     year_we_want_to_print_for, mturtp_as_number + 1, 0o1
                 )
 
-            # Initialize a list of US federal holidays specific to Michigan.
+            #  Initialize a list of US federal holidays specific to Michigan.
             us_holidays = country_holidays(
                 "US", subdiv="MI", years=year_we_want_to_print_for
             )
 
-            # Debug holidays
-            #   for day in us_holidays.items():
-            #   console.print(day)
+            #  Debug holidays
+            #    for day in us_holidays.items():
+            #    console.print(day)
 
-            # Debug variables
-            # console.print(f'{month_the_user_requested_to_print} : {mturtp_as_number} : {days_in_month} ::
-            # {printing_start_date}, {printing_end_date}')
-            # console.print(type(month_the_user_requested_to_print), type(mturtp_as_number), type(days_in_month),
-            # type(printing_start_date), type(printing_end_date))
+            #  Debug variables
+            #  console.print(f'{month_the_user_requested_to_print} : {mturtp_as_number} :
+            #  {printing_start_date}, {printing_end_date}')
+            #  console.print(type(month_the_user_requested_to_print), type(mturtp_as_number),
+            #  type(printing_start_date), type(printing_end_date))
 
-            # Define our fonts and sizes.
+            #  Define our fonts and sizes.
             date_font = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
             year_font = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-            # Initialize variables for the standard week, reading into memory only once.
-            status_img_closed = Image.open(
-                "4_RoomSchedule_Template_Closed_Overlay.png"
-            ).convert("RGBA")
-            base_img_weekday = Image.open(
-                "0_RoomSchedule_Template_Weekdays.png"
-            ).convert("RGB")
-            base_img_fri = Image.open("1_RoomSchedule_Template_Fridays.png").convert(
-                "RGB"
-            )
-            base_img_sat = Image.open("2_RoomSchedule_Template_Saturdays.png").convert(
-                "RGB"
-            )
-            base_img_sun = Image.open("3_RoomSchedule_Template_Sundays.png").convert(
-                "RGB"
-            )
+            #  Define basic elements to construct our calendar.
+            status_closed = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
+            weekday_hours = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
+            friday_hours = Image.open("1_Asset_FridayHours.png").convert("RGB")
+            saturday_hours = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
+            sunday_hours = Image.open("3_Asset_SundayHours.png").convert("RGB")
 
-            # Define artwork for all of our observed holidays and special closures.
+            #  Define constants for artwork to be overlayed.
             art_new_years_day = Image.open("holidays/NewYearsDay.png").convert("RGBA")
             art_mlk_day = Image.open("holidays/MLKDay.png").convert("RGBA")
             art_valentines_day = Image.open("holidays/ValentinesDay.png").convert(
@@ -153,35 +143,35 @@ def main():
                 "RGBA"
             )
 
-        # Nuh-uh-uh. You didn't say the magic word.
+        #  Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
-        # Iterate through our given month...
+        #  Iterate through our given month one day at a time until finished.
         else:
             for single_date in daterange_to_print(
                 printing_start_date, printing_end_date
             ):
 
-                # Define a filename scheme.
+                #  Define a filename scheme.
                 calendar_page_name = single_date.strftime(
                     "pages/X_RoomSchedule_%a-%B-%d-%Y.png"
                 )
 
-                # Create a mutable calendar image by first
-                # recognizing correct day of the standard week.
+                #  Create a mutable calendar image by first
+                #  recognizing correct day of the standard week.
                 match single_date.weekday():
                     case 6:
-                        mutable_calendar_img = base_img_sun.copy()
+                        mutable_calendar_img = sunday_hours.copy()
                         overlay_closed_status(mutable_calendar_img)
                     case 5:
-                        mutable_calendar_img = base_img_sat.copy()
+                        mutable_calendar_img = saturday_hours.copy()
                     case 4:
-                        mutable_calendar_img = base_img_fri.copy()
+                        mutable_calendar_img = friday_hours.copy()
                     case _:
-                        mutable_calendar_img = base_img_weekday.copy()
+                        mutable_calendar_img = weekday_hours.copy()
 
-                # Place correct dates onto the calendar image.
+                #  Draw correct dates as we compose the calendar page.
                 draw = ImageDraw.Draw(mutable_calendar_img)
                 draw.text(
                     (5000, 460),
@@ -198,8 +188,13 @@ def main():
                     font=year_font,
                 )
 
-                # Here we account manually each year for long weekends around holidays
-                # or for in-staff days.
+                #
+                #  These next two sections determine which special days during
+                #  the year are labeled with artwork and/or marked as closed.
+                #
+
+                #  This section needs its dates verified by hand each year based on
+                #  the list we are given by the City for when we will be closed.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     case "2022-02-14":  # Valentine's Day.
                         overlay_artwork(mutable_calendar_img, art_valentines_day.copy())
@@ -216,8 +211,8 @@ def main():
                     case "2022-12-23" | "2022-12-24" | "2022-12-26":  # Christmas weekend.
                         overlay_closed_status(mutable_calendar_img)
 
-                # Account for holidays based on algorithm, never needing updating.
-                # 'Observed' days do not get holiday inserts, only closure status.
+                #  This section is based on algorithms for major federal holidays.
+                #  It is meant to never need updating.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status(mutable_calendar_img)
@@ -275,6 +270,8 @@ def main():
                             mutable_calendar_img, art_new_years_eve_day.copy()
                         )
 
+                #  Save our transformed calendar page onto the filesystem.
+                #  Mostly for debugging purposes.
                 mutable_calendar_img.save(calendar_page_name, format="png")
 
                 # We use CUPS for printing, which should be available for all UNIX-type systems.
@@ -286,7 +283,7 @@ def main():
                         "-o media=Custom.11x17in",
                         "-o print-quality=5",
                         "-# 1",
-                        "-r",
+                        "-r",  # The -r switch deletes the file after creating its print job.
                         calendar_page_name,
                     ]
                 )
