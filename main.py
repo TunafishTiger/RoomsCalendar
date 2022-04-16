@@ -121,7 +121,9 @@ def main():
             art_valentines_day = Image.open("art/ValentinesDay.png").convert("RGBA")
             art_goodfriday_day = Image.open("art/GoodFriday.png").convert("RGBA")
             art_memorialday_day = Image.open("art/MemorialDay.png").convert("RGBA")
-            art_independenceday_day = Image.open("art/IndependenceDay.png").convert("RGBA")
+            art_independenceday_day = Image.open("art/IndependenceDay.png").convert(
+                "RGBA"
+            )
             art_laborday_day = Image.open("art/LaborDay.png").convert("RGBA")
             art_veteransday_day = Image.open("art/VeteransDay.png").convert("RGBA")
             art_halloween_day = Image.open("art/Halloween.png").convert("RGBA")
@@ -142,7 +144,7 @@ def main():
 
                 #  Define a filename scheme.
                 calendar_page_name = single_date.strftime(
-                    "pages/X_RoomSchedule_%a-%B-%d-%Y.png"
+                    "pages/Calendar %A %b %d %Y.png"
                 )
 
                 #  Create a mutable calendar image by first
