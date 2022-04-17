@@ -1,5 +1,5 @@
-#  Copyright (c) 2022. Main Branch for Caroline Kennedy use.
-#  Sean Gibson (SeanGibsonBooks@outlook.com) test
+#  Copyright (c) 2022. Working branch for development.
+#  Sean Gibson (SeanGibsonBooks@outlook.com)
 
 #  RoomsCalendarPrinter
 #  main.py
