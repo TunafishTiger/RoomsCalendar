@@ -32,17 +32,14 @@ def main():
     console.print("\n")
 
     #  Declare helper function to imprint closure.
-    def overlay_closed_status(base_image):
-        base_image = base_image
-        base_image.paste(status_closed, (0, 0), mask=status_closed)
-        base_image.save(calendar_page_name, format="png")
+    def overlay_closed_status():
+        mutable_calendar_img.paste(status_closed, (0, 0), mask=status_closed)
+        mutable_calendar_img.save(calendar_page_name, format="png")
 
     #  Declare helper function to imprint holiday inserts.
-    def overlay_artwork(base_image, art_to_use):
-        base_image = base_image
-        art_to_use = art_to_use
-        base_image.paste(art_to_use, (0, 0), mask=art_to_use)
-        base_image.save(calendar_page_name, format="png")
+    def overlay_artwork(art_to_use):
+        mutable_calendar_img.paste(art_to_use, (0, 0), mask=art_to_use)
+        mutable_calendar_img.save(calendar_page_name, format="png")
 
     #  Define an elegant way to compute deltas. Wrap iteration in console UI output.
     def daterange_to_print(first_date, last_date):
@@ -152,7 +149,7 @@ def main():
                 match single_date.weekday():
                     case 6:
                         mutable_calendar_img = sunday_hours.copy()
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     case 5:
                         mutable_calendar_img = saturday_hours.copy()
                     case 4:
@@ -187,70 +184,71 @@ def main():
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     # Valentine's Day.
                     case "2022-02-14":
-                        overlay_artwork(mutable_calendar_img, art_valentines_day)
+                        overlay_artwork(art_valentines_day)
                     # Good Friday weekend.
                     case "2022-04-16":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_artwork(art_goodfriday_day)
+                        overlay_closed_status()
                     # Memorial Day weekend.
                     case "2022-05-28":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     # Labor Day weekend.
                     case "2022-09-03" | "2022-09-05":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     # Halloween.
                     case "2022-10-31":
-                        overlay_artwork(mutable_calendar_img, art_halloween_day)
+                        overlay_artwork(art_halloween_day)
                     # Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     # Christmas weekend.
                     case "2022-12-23" | "2022-12-24" | "2022-12-26":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
 
                 #  This section is based on algorithms for major federal holidays.
                 #  It is meant to never need updating.
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_new_years_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_new_years_day)
                     case "New Year's Day (Observed)":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     case "Martin Luther King Jr. Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_mlk_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_mlk_day)
                     case "Good Friday":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_goodfriday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_goodfriday_day)
                     case "Memorial Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_memorialday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_memorialday_day)
                     case "Independence Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_independenceday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_independenceday_day)
                     case "Independence Day (Observed)":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     case "Labor Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_laborday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_laborday_day)
                     case "Veterans Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_veteransday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_veteransday_day)
                     case "Veterans Day (Observed)":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     case "Thanksgiving":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_thanksgivingday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_thanksgivingday_day)
                     case "Christmas Eve":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_christmas_eve_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_christmas_eve_day)
                     case "Christmas Eve (Observed)":
-                        overlay_closed_status(mutable_calendar_img)
+                        overlay_closed_status()
                     case "Christmas Day":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_christmasday_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_christmasday_day)
                     case "New Year's Eve":
-                        overlay_closed_status(mutable_calendar_img)
-                        overlay_artwork(mutable_calendar_img, art_new_years_eve_day)
+                        overlay_closed_status()
+                        overlay_artwork(art_new_years_eve_day)
 
                 #  Save our transformed calendar page onto the filesystem.
                 #  Mostly for debugging purposes.
