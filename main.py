@@ -190,6 +190,7 @@ def main():
                         overlay_artwork(mutable_calendar_img, art_valentines_day)
                     # Good Friday weekend.
                     case "2022-04-16":
+                        overlay_artwork(mutable_calendar_img, art_goodfriday_day)
                         overlay_closed_status(mutable_calendar_img)
                     # Memorial Day weekend.
                     case "2022-05-28":
@@ -265,7 +266,7 @@ def main():
                         "-o media=Custom.11x17in",
                         "-o print-quality=5",
                         "-# 1",
-                        "-r",  # The -r switch deletes the file after creating its print job.
+                        #"-r",  # The -r switch deletes the file after creating its print job.
                         calendar_page_name,
                     ]
                 )
