@@ -1,4 +1,4 @@
-#  Copyright (c) 2022. Main Branch for Caroline Kennedy use.
+#  Copyright (c) 2022. Working branch for development.
 #  Sean Gibson (SeanGibsonBooks@outlook.com)
 
 #  RoomsCalendarPrinter
