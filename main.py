@@ -7,9 +7,9 @@
 import subprocess
 from datetime import date, datetime, timedelta
 
+from holidays import country_holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfFileMerger
-from holidays import country_holidays
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
@@ -62,16 +62,16 @@ def main():
                 "What month should be printed?"
             )
 
-            month_the_user_requested_to_print = month_the_user_requested_to_print.capitalize()
+            month_the_user_requested_to_print = (
+                month_the_user_requested_to_print.capitalize()
+            )
 
             mturtp_as_number = int(
                 datetime.strptime(month_the_user_requested_to_print, "%B").month
             )
 
             #  If we're in December and ask for January, treat it as next year's January.
-            if month_the_user_requested_to_print in (
-                "January",
-            ) and current_month in (
+            if month_the_user_requested_to_print in ("January",) and current_month in (
                 "December",
             ):
                 year_we_want_to_print_for = datetime.today().year + 1
@@ -81,7 +81,7 @@ def main():
             printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
 
             #  Always compute December with a range ending on Jan. 1 of next year.
-            if month_the_user_requested_to_print in ("December", "december"):
+            if month_the_user_requested_to_print in ("December"):
                 printing_end_date = date(year_we_want_to_print_for + 1, 0o1, 0o1)
             else:
                 printing_end_date = date(
@@ -260,7 +260,9 @@ def main():
 
                 merger.append(calendar_page_name)
 
-            calendar_month_name = (f"{month_the_user_requested_to_print}_{year_we_want_to_print_for}")
+            calendar_month_name = (
+                f"{month_the_user_requested_to_print}_{year_we_want_to_print_for}"
+            )
             merger.write(f"months/{calendar_month_name}.pdf")
             merger.close()
 
