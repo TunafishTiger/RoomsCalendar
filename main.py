@@ -267,8 +267,6 @@ def main():
             merger.write(f"months/{calendar_month_name}.pdf")
             merger.close()
 
-            # OS walk and delete files in pages
-
             # We use CUPS for printing, which should be available for all UNIX-type systems.
             # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
             # Further configuration of the networked printer takes place there. Here we simply use it.
