@@ -8,6 +8,7 @@ import subprocess
 from datetime import date, datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
+from PyPDF2 import PdfFileMerger
 from holidays import country_holidays
 from rich.console import Console
 from rich.panel import Panel
@@ -60,6 +61,9 @@ def main():
             month_the_user_requested_to_print = Prompt.ask(
                 "What month should be printed?"
             )
+
+            month_the_user_requested_to_print = month_the_user_requested_to_print.capitalize()
+
             mturtp_as_number = int(
                 datetime.strptime(month_the_user_requested_to_print, "%B").month
             )
@@ -67,10 +71,8 @@ def main():
             #  If we're in December and ask for January, treat it as next year's January.
             if month_the_user_requested_to_print in (
                 "January",
-                "january",
             ) and current_month in (
                 "December",
-                "december",
             ):
                 year_we_want_to_print_for = datetime.today().year + 1
             else:
@@ -129,6 +131,8 @@ def main():
             art_christmasday_day = Image.open("art/ChristmasDay.png").convert("RGBA")
             art_new_years_eve_day = Image.open("art/NewYearsEve.png").convert("RGBA")
 
+            merger = PdfFileMerger()
+
         #  Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
@@ -141,7 +145,7 @@ def main():
 
                 #  Define a filename scheme.
                 calendar_page_name = single_date.strftime(
-                    "pages/Calendar %A %b %d %Y.png"
+                    "pages/Calendar %A %b %d %Y.pdf"
                 )
 
                 #  Create a mutable calendar image by first
@@ -252,21 +256,29 @@ def main():
 
                 #  Save our transformed calendar page onto the filesystem.
                 #  Mostly for debugging purposes.
-                mutable_calendar_img.save(calendar_page_name, format="png")
+                mutable_calendar_img.save(calendar_page_name, format="pdf")
 
-                # We use CUPS for printing, which should be available for all UNIX-type systems.
-                # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
-                # Further configuration of the networked printer takes place there. Here we simply use it.
-                subprocess.call(
-                    [
-                        "lpr",
-                        "-o media=Custom.11x17in",
-                        "-o print-quality=5",
-                        "-# 1",
-                        # "-r",  # The -r switch deletes the file after creating its print job.
-                        calendar_page_name,
-                    ]
-                )
+                merger.append(calendar_page_name)
+
+            calendar_month_name = (f"{month_the_user_requested_to_print}_{year_we_want_to_print_for}")
+            merger.write(f"months/{calendar_month_name}.pdf")
+            merger.close()
+
+            # OS walk and delete files in pages
+
+            # We use CUPS for printing, which should be available for all UNIX-type systems.
+            # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
+            # Further configuration of the networked printer takes place there. Here we simply use it.
+            subprocess.call(
+                [
+                    "lpr",
+                    "-o media=Custom.11x17in",
+                    "-o print-quality=5",
+                    "-# 1",
+                    "-r",  # The -r switch deletes the file after creating its print job.
+                    (f"months/{calendar_month_name}.pdf"),
+                ]
+            )
 
             # Fin.
             console.print(
