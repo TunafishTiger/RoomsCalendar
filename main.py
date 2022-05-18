@@ -7,9 +7,9 @@
 import subprocess
 from datetime import date, datetime, timedelta
 
-from holidays import country_holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfFileMerger
+from holidays import country_holidays
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
@@ -81,7 +81,7 @@ def main():
             printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
 
             #  Always compute December with a range ending on Jan. 1 of next year.
-            if month_the_user_requested_to_print in ("December"):
+            if month_the_user_requested_to_print in "December":
                 printing_end_date = date(year_we_want_to_print_for + 1, 0o1, 0o1)
             else:
                 printing_end_date = date(
@@ -278,7 +278,7 @@ def main():
                     "-o print-quality=5",
                     "-# 1",
                     "-r",  # The -r switch deletes the file after creating its print job.
-                    (f"months/{calendar_month_name}.pdf"),
+                    f"months/{calendar_month_name}.pdf",
                 ]
             )
 
