@@ -4,6 +4,7 @@
 #  RoomsCalendarPrinter
 #  main.py
 
+import os
 import subprocess
 from datetime import date, datetime, timedelta
 
@@ -277,10 +278,14 @@ def main():
                     "-o media=Custom.11x17in",
                     "-o print-quality=5",
                     "-# 1",
-                    "-r",  # The -r switch deletes the file after creating its print job.
+                    # "-r",  # The -r switch deletes the file after creating its print job.
                     f"months/{calendar_month_name}.pdf",
                 ]
             )
+
+            # Delete page images from their holding directory.
+            for file in os.scandir('pages'):
+                os.remove(file.path)
 
             # Fin.
             console.print(
