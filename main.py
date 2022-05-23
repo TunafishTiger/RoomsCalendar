@@ -5,7 +5,6 @@
 #  main.py
 
 import os
-import subprocess
 from datetime import date, datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
@@ -15,6 +14,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
 from rich.prompt import Prompt
+from sh import lpr
 
 
 def main():
@@ -270,13 +270,12 @@ def main():
             # We use CUPS for printing, which should be available for all UNIX-type systems.
             # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
             # Further configuration of the networked printer takes place there. Here we simply use it.
-            subprocess.call(
+            lpr(
                 [
-                    "lpr",
                     "-o media=Custom.11x17in",
                     "-o print-quality=5",
                     "-# 1",
-                    # "-r",  # The -r switch deletes the file after creating its print job.
+                    # "-r"  # The -r switch deletes the file after creating its print job.
                     f"months/{calendar_month_name}.pdf",
                 ]
             )
