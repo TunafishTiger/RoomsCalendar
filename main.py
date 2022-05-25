@@ -273,6 +273,7 @@ def main():
             lpr(
                 [
                     "-o media=Custom.11x17in",
+                    "-o sides=one-sided",
                     "-o print-quality=5",
                     "-# 1",
                     # "-r"  # The -r switch deletes the file after creating its print job.
