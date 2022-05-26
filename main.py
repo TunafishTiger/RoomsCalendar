@@ -16,6 +16,34 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
+#  CONSTANTS:
+
+#  Define our fonts and sizes.
+DATE_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
+YEAR_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
+
+#  Define basic elements to construct our calendar.
+STATUS_CLOSED = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
+WEEKDAY_HOURS = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
+FRIDAY_HOURS = Image.open("1_Asset_FridayHours.png").convert("RGB")
+SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
+SUNDAY_HOURS = Image.open("3_Asset_SundayHours.png").convert("RGB")
+
+#  Define artwork that can be overlayed.
+ART_NEW_YEARS_DAY = Image.open("art/NewYearsDay.png").convert("RGBA")
+ART_MLK_DAY = Image.open("art/MLKDay.png").convert("RGBA")
+ART_VALENTINES_DAY = Image.open("art/ValentinesDay.png").convert("RGBA")
+ART_GOODFRIDAY_DAY = Image.open("art/GoodFriday.png").convert("RGBA")
+ART_MEMORIALDAY_DAY = Image.open("art/MemorialDay.png").convert("RGBA")
+ART_INDEPENDENCEDAY_DAY = Image.open("art/IndependenceDay.png").convert("RGBA")
+ART_LABORDAY_DAY = Image.open("art/LaborDay.png").convert("RGBA")
+ART_VETERANSDAY_DAY = Image.open("art/VeteransDay.png").convert("RGBA")
+ART_HALLOWEEN_DAY = Image.open("art/Halloween.png").convert("RGBA")
+ART_THANKSGIVINGDAY_DAY = Image.open("art/Thanksgiving.png").convert("RGBA")
+ART_CHRISTMASEVE_DAY = Image.open("art/ChristmasEve.png").convert("RGBA")
+ART_CHRISTMASDAY_DAY = Image.open("art/ChristmasDay.png").convert("RGBA")
+ART_NEW_YEARS_EVE_DAY = Image.open("art/NewYearsEve.png").convert("RGBA")
+
 
 def main():
     #  Say hello and request communication.
@@ -35,7 +63,7 @@ def main():
 
     #  Declare helper function to imprint closure.
     def overlay_closed_status():
-        mutable_calendar_img.paste(status_closed, (0, 0), mask=status_closed)
+        mutable_calendar_img.paste(STATUS_CLOSED, (0, 0), mask=STATUS_CLOSED)
         mutable_calendar_img.save(calendar_page_name, format="png")
 
     #  Declare helper function to imprint holiday inserts.
@@ -94,44 +122,7 @@ def main():
                 "US", subdiv="MI", years=year_we_want_to_print_for
             )
 
-            #  Debug holidays
-            #    for day in us_holidays.items():
-            #    console.print(day)
-
-            #  Debug variables
-            #  console.print(f'{month_the_user_requested_to_print} : {mturtp_as_number} :
-            #  {printing_start_date}, {printing_end_date}')
-            #  console.print(type(month_the_user_requested_to_print), type(mturtp_as_number),
-            #  type(printing_start_date), type(printing_end_date))
-
-            #  Define our fonts and sizes.
-            date_font = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
-            year_font = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
-
-            #  Define basic elements to construct our calendar.
-            status_closed = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
-            weekday_hours = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
-            friday_hours = Image.open("1_Asset_FridayHours.png").convert("RGB")
-            saturday_hours = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
-            sunday_hours = Image.open("3_Asset_SundayHours.png").convert("RGB")
-
-            #  Define constants for artwork to be overlayed.
-            art_new_years_day = Image.open("art/NewYearsDay.png").convert("RGBA")
-            art_mlk_day = Image.open("art/MLKDay.png").convert("RGBA")
-            art_valentines_day = Image.open("art/ValentinesDay.png").convert("RGBA")
-            art_goodfriday_day = Image.open("art/GoodFriday.png").convert("RGBA")
-            art_memorialday_day = Image.open("art/MemorialDay.png").convert("RGBA")
-            art_independenceday_day = Image.open("art/IndependenceDay.png").convert(
-                "RGBA"
-            )
-            art_laborday_day = Image.open("art/LaborDay.png").convert("RGBA")
-            art_veteransday_day = Image.open("art/VeteransDay.png").convert("RGBA")
-            art_halloween_day = Image.open("art/Halloween.png").convert("RGBA")
-            art_thanksgivingday_day = Image.open("art/Thanksgiving.png").convert("RGBA")
-            art_christmas_eve_day = Image.open("art/ChristmasEve.png").convert("RGBA")
-            art_christmasday_day = Image.open("art/ChristmasDay.png").convert("RGBA")
-            art_new_years_eve_day = Image.open("art/NewYearsEve.png").convert("RGBA")
-
+            #  Open PDF file merger.
             merger = PdfFileMerger()
 
         #  Nuh-uh-uh. You didn't say the magic word.
@@ -153,14 +144,14 @@ def main():
                 #  recognizing correct day of the standard week.
                 match single_date.weekday():
                     case 6:
-                        mutable_calendar_img = sunday_hours.copy()
+                        mutable_calendar_img = SUNDAY_HOURS.copy()
                         overlay_closed_status()
                     case 5:
-                        mutable_calendar_img = saturday_hours.copy()
+                        mutable_calendar_img = SATURDAY_HOURS.copy()
                     case 4:
-                        mutable_calendar_img = friday_hours.copy()
+                        mutable_calendar_img = FRIDAY_HOURS.copy()
                     case _:
-                        mutable_calendar_img = weekday_hours.copy()
+                        mutable_calendar_img = WEEKDAY_HOURS.copy()
 
                 #  Draw correct dates as we compose the calendar page.
                 draw_dates = ImageDraw.Draw(mutable_calendar_img)
@@ -169,14 +160,14 @@ def main():
                     single_date.strftime("%A"),
                     (0, 0, 0),
                     anchor="rs",
-                    font=date_font,
+                    font=DATE_FONT,
                 )
                 draw_dates.text(
                     (5000, 650),
                     single_date.strftime("%B, %d, %Y"),
                     (0, 0, 0),
                     anchor="rs",
-                    font=year_font,
+                    font=YEAR_FONT,
                 )
 
                 #
@@ -187,26 +178,26 @@ def main():
                 #  This section needs its dates verified by hand each year based on
                 #  the list we are given by the City for when we will be closed.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
-                    # Valentine's Day.
+                    #  Valentine's Day.
                     case "2022-02-14":
-                        overlay_artwork(art_valentines_day)
-                    # Good Friday weekend.
+                        overlay_artwork(ART_VALENTINES_DAY)
+                    #  Good Friday weekend.
                     case "2022-04-16":
-                        overlay_artwork(art_goodfriday_day)
+                        overlay_artwork(ART_GOODFRIDAY_DAY)
                         overlay_closed_status()
-                    # Memorial Day weekend.
+                    #  Memorial Day weekend.
                     case "2022-05-28":
                         overlay_closed_status()
-                    # Labor Day weekend.
+                    #  Labor Day weekend.
                     case "2022-09-03" | "2022-09-05":
                         overlay_closed_status()
-                    # Halloween.
+                    #  Halloween.
                     case "2022-10-31":
-                        overlay_artwork(art_halloween_day)
-                    # Thanksgiving Day weekend.
+                        overlay_artwork(ART_HALLOWEEN_DAY)
+                    #  Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
                         overlay_closed_status()
-                    # Christmas weekend.
+                    #  Christmas weekend.
                     case "2022-12-23" | "2022-12-24" | "2022-12-26":
                         overlay_closed_status()
 
@@ -215,77 +206,82 @@ def main():
                 match us_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
-                        overlay_artwork(art_new_years_day)
+                        overlay_artwork(ART_NEW_YEARS_DAY)
                     case "New Year's Day (Observed)":
                         overlay_closed_status()
                     case "Martin Luther King Jr. Day":
                         overlay_closed_status()
-                        overlay_artwork(art_mlk_day)
+                        overlay_artwork(ART_MLK_DAY)
                     case "Good Friday":
                         overlay_closed_status()
-                        overlay_artwork(art_goodfriday_day)
+                        overlay_artwork(ART_GOODFRIDAY_DAY)
                     case "Memorial Day":
                         overlay_closed_status()
-                        overlay_artwork(art_memorialday_day)
+                        overlay_artwork(ART_MEMORIALDAY_DAY)
                     case "Independence Day":
                         overlay_closed_status()
-                        overlay_artwork(art_independenceday_day)
+                        overlay_artwork(ART_INDEPENDENCEDAY_DAY)
                     case "Independence Day (Observed)":
                         overlay_closed_status()
                     case "Labor Day":
                         overlay_closed_status()
-                        overlay_artwork(art_laborday_day)
+                        overlay_artwork(ART_LABORDAY_DAY)
                     case "Veterans Day":
                         overlay_closed_status()
-                        overlay_artwork(art_veteransday_day)
+                        overlay_artwork(ART_VETERANSDAY_DAY)
                     case "Veterans Day (Observed)":
                         overlay_closed_status()
                     case "Thanksgiving":
                         overlay_closed_status()
-                        overlay_artwork(art_thanksgivingday_day)
+                        overlay_artwork(ART_THANKSGIVINGDAY_DAY)
                     case "Christmas Eve":
                         overlay_closed_status()
-                        overlay_artwork(art_christmas_eve_day)
+                        overlay_artwork(ART_CHRISTMASEVE_DAY)
                     case "Christmas Eve (Observed)":
                         overlay_closed_status()
                     case "Christmas Day":
                         overlay_closed_status()
-                        overlay_artwork(art_christmasday_day)
+                        overlay_artwork(ART_CHRISTMASDAY_DAY)
                     case "New Year's Eve":
                         overlay_closed_status()
-                        overlay_artwork(art_new_years_eve_day)
+                        overlay_artwork(ART_NEW_YEARS_EVE_DAY)
 
                 #  Save our transformed calendar page onto the filesystem.
-                #  Mostly for debugging purposes.
                 mutable_calendar_img.save(calendar_page_name, format="pdf")
 
+                #  At the end of each loop:
+                #  append the file we've just saved into a multi-page PDF.
                 merger.append(calendar_page_name)
 
+            #  Derive a filename for our new multi-page PDF file.
             calendar_month_name = (
                 f"{month_the_user_requested_to_print}_{year_we_want_to_print_for}"
             )
+
+            #  Write multi-page PDF to filesystem.
             merger.write(f"months/{calendar_month_name}.pdf")
             merger.close()
 
-            # We use CUPS for printing, which should be available for all UNIX-type systems.
-            # Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
-            # Further configuration of the networked printer takes place there. Here we simply use it.
+            #  We use CUPS for printing, which should be available for all UNIX-type systems.
+            #  Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
+            #  Further configuration of the networked printer takes place there. Here we simply send to
+            #  our print job to it.
             lpr(
                 [
                     "-o media=Custom.11x17in",
                     "-o sides=one-sided",
                     "-o print-quality=5",
                     "-# 1",
-                    # "-r"  # The -r switch deletes the file after creating its print job.
+                    # "-r"  # The -r switch deletes the referenced file after creating its print job.
                     f"months/{calendar_month_name}.pdf",
                 ]
             )
 
-            # Delete page images from their holding directory.
+            #  Delete page images from their holding directory.
             for file in os.scandir('pages'):
                 os.remove(file.path)
 
-            # Fin.
+            #  Fin.
             console.print(
                 f"\nThe pages for [cyan]{month_the_user_requested_to_print.upper()} {year_we_want_to_print_for}[/] are"
                 f" being sent to the Staff RICOH IM C4500.\nYou can close the window and go to collect the calendar.\n"
