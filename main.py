@@ -7,9 +7,12 @@
 import os
 from datetime import date, datetime, timedelta
 
+import holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfFileMerger
-from holidays import country_holidays
+from dateutil.easter import easter
+from dateutil.relativedelta import FR, SA, relativedelta as rd
+from holidays.constants import (DEC, JUN, MAY, NOV, OCT, SEP)
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
@@ -33,8 +36,9 @@ SUNDAY_HOURS = Image.open("3_Asset_SundayHours.png").convert("RGB")
 ART_NEW_YEARS_DAY = Image.open("art/NewYearsDay.png").convert("RGBA")
 ART_MLK_DAY = Image.open("art/MLKDay.png").convert("RGBA")
 ART_VALENTINES_DAY = Image.open("art/ValentinesDay.png").convert("RGBA")
-ART_GOODFRIDAY_DAY = Image.open("art/GoodFriday.png").convert("RGBA")
+ART_GOODFRIDAY = Image.open("art/GoodFriday.png").convert("RGBA")
 ART_MEMORIALDAY_DAY = Image.open("art/MemorialDay.png").convert("RGBA")
+ART_JUNETEENTH = Image.open("art/Juneteenth.png").convert("RGBA")
 ART_INDEPENDENCEDAY_DAY = Image.open("art/IndependenceDay.png").convert("RGBA")
 ART_LABORDAY_DAY = Image.open("art/LaborDay.png").convert("RGBA")
 ART_VETERANSDAY_DAY = Image.open("art/VeteransDay.png").convert("RGBA")
@@ -46,20 +50,6 @@ ART_NEW_YEARS_EVE_DAY = Image.open("art/NewYearsEve.png").convert("RGBA")
 
 
 def main():
-    #  Say hello and request communication.
-    console = Console()
-
-    console.print("\n")
-    console.print(
-        Panel(
-            " \n This program creates the calendar sheets for our room schedule. \n"
-            " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)",
-            title="Caroline Kennedy Library",
-            subtitle=" :books: :books: :books: :books: :books:" " :books: ",
-        ),
-        width=80,
-    )
-    console.print("\n")
 
     #  Declare helper function to imprint closure.
     def overlay_closed_status():
@@ -78,6 +68,21 @@ def main():
             description="[i]Compiling calendar...[/]",
         ):
             yield first_date + timedelta(n)
+
+    #  Say hello and request communication.
+    console = Console()
+
+    console.print("\n")
+    console.print(
+        Panel(
+            " \n This program creates the calendar sheets for our room schedule. \n"
+            " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)",
+            title="Caroline Kennedy Library",
+            subtitle=" :books: :books: :books: :books: :books:" " :books: ",
+        ),
+        width=80,
+    )
+    console.print("\n")
 
     #  Begin 1 infinite loop.
     while True:
@@ -117,10 +122,31 @@ def main():
                     year_we_want_to_print_for, mturtp_as_number + 1, 0o1
                 )
 
+            #  HOLIDAYS
             #  Initialize a list of US federal holidays specific to Michigan.
-            us_holidays = country_holidays(
-                "US", subdiv="MI", years=year_we_want_to_print_for
+            michigan_holidays = holidays.US(
+                subdiv="MI", years=year_we_want_to_print_for
             )
+
+            #  Create our own algorithmic class specific to dates important to
+            #  Caroline Kennedy Library. Includes concept of holiday weekends.
+            class CarolineKennedyHolidays(holidays.HolidayBase):
+                def _populate(self, year):
+                    self[date(year, 2, 14)] = "Valentine's Day"
+                    self[easter(year) + rd(weekday=FR(-1))] = "Good Friday"
+                    self[date(year, MAY, 31) + rd(weekday=SA(-1))] = "Saturday Before Memorial Day"
+                    self[date(year, JUN, 19)] = "Juneteenth"
+                    self[date(year, SEP, 1) + rd(weekday=FR)] = "Friday Before Labor Day"
+                    self[date(year, SEP, 1) + rd(weekday=SA)] = "Saturday Before Labor Day"
+                    self[date(year, OCT, 31)] = "Halloween"
+                    self[date(year, NOV, 1) + rd(weekday=FR(+4))] = "Friday After Thanksgiving"
+                    self[date(year, DEC, 25) + rd(days=-2)] = "Two Days Before Christmas"
+                    self[date(year, DEC, 25) + rd(days=+1)] = "Day After Christmas"
+
+                    # self[date(year, , )] = ""
+                    # self[date(year, , )] = ""
+
+            ck_holidays = CarolineKennedyHolidays()
 
             #  Open PDF file merger.
             merger = PdfFileMerger()
@@ -170,40 +196,29 @@ def main():
                     font=YEAR_FONT,
                 )
 
-                #
-                #  These next two sections determine which special days during
-                #  the year are labeled with artwork and/or marked as closed.
-                #
-
-                #  This section needs its dates verified by hand each year based on
-                #  the list we are given by the City for when we will be closed.
-                match datetime.strftime(single_date, "%Y-%m-%d"):
-                    #  Valentine's Day.
-                    case "2022-02-14":
+                match ck_holidays.get(f"{single_date}"):
+                    case "Valentine's Day":
                         overlay_artwork(ART_VALENTINES_DAY)
-                    #  Good Friday weekend.
-                    case "2022-04-16":
-                        overlay_artwork(ART_GOODFRIDAY_DAY)
+                    case "Good Friday":
+                        overlay_artwork(ART_GOODFRIDAY)
                         overlay_closed_status()
-                    #  Memorial Day weekend.
-                    case "2022-05-28":
+                    case "Saturday Before Memorial Day":
                         overlay_closed_status()
-                    #  Labor Day weekend.
-                    case "2022-09-03" | "2022-09-05":
+                    case "Juneteenth":
+                        overlay_artwork(ART_JUNETEENTH)
+                    case "Friday Before Labor Day" | \
+                         "Saturday Before Labor Day":
                         overlay_closed_status()
-                    #  Halloween.
-                    case "2022-10-31":
+                    case "Halloween":
                         overlay_artwork(ART_HALLOWEEN_DAY)
-                    #  Thanksgiving Day weekend.
-                    case "2022-11-25" | "2022-11-26":
+                    case "Friday After Thanksgiving":
                         overlay_closed_status()
-                    #  Christmas weekend.
-                    case "2022-12-23" | "2022-12-24" | "2022-12-26":
+                    case "Two Days Before Christmas":
+                        overlay_closed_status()
+                    case "Day After Christmas":
                         overlay_closed_status()
 
-                #  This section is based on algorithms for major federal holidays.
-                #  It is meant to never need updating.
-                match us_holidays.get(f"{single_date}"):
+                match michigan_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
                         overlay_artwork(ART_NEW_YEARS_DAY)
@@ -214,7 +229,7 @@ def main():
                         overlay_artwork(ART_MLK_DAY)
                     case "Good Friday":
                         overlay_closed_status()
-                        overlay_artwork(ART_GOODFRIDAY_DAY)
+                        overlay_artwork(ART_GOODFRIDAY)
                     case "Memorial Day":
                         overlay_closed_status()
                         overlay_artwork(ART_MEMORIALDAY_DAY)
@@ -234,6 +249,8 @@ def main():
                     case "Thanksgiving":
                         overlay_closed_status()
                         overlay_artwork(ART_THANKSGIVINGDAY_DAY)
+                    case "Day After Thanksgiving":
+                        overlay_closed_status()
                     case "Christmas Eve":
                         overlay_closed_status()
                         overlay_artwork(ART_CHRISTMASEVE_DAY)
