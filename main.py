@@ -88,7 +88,7 @@ def main():
     while True:
         try:
 
-            #  When are we in real time?
+            #  Establish our location within real time.
             current_month = datetime.today().month
 
             #  Require one question and map native language to month integers.
@@ -105,12 +105,11 @@ def main():
             )
 
             #  If we're in December and ask for January, treat it as next year's January.
-            if month_the_user_requested_to_print in ("January",) and current_month in (
-                "December",
-            ):
+            if month_the_user_requested_to_print in "January" and str(current_month) in "December":
                 year_we_want_to_print_for = datetime.today().year + 1
             else:
-                year_we_want_to_print_for = datetime.today().year
+                year_we_want_to_print_for = 2021  # Test flag
+                # year_we_want_to_print_for = datetime.today().year
 
             printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
 
@@ -133,18 +132,18 @@ def main():
             class CarolineKennedyHolidays(holidays.HolidayBase):
                 def _populate(self, year):
                     self[date(year, 2, 14)] = "Valentine's Day"
-                    self[easter(year) + rd(weekday=FR(-1))] = "Good Friday"
-                    self[date(year, MAY, 31) + rd(weekday=SA(-1))] = "Saturday Before Memorial Day"
+                    self[easter(year) + rd(weekday=SA(-1))] = "Good Friday Weekend"
+                    self[date(year, MAY, 31) + rd(weekday=SA(-1))] = "Memorial Day Weekend"
                     self[date(year, JUN, 19)] = "Juneteenth"
-                    self[date(year, SEP, 1) + rd(weekday=FR)] = "Friday Before Labor Day"
-                    self[date(year, SEP, 1) + rd(weekday=SA)] = "Saturday Before Labor Day"
+                    self[date(year, SEP, 1) + rd(weekday=SA(+1))] = "Labor Day Weekend"  # huh
                     self[date(year, OCT, 31)] = "Halloween"
-                    self[date(year, NOV, 1) + rd(weekday=FR(+4))] = "Friday After Thanksgiving"
-                    self[date(year, DEC, 25) + rd(days=-2)] = "Two Days Before Christmas"
-                    self[date(year, DEC, 25) + rd(days=+1)] = "Day After Christmas"
-
-                    # self[date(year, , )] = ""
-                    # self[date(year, , )] = ""
+                    self[date(year, NOV, 1) + rd(weekday=FR(+4))] = "Thanksgiving Friday"
+                    self[date(year, NOV, 1) + rd(weekday=SA(+4))] = "Thanksgiving Saturday"
+                    self[date(year, DEC, 1) + rd(weekday=FR(+4))] = "Christmas Friday"
+                    self[date(year, DEC, 1) + rd(weekday=SA(+4))] = "Christmas Saturday"
+                    self[date(year, DEC, 26)] = "Day After Christmas"
+                    self[date(year, DEC, 1) + rd(weekday=FR(+5))] = "New Year\'s Eve Friday"
+                    self[date(year, DEC, 1) + rd(weekday=SA(+5))] = "New Year\'s Eve Saturday"
 
             ck_holidays = CarolineKennedyHolidays()
 
@@ -196,28 +195,6 @@ def main():
                     font=YEAR_FONT,
                 )
 
-                match ck_holidays.get(f"{single_date}"):
-                    case "Valentine's Day":
-                        overlay_artwork(ART_VALENTINES_DAY)
-                    case "Good Friday":
-                        overlay_artwork(ART_GOODFRIDAY)
-                        overlay_closed_status()
-                    case "Saturday Before Memorial Day":
-                        overlay_closed_status()
-                    case "Juneteenth":
-                        overlay_artwork(ART_JUNETEENTH)
-                    case "Friday Before Labor Day" | \
-                         "Saturday Before Labor Day":
-                        overlay_closed_status()
-                    case "Halloween":
-                        overlay_artwork(ART_HALLOWEEN_DAY)
-                    case "Friday After Thanksgiving":
-                        overlay_closed_status()
-                    case "Two Days Before Christmas":
-                        overlay_closed_status()
-                    case "Day After Christmas":
-                        overlay_closed_status()
-
                 match michigan_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
@@ -263,6 +240,30 @@ def main():
                         overlay_closed_status()
                         overlay_artwork(ART_NEW_YEARS_EVE_DAY)
 
+                match ck_holidays.get(f"{single_date}"):
+                    case "Valentine's Day":
+                        overlay_artwork(ART_VALENTINES_DAY)
+                    case "Good Friday Weekend":
+                        overlay_closed_status()
+                    case "Memorial Day Weekend":
+                        overlay_closed_status()
+                    case "Juneteenth":
+                        overlay_artwork(ART_JUNETEENTH)
+                    case "Labor Day Weekend":
+                        overlay_closed_status()
+                    case "Halloween":
+                        overlay_artwork(ART_HALLOWEEN_DAY)
+                    case "Thanksgiving Friday" | \
+                         "Thanksgiving Saturday":
+                        overlay_closed_status()
+                    case "Christmas Friday" | \
+                         "Christmas Saturday" | \
+                         "Day After Christmas":
+                        overlay_closed_status()
+                    case "New Year\'s Eve Friday" | \
+                         "New Year\'s Eve Saturday":
+                        overlay_closed_status()
+
                 #  Save our transformed calendar page onto the filesystem.
                 mutable_calendar_img.save(calendar_page_name, format="pdf")
 
@@ -289,8 +290,8 @@ def main():
                     "-o sides=one-sided",
                     "-o print-quality=5",
                     "-# 1",
-                    # "-r"  # The -r switch deletes the referenced file after creating its print job.
-                    f"months/{calendar_month_name}.pdf",
+                    # "-r",
+                    f"months/{calendar_month_name}.pdf"
                 ]
             )
 
