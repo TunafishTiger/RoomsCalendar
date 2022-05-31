@@ -10,9 +10,6 @@ from datetime import date, datetime, timedelta
 import holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfFileMerger
-from dateutil.easter import easter
-from dateutil.relativedelta import FR, SA, relativedelta as rd
-from holidays.constants import (DEC, JUN, MAY, NOV, OCT, SEP)
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import track
@@ -127,26 +124,6 @@ def main():
                 subdiv="MI", years=year_we_want_to_print_for
             )
 
-            #  Create our own algorithmic class specific to dates important to
-            #  Caroline Kennedy Library. Includes concept of holiday weekends.
-            class CarolineKennedyHolidays(holidays.HolidayBase):
-                def _populate(self, year):
-                    self[date(year, 2, 14)] = "Valentine's Day"
-                    self[easter(year) + rd(weekday=SA(-1))] = "Good Friday Weekend"
-                    self[date(year, MAY, 31) + rd(weekday=SA(-1))] = "Memorial Day Weekend"
-                    self[date(year, JUN, 19)] = "Juneteenth"
-                    self[date(year, SEP, 1) + rd(weekday=SA(+1))] = "Labor Day Weekend"  # huh
-                    self[date(year, OCT, 31)] = "Halloween"
-                    self[date(year, NOV, 1) + rd(weekday=FR(+4))] = "Thanksgiving Friday"
-                    self[date(year, NOV, 1) + rd(weekday=SA(+4))] = "Thanksgiving Saturday"
-                    self[date(year, DEC, 1) + rd(weekday=FR(+4))] = "Christmas Friday"
-                    self[date(year, DEC, 1) + rd(weekday=SA(+4))] = "Christmas Saturday"
-                    self[date(year, DEC, 26)] = "Day After Christmas"
-                    self[date(year, DEC, 1) + rd(weekday=FR(+5))] = "New Year\'s Eve Friday"
-                    self[date(year, DEC, 1) + rd(weekday=SA(+5))] = "New Year\'s Eve Saturday"
-
-            ck_holidays = CarolineKennedyHolidays()
-
             #  Open PDF file merger.
             merger = PdfFileMerger()
 
@@ -239,30 +216,6 @@ def main():
                     case "New Year's Eve":
                         overlay_closed_status()
                         overlay_artwork(ART_NEW_YEARS_EVE_DAY)
-
-                match ck_holidays.get(f"{single_date}"):
-                    case "Valentine's Day":
-                        overlay_artwork(ART_VALENTINES_DAY)
-                    case "Good Friday Weekend":
-                        overlay_closed_status()
-                    case "Memorial Day Weekend":
-                        overlay_closed_status()
-                    case "Juneteenth":
-                        overlay_artwork(ART_JUNETEENTH)
-                    case "Labor Day Weekend":
-                        overlay_closed_status()
-                    case "Halloween":
-                        overlay_artwork(ART_HALLOWEEN_DAY)
-                    case "Thanksgiving Friday" | \
-                         "Thanksgiving Saturday":
-                        overlay_closed_status()
-                    case "Christmas Friday" | \
-                         "Christmas Saturday" | \
-                         "Day After Christmas":
-                        overlay_closed_status()
-                    case "New Year\'s Eve Friday" | \
-                         "New Year\'s Eve Saturday":
-                        overlay_closed_status()
 
                 #  Save our transformed calendar page onto the filesystem.
                 mutable_calendar_img.save(calendar_page_name, format="pdf")
