@@ -108,8 +108,8 @@ def main():
             if month_the_user_requested_to_print in "January" and str(current_month) in "December":
                 year_we_want_to_print_for = datetime.today().year + 1
             else:
-                year_we_want_to_print_for = 2021  # Test flag
-                # year_we_want_to_print_for = datetime.today().year
+                # year_we_want_to_print_for = 2021  # Test flag
+                year_we_want_to_print_for = datetime.today().year
 
             printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
 
