@@ -3,7 +3,6 @@
 
 #  RoomsCalendarPrinter
 #  main.py
-
 import os
 from datetime import date, datetime, timedelta
 
@@ -16,6 +15,8 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
+# from grapefruit import grapefruit as gf
+
 #  CONSTANTS:
 
 #  Define our fonts and sizes.
@@ -26,8 +27,8 @@ YEAR_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 STATUS_CLOSED = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
 WEEKDAY_HOURS = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
 FRIDAY_HOURS = Image.open("1_Asset_FridayHours.png").convert("RGB")
-SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
-SUNDAY_HOURS = Image.open("3_Asset_SundayHours.png").convert("RGB")
+SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
+SUNDAY_HOURS = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
 
 #  Define artwork that can be overlayed.
 ART_NEW_YEARS_DAY = Image.open("art/NewYearsDay.png").convert("RGBA")
@@ -68,6 +69,8 @@ def main():
 
     #  Say hello and request communication.
     console = Console()
+
+    # gf()
 
     console.print("\n")
     console.print(
@@ -172,6 +175,35 @@ def main():
                     font=YEAR_FONT,
                 )
 
+                #  This section needs to be updated manually each year to align
+                #  with what MPM decides for our calendar.
+                match datetime.strftime(single_date, "%Y-%m-%d"):
+                    # Valentine's Day.
+                    case "2022-02-14":
+                        overlay_artwork(art_valentines_day)
+                    # Good Friday weekend.
+                    case "2022-04-16":
+                        overlay_artwork(art_goodfriday_day)
+                        overlay_closed_status()
+                    # Memorial Day weekend.
+                    case "2022-05-28":
+                        overlay_closed_status()
+                    # Labor Day weekend.
+                    case "2022-09-03" | "2022-09-05":
+                        overlay_closed_status()
+                    # Halloween.
+                    case "2022-10-31":
+                        overlay_artwork(art_halloween_day)
+                    # Thanksgiving Day weekend.
+                    case "2022-11-25" | "2022-11-26":
+                        overlay_closed_status()
+                    # Christmas weekend.
+                    case "2022-12-23" | "2022-12-24" | "2022-12-26":
+                        overlay_closed_status()
+
+                #  This section is algorithmic and matches holidays specific to
+                #  Michigan. These are standard dates we are always closed on.
+
                 match michigan_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
@@ -233,6 +265,10 @@ def main():
             merger.write(f"months/{calendar_month_name}.pdf")
             merger.close()
 
+            #  Delete page images from their holding directory.
+            for file in os.scandir('pages'):
+                os.remove(file.path)
+
             #  We use CUPS for printing, which should be available for all UNIX-type systems.
             #  Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
             #  Further configuration of the networked printer takes place there. Here we simply send to
@@ -247,10 +283,6 @@ def main():
                     f"months/{calendar_month_name}.pdf"
                 ]
             )
-
-            #  Delete page images from their holding directory.
-            for file in os.scandir('pages'):
-                os.remove(file.path)
 
             #  Fin.
             console.print(
