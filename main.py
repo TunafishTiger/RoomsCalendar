@@ -270,9 +270,9 @@ def main():
                 os.remove(file.path)
 
             #  We use CUPS for printing, which should be available for all UNIX-type systems.
-            #  Rely on configuring Windows Subsystem for Linux as a suitable environment in the office.
+            #  Relies on configuring Windows Subsystem for Linux as a suitable environment in the office.
             #  Further configuration of the networked printer takes place there. Here we simply send to
-            #  our print job to it.
+            #  our print job.
             lpr(
                 [
                     "-o media=Custom.11x17in",
