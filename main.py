@@ -3,6 +3,7 @@
 
 #  RoomsCalendarPrinter
 #  main.py
+
 import os
 from datetime import date, datetime, timedelta
 
@@ -27,14 +28,16 @@ YEAR_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 STATUS_CLOSED = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
 WEEKDAY_HOURS = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
 FRIDAY_HOURS = Image.open("1_Asset_FridayHours.png").convert("RGB")
-SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
-SUNDAY_HOURS = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
+SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
+SATURDAY_HOURS_EXTENDED = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
+SUNDAY_HOURS = Image.open("3_Asset_SundayHours.png").convert("RGB")
+SUNDAY_HOURS_EXTENDED = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
 
 #  Define artwork that can be overlayed.
 ART_NEW_YEARS_DAY = Image.open("art/NewYearsDay.png").convert("RGBA")
 ART_MLK_DAY = Image.open("art/MLKDay.png").convert("RGBA")
 ART_VALENTINES_DAY = Image.open("art/ValentinesDay.png").convert("RGBA")
-ART_GOODFRIDAY = Image.open("art/GoodFriday.png").convert("RGBA")
+ART_GOODFRIDAY_DAY = Image.open("art/GoodFriday.png").convert("RGBA")
 ART_MEMORIALDAY_DAY = Image.open("art/MemorialDay.png").convert("RGBA")
 ART_JUNETEENTH = Image.open("art/Juneteenth.png").convert("RGBA")
 ART_INDEPENDENCEDAY_DAY = Image.open("art/IndependenceDay.png").convert("RGBA")
@@ -67,22 +70,22 @@ def main():
         ):
             yield first_date + timedelta(n)
 
+    # gf()
+
     #  Say hello and request communication.
     console = Console()
 
-    # gf()
-
-    console.print("\n")
     console.print(
+        "\n",
         Panel(
-            " \n This program creates the calendar sheets for our room schedule. \n"
-            " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)",
+            " \nThis program creates the calendar sheets for our room schedule.\n"
+            " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)\n",
             title="Caroline Kennedy Library",
             subtitle=" :books: :books: :books: :books: :books:" " :books: ",
         ),
+        "\n",
         width=80,
     )
-    console.print("\n")
 
     #  Begin 1 infinite loop.
     while True:
@@ -149,10 +152,10 @@ def main():
                 #  recognizing correct day of the standard week.
                 match single_date.weekday():
                     case 6:
-                        mutable_calendar_img = SUNDAY_HOURS.copy()
+                        mutable_calendar_img = SUNDAY_HOURS_EXTENDED.copy()
                         overlay_closed_status()
                     case 5:
-                        mutable_calendar_img = SATURDAY_HOURS.copy()
+                        mutable_calendar_img = SATURDAY_HOURS_EXTENDED.copy()
                     case 4:
                         mutable_calendar_img = FRIDAY_HOURS.copy()
                     case _:
@@ -180,10 +183,10 @@ def main():
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     # Valentine's Day.
                     case "2022-02-14":
-                        overlay_artwork(art_valentines_day)
+                        overlay_artwork(ART_VALENTINES_DAY)
                     # Good Friday weekend.
                     case "2022-04-16":
-                        overlay_artwork(art_goodfriday_day)
+                        overlay_artwork(ART_GOODFRIDAY_DAY)
                         overlay_closed_status()
                     # Memorial Day weekend.
                     case "2022-05-28":
@@ -193,7 +196,7 @@ def main():
                         overlay_closed_status()
                     # Halloween.
                     case "2022-10-31":
-                        overlay_artwork(art_halloween_day)
+                        overlay_artwork(ART_HALLOWEEN_DAY)
                     # Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
                         overlay_closed_status()
@@ -215,7 +218,7 @@ def main():
                         overlay_artwork(ART_MLK_DAY)
                     case "Good Friday":
                         overlay_closed_status()
-                        overlay_artwork(ART_GOODFRIDAY)
+                        overlay_artwork(ART_GOODFRIDAY_DAY)
                     case "Memorial Day":
                         overlay_closed_status()
                         overlay_artwork(ART_MEMORIALDAY_DAY)
@@ -287,8 +290,9 @@ def main():
             #  Fin.
             console.print(
                 f"\nThe pages for [cyan]{month_the_user_requested_to_print.upper()} {year_we_want_to_print_for}[/] are"
-                f" being sent to the Staff RICOH IM C4500.\nYou can close the window and go to collect the calendar.\n"
-                f"\n"
+                f" being sent to the Staff RICOH IM C4500.\n"
+                f"You can close the window and go to collect the calendar.\n"
+                f"\n",
             )
             break
 
