@@ -17,7 +17,7 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
-# from grapefruit import grapefruit as gf
+# from grapefruit import add_holiday
 
 #  CONSTANTS:
 
@@ -30,9 +30,13 @@ STATUS_CLOSED: Final = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
 WEEKDAY_HOURS: Final = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
 FRIDAY_HOURS: Final = Image.open("1_Asset_FridayHours.png").convert("RGB")
 SATURDAY_HOURS: Final = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
-SATURDAY_HOURS_EXTENDED: Final = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
+SATURDAY_HOURS_EXTENDED: Final = Image.open(
+    "2_Asset_SaturdayHours_Extended.png"
+).convert("RGB")
 SUNDAY_HOURS: Final = Image.open("3_Asset_SundayHours.png").convert("RGB")
-SUNDAY_HOURS_EXTENDED: Final = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
+SUNDAY_HOURS_EXTENDED: Final = Image.open("3_Asset_SundayHours_Extended.png").convert(
+    "RGB"
+)
 
 #  Define artwork that can be overlayed.
 ART_NEW_YEARS_DAY: Final = Image.open("art/NewYearsDay.png").convert("RGBA")
@@ -71,8 +75,6 @@ def main():
         ):
             yield first_date + timedelta(n)
 
-    # gf()
-
     #  Say hello and request communication.
     console = Console()
 
@@ -96,37 +98,30 @@ def main():
             current_month = datetime.today().month
 
             #  Require one question and map native language to month integers.
-            month_the_user_requested_to_print = Prompt.ask(
-                "What month should be printed?"
-            )
+            answer = Prompt.ask("What month should be printed?")
 
-            month_the_user_requested_to_print = (
-                month_the_user_requested_to_print.capitalize()
-            )
+            answer = answer.capitalize()
 
-            mturtp_as_number = int(
-                datetime.strptime(month_the_user_requested_to_print, "%B").month
-            )
+            answer_as_number = int(datetime.strptime(answer, "%B").month)
 
             #  If we're in December and ask for January, treat it as next year's January.
-            if month_the_user_requested_to_print in "January" and str(current_month) in "December":
+            if answer in "January" and str(current_month) in "December":
                 year_we_want_to_print_for = datetime.today().year + 1
             else:
                 # year_we_want_to_print_for = 2021  # Test flag
                 year_we_want_to_print_for = datetime.today().year
 
-            printing_start_date = date(year_we_want_to_print_for, mturtp_as_number, 0o1)
+            printing_start_date = date(year_we_want_to_print_for, answer_as_number, 0o1)
 
             #  Always compute December with a range ending on Jan. 1 of next year.
-            if month_the_user_requested_to_print in "December":
+            if answer in "December":
                 printing_end_date = date(year_we_want_to_print_for + 1, 0o1, 0o1)
             else:
                 printing_end_date = date(
-                    year_we_want_to_print_for, mturtp_as_number + 1, 0o1
+                    year_we_want_to_print_for, answer_as_number + 1, 0o1
                 )
 
-            #  HOLIDAYS
-            #  Initialize a list of US federal holidays specific to Michigan.
+            #  Initialize a list of major holidays specific to Michigan.
             michigan_holidays = holidays.US(
                 subdiv="MI", years=year_we_want_to_print_for
             )
@@ -178,6 +173,8 @@ def main():
                     anchor="rs",
                     font=YEAR_FONT,
                 )
+
+                #  This section is meant to pull from SQL.
 
                 #  This section needs to be updated manually each year to align
                 #  with what MPM decides for our calendar.
@@ -261,16 +258,14 @@ def main():
                 merger.append(calendar_page_name)
 
             #  Derive a filename for our new multi-page PDF file.
-            calendar_month_name = (
-                f"{month_the_user_requested_to_print}_{year_we_want_to_print_for}"
-            )
+            calendar_month_name = f"{answer}_{year_we_want_to_print_for}"
 
             #  Write multi-page PDF to filesystem.
             merger.write(f"months/{calendar_month_name}.pdf")
             merger.close()
 
             #  Delete page images from their holding directory.
-            for file in os.scandir('pages'):
+            for file in os.scandir("pages"):
                 os.remove(file.path)
 
             #  We use CUPS for printing, which should be available for all UNIX-type systems.
@@ -284,17 +279,18 @@ def main():
                     "-o print-quality=5",
                     "-# 1",
                     # "-r",
-                    f"months/{calendar_month_name}.pdf"
+                    f"months/{calendar_month_name}.pdf",
                 ]
             )
 
             #  Fin.
             console.print(
-                f"\nThe pages for [cyan]{month_the_user_requested_to_print.upper()} {year_we_want_to_print_for}[/] are"
+                f"\nThe pages for [cyan]{answer} {year_we_want_to_print_for}[/] are"
                 f" being sent to the Staff RICOH IM C4500.\n"
                 f"You can close the window and go to collect the calendar.\n"
                 f"\n",
             )
+
             break
 
 
