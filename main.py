@@ -6,6 +6,7 @@
 
 import os
 from datetime import date, datetime, timedelta
+from typing import Final
 
 import holidays
 from PIL import Image, ImageDraw, ImageFont
@@ -21,33 +22,33 @@ from sh import lpr
 #  CONSTANTS:
 
 #  Define our fonts and sizes.
-DATE_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
-YEAR_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
+DATE_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
+YEAR_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
 #  Define basic elements to construct our calendar.
-STATUS_CLOSED = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
-WEEKDAY_HOURS = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
-FRIDAY_HOURS = Image.open("1_Asset_FridayHours.png").convert("RGB")
-SATURDAY_HOURS = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
-SATURDAY_HOURS_EXTENDED = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
-SUNDAY_HOURS = Image.open("3_Asset_SundayHours.png").convert("RGB")
-SUNDAY_HOURS_EXTENDED = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
+STATUS_CLOSED: Final = Image.open("4_Asset_ClosedToday.png").convert("RGBA")
+WEEKDAY_HOURS: Final = Image.open("0_Asset_WeekdayHours.png").convert("RGB")
+FRIDAY_HOURS: Final = Image.open("1_Asset_FridayHours.png").convert("RGB")
+SATURDAY_HOURS: Final = Image.open("2_Asset_SaturdayHours.png").convert("RGB")
+SATURDAY_HOURS_EXTENDED: Final = Image.open("2_Asset_SaturdayHours_Extended.png").convert("RGB")
+SUNDAY_HOURS: Final = Image.open("3_Asset_SundayHours.png").convert("RGB")
+SUNDAY_HOURS_EXTENDED: Final = Image.open("3_Asset_SundayHours_Extended.png").convert("RGB")
 
 #  Define artwork that can be overlayed.
-ART_NEW_YEARS_DAY = Image.open("art/NewYearsDay.png").convert("RGBA")
-ART_MLK_DAY = Image.open("art/MLKDay.png").convert("RGBA")
-ART_VALENTINES_DAY = Image.open("art/ValentinesDay.png").convert("RGBA")
-ART_GOODFRIDAY_DAY = Image.open("art/GoodFriday.png").convert("RGBA")
-ART_MEMORIALDAY_DAY = Image.open("art/MemorialDay.png").convert("RGBA")
-ART_JUNETEENTH = Image.open("art/Juneteenth.png").convert("RGBA")
-ART_INDEPENDENCEDAY_DAY = Image.open("art/IndependenceDay.png").convert("RGBA")
-ART_LABORDAY_DAY = Image.open("art/LaborDay.png").convert("RGBA")
-ART_VETERANSDAY_DAY = Image.open("art/VeteransDay.png").convert("RGBA")
-ART_HALLOWEEN_DAY = Image.open("art/Halloween.png").convert("RGBA")
-ART_THANKSGIVINGDAY_DAY = Image.open("art/Thanksgiving.png").convert("RGBA")
-ART_CHRISTMASEVE_DAY = Image.open("art/ChristmasEve.png").convert("RGBA")
-ART_CHRISTMASDAY_DAY = Image.open("art/ChristmasDay.png").convert("RGBA")
-ART_NEW_YEARS_EVE_DAY = Image.open("art/NewYearsEve.png").convert("RGBA")
+ART_NEW_YEARS_DAY: Final = Image.open("art/NewYearsDay.png").convert("RGBA")
+ART_MLK_DAY: Final = Image.open("art/MLKDay.png").convert("RGBA")
+ART_VALENTINES_DAY: Final = Image.open("art/ValentinesDay.png").convert("RGBA")
+ART_GOODFRIDAY_DAY: Final = Image.open("art/GoodFriday.png").convert("RGBA")
+ART_MEMORIALDAY_DAY: Final = Image.open("art/MemorialDay.png").convert("RGBA")
+ART_JUNETEENTH: Final = Image.open("art/Juneteenth.png").convert("RGBA")
+ART_INDEPENDENCEDAY_DAY: Final = Image.open("art/IndependenceDay.png").convert("RGBA")
+ART_LABORDAY_DAY: Final = Image.open("art/LaborDay.png").convert("RGBA")
+ART_VETERANSDAY_DAY: Final = Image.open("art/VeteransDay.png").convert("RGBA")
+ART_HALLOWEEN_DAY: Final = Image.open("art/Halloween.png").convert("RGBA")
+ART_THANKSGIVINGDAY_DAY: Final = Image.open("art/Thanksgiving.png").convert("RGBA")
+ART_CHRISTMASEVE_DAY: Final = Image.open("art/ChristmasEve.png").convert("RGBA")
+ART_CHRISTMASDAY_DAY: Final = Image.open("art/ChristmasDay.png").convert("RGBA")
+ART_NEW_YEARS_EVE_DAY: Final = Image.open("art/NewYearsEve.png").convert("RGBA")
 
 
 def main():
