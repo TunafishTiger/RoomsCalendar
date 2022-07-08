@@ -17,10 +17,6 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
-# from grapefruit import add_holiday
-
-#  CONSTANTS:
-
 #  Define our fonts and sizes.
 DATE_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
 YEAR_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
