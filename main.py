@@ -80,7 +80,7 @@ def main():
             " \nThis program creates the calendar sheets for our room schedule.\n"
             " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)\n",
             title="Caroline Kennedy Library",
-            subtitle=" :books: :books: :books: :books: :books:" " :books: ",
+            subtitle=" :books: :books: :books: :books: :books: :books: ",
         ),
         "\n",
         width=80,
