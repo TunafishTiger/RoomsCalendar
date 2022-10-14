@@ -1,7 +1,7 @@
 #  Copyright (c) 2022. Working branch for development.
 #  Sean Gibson (SeanGibsonBooks@outlook.com)
 
-#  RoomsCalendarPrinter
+#  RoomsCalendar
 #  main.py
 
 import os
