@@ -198,7 +198,7 @@ def main():
                         overlay_closed_status()
 
                 #  This section is algorithmic and matches holidays specific to
-                #  Michigan. These are standard dates we are always closed on or
+                #  Michigan. These are standard dates we are always closed, or,
                 #  acknowledge with artwork.
 
                 match michigan_holidays.get(f"{single_date}"):
