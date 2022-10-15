@@ -66,7 +66,7 @@ def main():
         calendar_sheet.paste(art_to_use, (0, 0), mask=art_to_use)
         calendar_sheet.save(calendar_sheet_name, format="png")
 
-    #  Define an elegant way to compute deltas. Wrap iteration in console UI output.
+    #  Compute deltas. Wrap iteration in console UI output.
     def daterange_to_print(first_date, last_date):
         for n in track(
                 range(int((last_date - first_date).days)),
