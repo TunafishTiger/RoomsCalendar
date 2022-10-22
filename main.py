@@ -17,48 +17,43 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
+#  Define basic elements to construct our calendar.
+STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
+WEEKDAY_HOURS: Final = "0_Asset_WeekdayHours.png"
+FRIDAY_HOURS: Final = "1_Asset_FridayHours.png"
+SATURDAY_HOURS: Final = "2_Asset_SaturdayHours.png"
+SATURDAY_HOURS_EXTENDED: Final = "2_Asset_SaturdayHours_Extended.png"
+SUNDAY_HOURS: Final = "3_Asset_SundayHours.png"
+SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
 
-class Calendar:
-    #  Define basic elements to construct our calendar.
-    STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
-    WEEKDAY_HOURS: Final = "0_Asset_WeekdayHours.png"
-    FRIDAY_HOURS: Final = "1_Asset_FridayHours.png"
-    SATURDAY_HOURS: Final = "2_Asset_SaturdayHours.png"
-    SATURDAY_HOURS_EXTENDED: Final = "2_Asset_SaturdayHours_Extended.png"
-    SUNDAY_HOURS: Final = "3_Asset_SundayHours.png"
-    SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
+#  Define our fonts and sizes.
+WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
+DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-    #  Define our fonts and sizes.
-    WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
-    DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
-
-
-class Art:
-    #  Define artwork that can be overlayed.
-    NEWYEARSDAY: Final = "art/NewYearsDay.png"
-    MLKDAY: Final = "art/MLKDay.png"
-    VALENTINESDAY: Final = "art/ValentinesDay.png"
-    GOODFRIDAY: Final = "art/GoodFriday.png"
-    MEMORIALDAY: Final = "art/MemorialDay.png"
-    JUNETEENTH: Final = "art/Juneteenth.png"
-    INDEPENDENCEDAY: Final = "art/IndependenceDay.png"
-    LABORDAY: Final = "art/LaborDay.png"
-    VETERANSDAY: Final = "art/VeteransDay.png"
-    HALLOWEEN: Final = "art/Halloween.png"
-    THANKSGIVING: Final = "art/Thanksgiving.png"
-    CHRISTMASEVE: Final = "art/ChristmasEve.png"
-    CHRISTMASDAY: Final = "art/ChristmasDay.png"
-    NEWYEARSEVE: Final = "art/NewYearsEve.png"
-
+#  Define artwork that can be overlayed.
+NEWYEARSDAY: Final = "art/NewYearsDay.png"
+MLKDAY: Final = "art/MLKDay.png"
+VALENTINESDAY: Final = "art/ValentinesDay.png"
+GOODFRIDAY: Final = "art/GoodFriday.png"
+MEMORIALDAY: Final = "art/MemorialDay.png"
+JUNETEENTH: Final = "art/Juneteenth.png"
+INDEPENDENCEDAY: Final = "art/IndependenceDay.png"
+LABORDAY: Final = "art/LaborDay.png"
+VETERANSDAY: Final = "art/VeteransDay.png"
+HALLOWEEN: Final = "art/Halloween.png"
+THANKSGIVING: Final = "art/Thanksgiving.png"
+CHRISTMASEVE: Final = "art/ChristmasEve.png"
+CHRISTMASDAY: Final = "art/ChristmasDay.png"
+NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
 def main():
     #  Declare helper function to imprint closure.
     def overlay_closed_status():
         calendar_sheet.paste(
-            Image.open(Calendar.STATUS_CLOSED).convert("RGBA"),
+            Image.open(STATUS_CLOSED).convert("RGBA"),
             (0, 0),
-            mask=Image.open(Calendar.STATUS_CLOSED).convert("RGBA")
+            mask=Image.open(STATUS_CLOSED).convert("RGBA")
         )
         calendar_sheet.save(calendar_sheet_filename, format="png")
 
@@ -150,14 +145,14 @@ def main():
                 #  recognizing the current day of the standard week.
                 match single_date.weekday():
                     case 6:
-                        calendar_sheet = Image.open(Calendar.SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+                        calendar_sheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
                         overlay_closed_status()
                     case 5:
-                        calendar_sheet = Image.open(Calendar.SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+                        calendar_sheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
                     case 4:
-                        calendar_sheet = Image.open(Calendar.FRIDAY_HOURS).convert("RGB").copy()
+                        calendar_sheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
                     case _:
-                        calendar_sheet = Image.open(Calendar.WEEKDAY_HOURS).convert("RGB").copy()
+                        calendar_sheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
 
                 #  Draw correct dates as we compose the calendar page.
                 draw_dates = ImageDraw.Draw(calendar_sheet)
@@ -166,14 +161,14 @@ def main():
                     single_date.strftime("%A"),
                     (0, 0, 0),
                     anchor="rs",
-                    font=Calendar.WEEKDAYNAME_FONT,
+                    font=WEEKDAYNAME_FONT,
                 )
                 draw_dates.text(
                     (5000, 650),
                     single_date.strftime("%B, %d, %Y"),
                     (0, 0, 0),
                     anchor="rs",
-                    font=Calendar.DATESTAMP_FONT,
+                    font=DATESTAMP_FONT,
                 )
 
                 #  This section needs to be updated manually each year to align
@@ -181,10 +176,10 @@ def main():
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     # Valentine's Day.
                     case "2022-02-14":
-                        overlay_artwork(Art.VALENTINESDAY)
+                        overlay_artwork(VALENTINESDAY)
                     # Good Friday weekend.
                     case "2022-04-16":
-                        overlay_artwork(Art.GOODFRIDAY)
+                        overlay_artwork(GOODFRIDAY)
                         overlay_closed_status()
                     # Memorial Day weekend.
                     case "2022-05-28":
@@ -194,7 +189,7 @@ def main():
                         overlay_closed_status()
                     # Halloween.
                     case "2022-10-31":
-                        overlay_artwork(Art.HALLOWEEN)
+                        overlay_artwork(HALLOWEEN)
                     # Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
                         overlay_closed_status()
@@ -209,47 +204,47 @@ def main():
                 match michigan_holidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.NEWYEARSDAY)
+                        overlay_artwork(NEWYEARSDAY)
                     case "New Year's Day (Observed)":
                         overlay_closed_status()
                     case "Martin Luther King Jr. Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.MLKDAY)
+                        overlay_artwork(MLKDAY)
                     case "Good Friday":
                         overlay_closed_status()
-                        overlay_artwork(Art.GOODFRIDAY)
+                        overlay_artwork(GOODFRIDAY)
                     case "Memorial Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.MEMORIALDAY)
+                        overlay_artwork(MEMORIALDAY)
                     case "Independence Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.INDEPENDENCEDAY)
+                        overlay_artwork(INDEPENDENCEDAY)
                     case "Independence Day (Observed)":
                         overlay_closed_status()
                     case "Labor Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.LABORDAY)
+                        overlay_artwork(LABORDAY)
                     case "Veterans Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.VETERANSDAY)
+                        overlay_artwork(VETERANSDAY)
                     case "Veterans Day (Observed)":
                         overlay_closed_status()
                     case "Thanksgiving":
                         overlay_closed_status()
-                        overlay_artwork(Art.THANKSGIVING)
+                        overlay_artwork(THANKSGIVING)
                     case "Day After Thanksgiving":
                         overlay_closed_status()
                     case "Christmas Eve":
                         overlay_closed_status()
-                        overlay_artwork(Art.CHRISTMASEVE)
+                        overlay_artwork(CHRISTMASEVE)
                     case "Christmas Eve (Observed)":
                         overlay_closed_status()
                     case "Christmas Day":
                         overlay_closed_status()
-                        overlay_artwork(Art.CHRISTMASDAY)
+                        overlay_artwork(CHRISTMASDAY)
                     case "New Year's Eve":
                         overlay_closed_status()
-                        overlay_artwork(Art.NEWYEARSEVE)
+                        overlay_artwork(NEWYEARSEVE)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendar_sheet.save(calendar_sheet_filename, format="pdf")
