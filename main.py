@@ -1,6 +1,3 @@
-#  Copyright (c) 2022. Working branch for development.
-#  Sean Gibson (SeanGibsonBooks@outlook.com)
-
 #  RoomsCalendar
 #  main.py
 
@@ -47,32 +44,35 @@ CHRISTMASDAY: Final = "art/ChristmasDay.png"
 NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
-def main():
-    #  Declare helper function to imprint closure.
-    def overlay_closed_status():
-        calendar_sheet.paste(
-            Image.open(STATUS_CLOSED).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(STATUS_CLOSED).convert("RGBA")
-        )
-        calendar_sheet.save(calendar_sheet_filename, format="png")
+#  Declare helper function to imprint closure.
+def overlay_closed_status():
+    calendar_sheet.paste(
+        Image.open(STATUS_CLOSED).convert("RGBA"),
+        (0, 0),
+        mask=Image.open(STATUS_CLOSED).convert("RGBA")
+    )
+    calendar_sheet.save(calendar_sheet_filename, format="png")
 
-    #  Declare helper function to imprint holiday inserts.
-    def overlay_artwork(art_to_use):
-        calendar_sheet.paste(
-            Image.open(art_to_use).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(art_to_use).convert("RGBA")
-        )
-        calendar_sheet.save(calendar_sheet_filename, format="png")
 
-    #  Compute deltas. Wrap iteration in console UI output.
-    def daterange_to_print(first_date, last_date):
-        for n in track(
-                range(int((last_date - first_date).days)),
-                description="[i]Compiling calendar...[/]",
-        ):
-            yield first_date + timedelta(n)
+#  Declare helper function to imprint holiday inserts.
+def overlay_artwork(art_to_use):
+    calendar_sheet.paste(
+        Image.open(art_to_use).convert("RGBA"),
+        (0, 0),
+        mask=Image.open(art_to_use).convert("RGBA")
+    )
+    calendar_sheet.save(calendar_sheet_filename, format="png")
+
+
+#  Compute deltas. Wrap iteration in console UI output.
+def daterange_to_print(first_date, last_date):
+    for n in track(
+            range(int((last_date - first_date).days)),
+            description="[i]Compiling calendar...[/]",
+    ):
+        yield first_date + timedelta(n)
+
+if __name__ == "__main__":
 
     #  Initialize console from RICH.
     console = Console()
@@ -289,7 +289,3 @@ def main():
             )
 
             break
-
-
-if __name__ == "__main__":
-    main()
