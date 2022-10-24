@@ -72,6 +72,7 @@ def daterange_to_print(first_date, last_date):
     ):
         yield first_date + timedelta(n)
 
+
 if __name__ == "__main__":
 
     #  Initialize console from RICH.
