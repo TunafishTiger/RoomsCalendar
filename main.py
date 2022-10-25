@@ -44,8 +44,8 @@ CHRISTMASDAY: Final = "art/ChristmasDay.png"
 NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
-#  Declare helper function to establish where we are in real time.
 def year_we_want_to_print_for(_answer):
+    """Declare helper function to establish when we are, what we want printed."""
     #  Establish what month we're actually in.
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
@@ -57,8 +57,8 @@ def year_we_want_to_print_for(_answer):
     return _year_we_want_to_print_for
 
 
-#  Declare helper function to derive an end date.
 def printing_end_date(_answer):
+    """Declare helper function to derive an end date."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if _answer in "December":
         _printingEndDate = date(
@@ -71,8 +71,8 @@ def printing_end_date(_answer):
     return _printingEndDate
 
 
-#  Declare helper function to imprint closure.
 def overlay_closed_status():
+    """Declare helper function to imprint closure."""
     calendarSheet.paste(
         Image.open(STATUS_CLOSED).convert("RGBA"),
         (0, 0),
@@ -81,8 +81,8 @@ def overlay_closed_status():
     calendarSheet.save(calendarSheetFilename, format="png")
 
 
-#  Declare helper function to imprint holiday inserts.
 def overlay_artwork(art_to_use):
+    """Declare helper function to imprint holiday inserts."""
     calendarSheet.paste(
         Image.open(art_to_use).convert("RGBA"),
         (0, 0),
@@ -91,13 +91,28 @@ def overlay_artwork(art_to_use):
     calendarSheet.save(calendarSheetFilename, format="png")
 
 
-#  Compute deltas. Wrap iteration in console UI output.
 def daterange_to_print(first_date, last_date):
+    """Compute deltas. Wrap iteration in console UI output."""
     for n in track(
             range(int((last_date - first_date).days)),
             description="[i]Compiling calendar...[/]",
     ):
         yield first_date + timedelta(n)
+
+
+def standard_week(_single_date):
+    """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
+    match _single_date.weekday():
+        case 6:
+            _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+            overlay_closed_status()
+        case 5:
+            _calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+        case 4:
+            _calendarSheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+        case _:
+            _calendarSheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+    return _calendarSheet
 
 
 if __name__ == "__main__":
@@ -130,7 +145,7 @@ if __name__ == "__main__":
             printingEndDate = printing_end_date(answer)
 
             #  Initialize a list of major holidays specific to Michigan.
-            michigan_holidays = holidays.US(
+            michiganHolidays = holidays.US(
                 subdiv="MI", years=yearWeWantToPrintFor
             )
 
@@ -143,7 +158,7 @@ if __name__ == "__main__":
 
         else:
             for single_date in daterange_to_print(
-                    printingStartDate, printingEndDate
+                printingStartDate, printingEndDate
             ):
 
                 #  Define a filename scheme.
@@ -151,18 +166,7 @@ if __name__ == "__main__":
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
-                #  Create a mutable calendar sheet by first
-                #  recognizing the current day of the standard week.
-                match single_date.weekday():
-                    case 6:
-                        calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
-                        overlay_closed_status()
-                    case 5:
-                        calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
-                    case 4:
-                        calendarSheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
-                    case _:
-                        calendarSheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+                calendarSheet = standard_week(single_date)
 
                 #  Draw correct dates as we compose the calendar page.
                 draw_dates = ImageDraw.Draw(calendarSheet)
@@ -211,7 +215,7 @@ if __name__ == "__main__":
                 #  Michigan. These are standard dates we are always closed, or,
                 #  acknowledge with artwork.
 
-                match michigan_holidays.get(f"{single_date}"):
+                match michiganHolidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlay_closed_status()
                         overlay_artwork(NEWYEARSDAY)
