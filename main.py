@@ -46,7 +46,6 @@ NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 def year_we_want_to_print_for(_answer):
     """Declare helper function to establish when we are, what we want printed."""
-    #  Establish what month we're actually in.
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
@@ -58,7 +57,7 @@ def year_we_want_to_print_for(_answer):
 
 
 def printing_end_date(_answer):
-    """Declare helper function to derive an end date."""
+    """Declare helper function to derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if _answer in "December":
         _printingEndDate = date(
@@ -71,23 +70,20 @@ def printing_end_date(_answer):
     return _printingEndDate
 
 
-def overlay_closed_status():
-    """Declare helper function to imprint closure."""
-    calendarSheet.paste(
-        Image.open(STATUS_CLOSED).convert("RGBA"),
-        (0, 0),
-        mask=Image.open(STATUS_CLOSED).convert("RGBA")
-    )
-    calendarSheet.save(calendarSheetFilename, format="png")
-
-
-def overlay_artwork(art_to_use):
-    """Declare helper function to imprint holiday inserts."""
-    calendarSheet.paste(
-        Image.open(art_to_use).convert("RGBA"),
-        (0, 0),
-        mask=Image.open(art_to_use).convert("RGBA")
-    )
+def overlays(_artToUse, _closure):
+    """ Imprint closure and/or holiday artwork. """
+    if _artToUse:
+        calendarSheet.paste(
+            Image.open(_artToUse).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(_artToUse).convert("RGBA")
+        )
+    if _closure:
+        calendarSheet.paste(
+            Image.open(STATUS_CLOSED).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(STATUS_CLOSED).convert("RGBA")
+        )
     calendarSheet.save(calendarSheetFilename, format="png")
 
 
@@ -105,7 +101,7 @@ def standard_week(_single_date):
     match _single_date.weekday():
         case 6:
             _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
-            overlay_closed_status()
+            overlays(None, True)
         case 5:
             _calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
         case 4:
@@ -190,26 +186,25 @@ if __name__ == "__main__":
                 match datetime.strftime(single_date, "%Y-%m-%d"):
                     # Valentine's Day.
                     case "2022-02-14":
-                        overlay_artwork(VALENTINESDAY)
-                    # Good Friday weekend.
+                        overlays(VALENTINESDAY, False)
+                    # Good Friday weekend.mc
                     case "2022-04-16":
-                        overlay_artwork(GOODFRIDAY)
-                        overlay_closed_status()
+                        overlays(GOODFRIDAY, True)
                     # Memorial Day weekend.
                     case "2022-05-28":
-                        overlay_closed_status()
+                        overlays(None, True)
                     # Labor Day weekend.
                     case "2022-09-03" | "2022-09-05":
-                        overlay_closed_status()
+                        overlays(None, True)
                     # Halloween.
                     case "2022-10-31":
-                        overlay_artwork(HALLOWEEN)
+                        overlays(HALLOWEEN, False)
                     # Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
-                        overlay_closed_status()
+                        overlays(None, True)
                     # Christmas weekend.
                     case "2022-12-23" | "2022-12-24" | "2022-12-26":
-                        overlay_closed_status()
+                        overlays(None, True)
 
                 #  This section is algorithmic and matches holidays specific to
                 #  Michigan. These are standard dates we are always closed, or,
@@ -217,48 +212,37 @@ if __name__ == "__main__":
 
                 match michiganHolidays.get(f"{single_date}"):
                     case "New Year's Day":
-                        overlay_closed_status()
-                        overlay_artwork(NEWYEARSDAY)
+                        overlays(NEWYEARSDAY, True)
                     case "New Year's Day (Observed)":
-                        overlay_closed_status()
+                        overlays(None, True)
                     case "Martin Luther King Jr. Day":
-                        overlay_closed_status()
-                        overlay_artwork(MLKDAY)
+                        overlays(MLKDAY, True)
                     case "Good Friday":
-                        overlay_closed_status()
-                        overlay_artwork(GOODFRIDAY)
+                        overlays(GOODFRIDAY, True)
                     case "Memorial Day":
-                        overlay_closed_status()
-                        overlay_artwork(MEMORIALDAY)
+                        overlays(MEMORIALDAY, True)
                     case "Independence Day":
-                        overlay_closed_status()
-                        overlay_artwork(INDEPENDENCEDAY)
+                        overlays(INDEPENDENCEDAY, True)
                     case "Independence Day (Observed)":
-                        overlay_closed_status()
+                        overlays(None, True)
                     case "Labor Day":
-                        overlay_closed_status()
-                        overlay_artwork(LABORDAY)
+                        overlays(LABORDAY, True)
                     case "Veterans Day":
-                        overlay_closed_status()
-                        overlay_artwork(VETERANSDAY)
+                        overlays(VETERANSDAY, True)
                     case "Veterans Day (Observed)":
-                        overlay_closed_status()
+                        overlays(None, True)
                     case "Thanksgiving":
-                        overlay_closed_status()
-                        overlay_artwork(THANKSGIVING)
+                        overlays(THANKSGIVING, True)
                     case "Day After Thanksgiving":
-                        overlay_closed_status()
+                        overlays(None, True)
                     case "Christmas Eve":
-                        overlay_closed_status()
-                        overlay_artwork(CHRISTMASEVE)
+                        overlays(CHRISTMASEVE, True)
                     case "Christmas Eve (Observed)":
-                        overlay_closed_status()
+                        overlays(None, True)
                     case "Christmas Day":
-                        overlay_closed_status()
-                        overlay_artwork(CHRISTMASDAY)
+                        overlays(CHRISTMASDAY, True)
                     case "New Year's Eve":
-                        overlay_closed_status()
-                        overlay_artwork(NEWYEARSEVE)
+                        overlays(NEWYEARSEVE, True)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendarSheet.save(calendarSheetFilename, format="pdf")
