@@ -45,7 +45,7 @@ NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
 def year_we_want_to_print_for(_answer):
-    """Declare helper function to establish when we are, what we want printed."""
+    """ Declare helper function to establish when we are, what we want printed. """
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
@@ -57,7 +57,7 @@ def year_we_want_to_print_for(_answer):
 
 
 def printing_end_date(_answer):
-    """Declare helper function to derive an end date for our calendar."""
+    """ Declare helper function to derive an end date for our calendar. """
     #  Always compute December with a range ending on Jan. 1 of next year.
     if _answer in "December":
         _printingEndDate = date(
@@ -88,7 +88,7 @@ def overlays(_art_to_use, _closure):
 
 
 def daterange_to_print(first_date, last_date):
-    """Compute deltas. Wrap iteration in console UI output."""
+    """ Compute deltas. Wrap iteration in console UI output. """
     for n in track(
             range(int((last_date - first_date).days)),
             description="[i]Compiling calendar...[/]",
@@ -97,7 +97,7 @@ def daterange_to_print(first_date, last_date):
 
 
 def standard_week(_single_date):
-    """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
+    """ Create a mutable calendar sheet by first recognizing the current day of the standard week. """
     match _single_date.weekday():
         case 6:
             _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
