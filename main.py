@@ -1,5 +1,5 @@
 #  RoomsCalendar
-#  main.py
+#  main.py 
 
 import os
 from datetime import date, datetime, timedelta
@@ -133,7 +133,7 @@ if __name__ == "__main__":
             michigan_holidays = holidays.US(
                 subdiv="MI", years=yearWeWantToPrintFor
             )
-            
+
             #  Initialize PDF file merger.
             merger = PdfFileMerger()
 
