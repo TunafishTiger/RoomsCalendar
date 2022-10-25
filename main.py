@@ -44,24 +44,51 @@ CHRISTMASDAY: Final = "art/ChristmasDay.png"
 NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
+#  Declare helper function to establish where we are in real time.
+def year_we_want_to_print_for(_answer):
+    #  Establish what month we're actually in.
+    current_month = datetime.today().month
+    #  If we're in December and ask for January, treat it as next year's January.
+    #  Else, January of current year.
+    if _answer in "January" and str(current_month) in "December":
+        _year_we_want_to_print_for = datetime.today().year + 1
+    else:
+        _year_we_want_to_print_for = datetime.today().year
+    return _year_we_want_to_print_for
+
+
+#  Declare helper function to derive an end date.
+def printing_end_date(_answer):
+    #  Always compute December with a range ending on Jan. 1 of next year.
+    if _answer in "December":
+        _printingEndDate = date(
+            yearWeWantToPrintFor + 1, 0o1, 0o1
+        )
+    else:
+        _printingEndDate = date(
+            yearWeWantToPrintFor, answerAsNumber + 1, 0o1
+        )
+    return _printingEndDate
+
+
 #  Declare helper function to imprint closure.
 def overlay_closed_status():
-    calendar_sheet.paste(
+    calendarSheet.paste(
         Image.open(STATUS_CLOSED).convert("RGBA"),
         (0, 0),
         mask=Image.open(STATUS_CLOSED).convert("RGBA")
     )
-    calendar_sheet.save(calendar_sheet_filename, format="png")
+    calendarSheet.save(calendarSheetFilename, format="png")
 
 
 #  Declare helper function to imprint holiday inserts.
 def overlay_artwork(art_to_use):
-    calendar_sheet.paste(
+    calendarSheet.paste(
         Image.open(art_to_use).convert("RGBA"),
         (0, 0),
         mask=Image.open(art_to_use).convert("RGBA")
     )
-    calendar_sheet.save(calendar_sheet_filename, format="png")
+    calendarSheet.save(calendarSheetFilename, format="png")
 
 
 #  Compute deltas. Wrap iteration in console UI output.
@@ -93,38 +120,20 @@ if __name__ == "__main__":
     #  Begin 1 infinite loop.
     while True:
         try:
-            #  Establish what month we're actually in.
-            current_month = datetime.today().month
-
             #  Require one question and map native language to month integers.
             answer = Prompt.ask("What month should be printed?")
             answer = answer.capitalize()
-            answer_as_number = int(datetime.strptime(answer, "%B").month)
+            answerAsNumber = int(datetime.strptime(answer, "%B").month)
 
-            #  If we're in December and ask for January, treat it as next year's January.
-            #  Else, January of current year.
-            if answer in "January" and str(current_month) in "December":
-                year_we_want_to_print_for = datetime.today().year + 1
-            else:
-                year_we_want_to_print_for = datetime.today().year
-
-            printing_start_date = date(year_we_want_to_print_for, answer_as_number, 0o1)
-
-            #  Always compute December with a range ending on Jan. 1 of next year.
-            if answer in "December":
-                printing_end_date = date(
-                    year_we_want_to_print_for + 1, 0o1, 0o1
-                )
-            else:
-                printing_end_date = date(
-                    year_we_want_to_print_for, answer_as_number + 1, 0o1
-                )
+            yearWeWantToPrintFor = year_we_want_to_print_for(answer)
+            printingStartDate = date(yearWeWantToPrintFor, answerAsNumber, 0o1)
+            printingEndDate = printing_end_date(answer)
 
             #  Initialize a list of major holidays specific to Michigan.
             michigan_holidays = holidays.US(
-                subdiv="MI", years=year_we_want_to_print_for
+                subdiv="MI", years=yearWeWantToPrintFor
             )
-
+            
             #  Initialize PDF file merger.
             merger = PdfFileMerger()
 
@@ -134,11 +143,11 @@ if __name__ == "__main__":
 
         else:
             for single_date in daterange_to_print(
-                    printing_start_date, printing_end_date
+                    printingStartDate, printingEndDate
             ):
 
                 #  Define a filename scheme.
-                calendar_sheet_filename = single_date.strftime(
+                calendarSheetFilename = single_date.strftime(
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
@@ -146,17 +155,17 @@ if __name__ == "__main__":
                 #  recognizing the current day of the standard week.
                 match single_date.weekday():
                     case 6:
-                        calendar_sheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+                        calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
                         overlay_closed_status()
                     case 5:
-                        calendar_sheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+                        calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
                     case 4:
-                        calendar_sheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+                        calendarSheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
                     case _:
-                        calendar_sheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+                        calendarSheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
 
                 #  Draw correct dates as we compose the calendar page.
-                draw_dates = ImageDraw.Draw(calendar_sheet)
+                draw_dates = ImageDraw.Draw(calendarSheet)
                 draw_dates.text(
                     (5000, 460),
                     single_date.strftime("%A"),
@@ -248,14 +257,14 @@ if __name__ == "__main__":
                         overlay_artwork(NEWYEARSEVE)
 
                 #  Save our transformed calendar page onto the filesystem.
-                calendar_sheet.save(calendar_sheet_filename, format="pdf")
+                calendarSheet.save(calendarSheetFilename, format="pdf")
 
                 #  At the end of each loop:
-                #  append the file we've just saved into a multipage PDF.
-                merger.append(calendar_sheet_filename)
+                #  append the file we've just saved into a new multipage PDF.
+                merger.append(calendarSheetFilename)
 
             #  Derive a filename for our new multi-page PDF file.
-            calendar_month_name = f"{answer}_{year_we_want_to_print_for}"
+            calendar_month_name = f"{answer}_{yearWeWantToPrintFor}"
 
             #  Write multi-page PDF to filesystem.
             merger.write(f"months/{calendar_month_name}.pdf")
@@ -283,7 +292,7 @@ if __name__ == "__main__":
 
             #  Fin.
             console.print(
-                f"\nThe pages for [cyan]{answer} {year_we_want_to_print_for}[/] are"
+                f"\nThe pages for [cyan]{answer} {yearWeWantToPrintFor}[/] are"
                 f" being sent to the Staff RICOH IM C4500.\n"
                 f"You can close the window and go to collect the calendar.\n"
                 f"\n",
