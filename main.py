@@ -70,13 +70,13 @@ def printing_end_date(_answer):
     return _printingEndDate
 
 
-def overlays(_artToUse, _closure):
+def overlays(_art_to_use, _closure):
     """ Imprint closure and/or holiday artwork. """
-    if _artToUse:
+    if _art_to_use:
         calendarSheet.paste(
-            Image.open(_artToUse).convert("RGBA"),
+            Image.open(_art_to_use).convert("RGBA"),
             (0, 0),
-            mask=Image.open(_artToUse).convert("RGBA")
+            mask=Image.open(_art_to_use).convert("RGBA")
         )
     if _closure:
         calendarSheet.paste(
