@@ -101,7 +101,8 @@ def standard_week(_single_date):
     match _single_date.weekday():
         case 6:
             _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
-            _calendarSheet.paste(Image.open(STATUS_CLOSED).convert("RGBA"),
+            _calendarSheet.paste(
+                Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
                 mask=Image.open(STATUS_CLOSED).convert("RGBA"))
             _calendarSheet.save(calendarSheetFilename, format="png")
