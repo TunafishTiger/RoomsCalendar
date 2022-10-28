@@ -44,31 +44,78 @@ CHRISTMASDAY: Final = "art/ChristmasDay.png"
 NEWYEARSEVE: Final = "art/NewYearsEve.png"
 
 
-def main():
+def year_we_want_to_print_for(_answer):
+    """ Declare helper function to establish when we are, what we want printed. """
+    current_month = datetime.today().month
+    #  If we're in December and ask for January, treat it as next year's January.
+    #  Else, January of current year.
+    if _answer in "January" and str(current_month) in "December":
+        _year_we_want_to_print_for = datetime.today().year + 1
+    else:
+        _year_we_want_to_print_for = datetime.today().year
+    return _year_we_want_to_print_for
 
-    def overlays(_art_to_use, _closure):
-        """ Imprint closure and/or holiday artwork. """
-        if _art_to_use:
-            calendarSheet.paste(
-                Image.open(_art_to_use).convert("RGBA"),
-                (0, 0),
-                mask=Image.open(_art_to_use).convert("RGBA")
-            )
-        if _closure:
-            calendarSheet.paste(
+
+def printing_end_date(_answer):
+    """ Declare helper function to derive an end date for our calendar. """
+    #  Always compute December with a range ending on Jan. 1 of next year.
+    if _answer in "December":
+        _printingEndDate = date(
+            yearWeWantToPrintFor + 1, 0o1, 0o1
+        )
+    else:
+        _printingEndDate = date(
+            yearWeWantToPrintFor, answerAsNumber + 1, 0o1
+        )
+    return _printingEndDate
+
+
+def overlays(_art_to_use, _closure):
+    """ Imprint closure and/or holiday artwork. """
+    if _art_to_use:
+        calendarSheet.paste(
+            Image.open(_art_to_use).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(_art_to_use).convert("RGBA")
+        )
+    if _closure:
+        calendarSheet.paste(
+            Image.open(STATUS_CLOSED).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(STATUS_CLOSED).convert("RGBA")
+        )
+    calendarSheet.save(calendarSheetFilename, format="png")
+
+
+def daterange_to_print(first_date, last_date):
+    """ Compute deltas. Wrap iteration in console UI output. """
+    for n in track(
+            range(int((last_date - first_date).days)),
+            description="[i]Compiling calendar...[/]",
+    ):
+        yield first_date + timedelta(n)
+
+
+def standard_week(_single_date):
+    """ Create a mutable calendar sheet by first recognizing the current day of the standard week. """
+    match _single_date.weekday():
+        case 6:
+            _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+            _calendarSheet.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
-                mask=Image.open(STATUS_CLOSED).convert("RGBA")
-            )
-        calendarSheet.save(calendarSheetFilename, format="png")
+                mask=Image.open(STATUS_CLOSED).convert("RGBA"))
+            _calendarSheet.save(calendarSheetFilename, format="png")
+        case 5:
+            _calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+        case 4:
+            _calendarSheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+        case _:
+            _calendarSheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+    return _calendarSheet
 
-    #  Compute deltas. Wrap iteration in console UI output.
-    def daterange_to_print(first_date, last_date):
-        for n in track(
-                range(int((last_date - first_date).days)),
-                description="[i]Compiling calendar...[/]",
-        ):
-            yield first_date + timedelta(n)
+
+if __name__ == "__main__":
 
     #  Initialize console from RICH.
     console = Console()
@@ -88,36 +135,18 @@ def main():
     #  Begin 1 infinite loop.
     while True:
         try:
-            #  Establish what month we're actually in.
-            current_month = datetime.today().month
-
             #  Require one question and map native language to month integers.
             answer = Prompt.ask("What month should be printed?")
             answer = answer.capitalize()
-            answer_as_number = int(datetime.strptime(answer, "%B").month)
+            answerAsNumber = int(datetime.strptime(answer, "%B").month)
 
-            #  If we're in December and ask for January, treat it as next year's January.
-            #  Else, January of current year.
-            if answer in "January" and str(current_month) in "December":
-                year_we_want_to_print_for = datetime.today().year + 1
-            else:
-                year_we_want_to_print_for = datetime.today().year
-
-            printing_start_date = date(year_we_want_to_print_for, answer_as_number, 0o1)
-
-            #  Always compute December with a range ending on Jan. 1 of next year.
-            if answer in "December":
-                printing_end_date = date(
-                    year_we_want_to_print_for + 1, 0o1, 0o1
-                )
-            else:
-                printing_end_date = date(
-                    year_we_want_to_print_for, answer_as_number + 1, 0o1
-                )
+            yearWeWantToPrintFor = year_we_want_to_print_for(answer)
+            printingStartDate = date(yearWeWantToPrintFor, answerAsNumber, 0o1)
+            printingEndDate = printing_end_date(answer)
 
             #  Initialize a list of major holidays specific to Michigan.
-            michigan_holidays = holidays.US(
-                subdiv="MI", years=year_we_want_to_print_for
+            michiganHolidays = holidays.US(
+                subdiv="MI", years=yearWeWantToPrintFor
             )
 
             #  Initialize PDF file merger.
@@ -129,29 +158,18 @@ def main():
 
         else:
             for single_date in daterange_to_print(
-                    printing_start_date, printing_end_date
+                printingStartDate, printingEndDate
             ):
 
                 #  Define a filename scheme.
-                calendar_sheet_filename = single_date.strftime(
+                calendarSheetFilename = single_date.strftime(
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
-                #  Create a mutable calendar sheet by first
-                #  recognizing the current day of the standard week.
-                match single_date.weekday():
-                    case 6:
-                        calendar_sheet = SUNDAY_HOURS_EXTENDED.copy()
-                        overlays(None, True)
-                    case 5:
-                        calendar_sheet = SATURDAY_HOURS_EXTENDED.copy()
-                    case 4:
-                        calendar_sheet = FRIDAY_HOURS.copy()
-                    case _:
-                        calendar_sheet = WEEKDAY_HOURS.copy()
+                calendarSheet = standard_week(single_date)
 
                 #  Draw correct dates as we compose the calendar page.
-                draw_dates = ImageDraw.Draw(calendar_sheet)
+                draw_dates = ImageDraw.Draw(calendarSheet)
                 draw_dates.text(
                     (5000, 460),
                     single_date.strftime("%A"),
@@ -170,18 +188,25 @@ def main():
                 #  This section needs to be updated manually each year to align
                 #  with what MPM decides for our calendar.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
+                    # Valentine's Day.
                     case "2022-02-14":
                         overlays(VALENTINESDAY, False)
+                    # Good Friday weekend.mc
                     case "2022-04-16":
                         overlays(GOODFRIDAY, True)
+                    # Memorial Day weekend.
                     case "2022-05-28":
                         overlays(None, True)
+                    # Labor Day weekend.
                     case "2022-09-03" | "2022-09-05":
                         overlays(None, True)
+                    # Halloween.
                     case "2022-10-31":
                         overlays(HALLOWEEN, False)
+                    # Thanksgiving Day weekend.
                     case "2022-11-25" | "2022-11-26":
                         overlays(None, True)
+                    # Christmas weekend.
                     case "2022-12-23" | "2022-12-24" | "2022-12-26":
                         overlays(None, True)
 
@@ -189,7 +214,7 @@ def main():
                 #  Michigan. These are standard dates we are always closed, or,
                 #  acknowledge with artwork.
 
-                match michigan_holidays.get(f"{single_date}"):
+                match michiganHolidays.get(f"{single_date}"):
                     case "New Year's Day":
                         overlays(NEWYEARSDAY, True)
                     case "New Year's Day (Observed)":
@@ -224,14 +249,14 @@ def main():
                         overlays(NEWYEARSEVE, True)
 
                 #  Save our transformed calendar page onto the filesystem.
-                calendar_sheet.save(calendar_sheet_filename, format="pdf")
+                calendarSheet.save(calendarSheetFilename, format="pdf")
 
                 #  At the end of each loop:
-                #  append the file we've just saved into a multipage PDF.
-                merger.append(calendar_sheet_filename)
+                #  append the file we've just saved into a new multipage PDF.
+                merger.append(calendarSheetFilename)
 
             #  Derive a filename for our new multi-page PDF file.
-            calendar_month_name = f"{answer}_{year_we_want_to_print_for}"
+            calendar_month_name = f"{answer}_{yearWeWantToPrintFor}"
 
             #  Write multi-page PDF to filesystem.
             merger.write(f"months/{calendar_month_name}.pdf")
@@ -259,14 +284,10 @@ def main():
 
             #  Fin.
             console.print(
-                f"\nThe pages for [cyan]{answer} {year_we_want_to_print_for}[/] are"
+                f"\nThe pages for [cyan]{answer} {yearWeWantToPrintFor}[/] are"
                 f" being sent to the Staff RICOH IM C4500.\n"
                 f"You can close the window and go to collect the calendar.\n"
                 f"\n",
             )
 
             break
-
-
-if __name__ == "__main__":
-    main()
