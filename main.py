@@ -27,6 +27,7 @@ SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
 WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
 DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
+"""
 #  Define artwork that can be overlayed.
 NEWYEARSDAY: Final = "art/NewYearsDay.png"
 MLKDAY: Final = "art/MLKDay.png"
@@ -42,43 +43,69 @@ THANKSGIVING: Final = "art/Thanksgiving.png"
 CHRISTMASEVE: Final = "art/ChristmasEve.png"
 CHRISTMASDAY: Final = "art/ChristmasDay.png"
 NEWYEARSEVE: Final = "art/NewYearsEve.png"
+"""
+
+mpm_holidays = {
+    "New Year's Day (Observed)": (None, True),
+    "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
+    "2022-02-14": ("art/ValentinesDay.png", False),
+    "Good Friday": ("art/GoodFriday.png", True),
+    "2022-04-16": ("art/GoodFriday.png", True),
+    "Memorial Day": ("art/MemorialDay.png", True),
+    "2022-05-28": (None, True),
+    "2022-06-19": ("art/Juneteenth.png", False),
+    "Independence Day": ("art/IndependenceDay.png", True),
+    "Independence Day (Observed)": (None, True),
+    "Labor Day": ("art/LaborDay.png", True),
+    "2022-09-03": (None, True),
+    "2022-09-05": (None, True),
+    "Veterans Day": ("art/VeteransDay.png", True),
+    "Veterans Day (Observed)": (None, True),
+    "2022-10-31": ("art/Halloween.png", False),
+    "Thanksgiving": ("art/Thanksgiving.png", True),
+    "Day After Thanksgiving": (None, True),
+    "Christmas Eve": ("art/ChristmasEve.png", True),
+    "Christmas Eve (Observed)": (None, True),
+    "Christmas Day": ("art/ChristmasDay.png", True),
+    "New Year's Eve": ("art/NewYearsEve.png", True)
+}
 
 
-def year_we_want_to_print_for(_answer):
+def year_we_want_to_print_for(answer_):
     """ Declare helper function to establish when we are, what we want printed. """
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
-    if _answer in "January" and str(current_month) in "December":
-        _year_we_want_to_print_for = datetime.today().year + 1
+    if answer_ in "January" and str(current_month) in "December":
+        year_we_want_to_print_for_ = datetime.today().year + 1
     else:
-        _year_we_want_to_print_for = datetime.today().year
-    return _year_we_want_to_print_for
+        year_we_want_to_print_for_ = datetime.today().year
+    return year_we_want_to_print_for_
 
 
-def printing_end_date(_answer):
+def printing_end_date(answer_):
     """ Declare helper function to derive an end date for our calendar. """
     #  Always compute December with a range ending on Jan. 1 of next year.
-    if _answer in "December":
-        _printingEndDate = date(
+    if answer_ in "December":
+        printingEndDate_ = date(
             yearWeWantToPrintFor + 1, 0o1, 0o1
         )
     else:
-        _printingEndDate = date(
+        printingEndDate_ = date(
             yearWeWantToPrintFor, answerAsNumber + 1, 0o1
         )
-    return _printingEndDate
+    return printingEndDate_
 
 
-def overlays(_art_to_use, _closure):
+def overlays(art_to_use_, closure_):
     """ Imprint closure and/or holiday artwork. """
-    if _art_to_use:
+    if art_to_use_:
         calendarSheet.paste(
-            Image.open(_art_to_use).convert("RGBA"),
+            Image.open(art_to_use_).convert("RGBA"),
             (0, 0),
-            mask=Image.open(_art_to_use).convert("RGBA")
+            mask=Image.open(art_to_use_).convert("RGBA")
         )
-    if _closure:
+    if closure_:
         calendarSheet.paste(
             Image.open(STATUS_CLOSED).convert("RGBA"),
             (0, 0),
@@ -96,23 +123,23 @@ def daterange_to_print(first_date, last_date):
         yield first_date + timedelta(n)
 
 
-def standard_week(_single_date):
+def standard_week(single_date_):
     """ Create a mutable calendar sheet by first recognizing the current day of the standard week. """
-    match _single_date.weekday():
+    match single_date_.weekday():
         case 6:
-            _calendarSheet = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
-            _calendarSheet.paste(
+            calendarSheet_ = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendarSheet_.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
                 mask=Image.open(STATUS_CLOSED).convert("RGBA"))
-            _calendarSheet.save(calendarSheetFilename, format="png")
+            calendarSheet_.save(calendarSheetFilename, format="png")
         case 5:
-            _calendarSheet = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendarSheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
         case 4:
-            _calendarSheet = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+            calendarSheet_ = Image.open(FRIDAY_HOURS).convert("RGB").copy()
         case _:
-            _calendarSheet = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
-    return _calendarSheet
+            calendarSheet_ = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+    return calendarSheet_
 
 
 if __name__ == "__main__":
@@ -185,6 +212,7 @@ if __name__ == "__main__":
                     font=DATESTAMP_FONT,
                 )
 
+                """
                 #  This section needs to be updated manually each year to align
                 #  with what MPM decides for our calendar.
                 match datetime.strftime(single_date, "%Y-%m-%d"):
@@ -247,6 +275,11 @@ if __name__ == "__main__":
                         overlays(CHRISTMASDAY, True)
                     case "New Year's Eve":
                         overlays(NEWYEARSEVE, True)
+                """
+
+                sth = mpm_holidays.get(holiday_name, None) or mpm_holidays.get(date_str, None)
+                if sth:
+                    overlays(*sth)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendarSheet.save(calendarSheetFilename, format="pdf")
