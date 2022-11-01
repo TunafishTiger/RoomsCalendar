@@ -172,9 +172,7 @@ if __name__ == "__main__":
             printingEndDate = printing_end_date(answer)
 
             #  Initialize a list of major holidays specific to Michigan.
-            michiganHolidays = holidays.US(
-                subdiv="MI", years=yearWeWantToPrintFor
-            )
+            michiganHolidays = holidays.US(subdiv="MI", years=yearWeWantToPrintFor)
 
             #  Initialize PDF file merger.
             merger = PdfFileMerger()
@@ -213,73 +211,16 @@ if __name__ == "__main__":
                 )
 
                 """
-                #  This section needs to be updated manually each year to align
-                #  with what MPM decides for our calendar.
-                match datetime.strftime(single_date, "%Y-%m-%d"):
-                    # Valentine's Day.
-                    case "2022-02-14":
-                        overlays(VALENTINESDAY, False)
-                    # Good Friday weekend.mc
-                    case "2022-04-16":
-                        overlays(GOODFRIDAY, True)
-                    # Memorial Day weekend.
-                    case "2022-05-28":
-                        overlays(None, True)
-                    # Labor Day weekend.
-                    case "2022-09-03" | "2022-09-05":
-                        overlays(None, True)
-                    # Halloween.
-                    case "2022-10-31":
-                        overlays(HALLOWEEN, False)
-                    # Thanksgiving Day weekend.
-                    case "2022-11-25" | "2022-11-26":
-                        overlays(None, True)
-                    # Christmas weekend.
-                    case "2022-12-23" | "2022-12-24" | "2022-12-26":
-                        overlays(None, True)
-
-                #  This section is algorithmic and matches holidays specific to
-                #  Michigan. These are standard dates we are always closed, or,
-                #  acknowledge with artwork.
-
-                match michiganHolidays.get(f"{single_date}"):
-                    case "New Year's Day":
-                        overlays(NEWYEARSDAY, True)
-                    case "New Year's Day (Observed)":
-                        overlays(None, True)
-                    case "Martin Luther King Jr. Day":
-                        overlays(MLKDAY, True)
-                    case "Good Friday":
-                        overlays(GOODFRIDAY, True)
-                    case "Memorial Day":
-                        overlays(MEMORIALDAY, True)
-                    case "Independence Day":
-                        overlays(INDEPENDENCEDAY, True)
-                    case "Independence Day (Observed)":
-                        overlays(None, True)
-                    case "Labor Day":
-                        overlays(LABORDAY, True)
-                    case "Veterans Day":
-                        overlays(VETERANSDAY, True)
-                    case "Veterans Day (Observed)":
-                        overlays(None, True)
-                    case "Thanksgiving":
-                        overlays(THANKSGIVING, True)
-                    case "Day After Thanksgiving":
-                        overlays(None, True)
-                    case "Christmas Eve":
-                        overlays(CHRISTMASEVE, True)
-                    case "Christmas Eve (Observed)":
-                        overlays(None, True)
-                    case "Christmas Day":
-                        overlays(CHRISTMASDAY, True)
-                    case "New Year's Eve":
-                        overlays(NEWYEARSEVE, True)
+                if datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays.keys() or \
+                        michiganHolidays.get(f"{single_date}") in mpm_holidays.keys():
+                    for art, closed in mpm_holidays.values():
+                        overlays(art, closed)
                 """
 
-                sth = mpm_holidays.get(holiday_name, None) or mpm_holidays.get(date_str, None)
-                if sth:
-                    overlays(*sth)
+                if datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays.keys() or \
+                        michiganHolidays.get(f"{single_date}") in mpm_holidays.keys():
+                    for art, closed in mpm_holidays.values():
+                        overlays(art, closed)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendarSheet.save(calendarSheetFilename, format="pdf")
