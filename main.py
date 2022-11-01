@@ -67,12 +67,12 @@ mpm_holidays = {
     "Christmas Eve": ("art/ChristmasEve.png", True),
     "Christmas Eve (Observed)": (None, True),
     "Christmas Day": ("art/ChristmasDay.png", True),
-    "New Year's Eve": ("art/NewYearsEve.png", True)
+    "New Year's Eve": ("art/NewYearsEve.png", True),
 }
 
 
 def year_we_want_to_print_for(answer_):
-    """ Declare helper function to establish when we are, what we want printed. """
+    """Declare helper function to establish when we are, what we want printed."""
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
@@ -84,54 +84,70 @@ def year_we_want_to_print_for(answer_):
 
 
 def printing_end_date(answer_):
-    """ Declare helper function to derive an end date for our calendar. """
+    """Declare helper function to derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if answer_ in "December":
-        printingEndDate_ = date(
-            yearWeWantToPrintFor + 1, 0o1, 0o1
-        )
+        printingEndDate_ = date(yearWeWantToPrintFor + 1, 0o1, 0o1)
     else:
-        printingEndDate_ = date(
-            yearWeWantToPrintFor, answerAsNumber + 1, 0o1
-        )
+        printingEndDate_ = date(yearWeWantToPrintFor, answerAsNumber + 1, 0o1)
     return printingEndDate_
 
 
+"""
 def overlays(art_to_use_, closure_):
-    """ Imprint closure and/or holiday artwork. """
+    Imprint closure and/or holiday artwork.
     if art_to_use_:
         calendarSheet.paste(
             Image.open(art_to_use_).convert("RGBA"),
             (0, 0),
-            mask=Image.open(art_to_use_).convert("RGBA")
+            mask=Image.open(art_to_use_).convert("RGBA"),
         )
     if closure_:
         calendarSheet.paste(
             Image.open(STATUS_CLOSED).convert("RGBA"),
             (0, 0),
-            mask=Image.open(STATUS_CLOSED).convert("RGBA")
+            mask=Image.open(STATUS_CLOSED).convert("RGBA"),
+        )
+    calendarSheet.save(calendarSheetFilename, format="png")
+"""
+
+
+def overlays(art_to_use_, closure_):
+    """Imprint closure and/or holiday artwork."""
+    if art_to_use_:
+        calendarSheet.paste(
+            Image.open(art_to_use_).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(art_to_use_).convert("RGBA"),
+        )
+    if closure_:
+        calendarSheet.paste(
+            Image.open(STATUS_CLOSED).convert("RGBA"),
+            (0, 0),
+            mask=Image.open(STATUS_CLOSED).convert("RGBA"),
         )
     calendarSheet.save(calendarSheetFilename, format="png")
 
 
 def daterange_to_print(first_date, last_date):
-    """ Compute deltas. Wrap iteration in console UI output. """
+    """Compute deltas. Wrap iteration in console UI output."""
     for n in track(
-            range(int((last_date - first_date).days)),
-            description="[i]Compiling calendar...[/]",
+        range(int((last_date - first_date).days)),
+        description="[i]Compiling calendar...[/]",
     ):
         yield first_date + timedelta(n)
 
 
 def standard_week(single_date_):
-    """ Create a mutable calendar sheet by first recognizing the current day of the standard week. """
+    """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
     match single_date_.weekday():
         case 6:
             calendarSheet_ = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
             calendarSheet_.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
-                mask=Image.open(STATUS_CLOSED).convert("RGBA"))
+                mask=Image.open(STATUS_CLOSED).convert("RGBA"),
+            )
             calendarSheet_.save(calendarSheetFilename, format="png")
         case 5:
             calendarSheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
@@ -182,9 +198,7 @@ if __name__ == "__main__":
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
         else:
-            for single_date in daterange_to_print(
-                printingStartDate, printingEndDate
-            ):
+            for single_date in daterange_to_print(printingStartDate, printingEndDate):
 
                 #  Define a filename scheme.
                 calendarSheetFilename = single_date.strftime(
@@ -211,14 +225,18 @@ if __name__ == "__main__":
                 )
 
                 """
-                if datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays.keys() or \
-                        michiganHolidays.get(f"{single_date}") in mpm_holidays.keys():
+                if (
+                    datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
+                    or michiganHolidays.get(f"{single_date}") in mpm_holidays
+                ):
                     for art, closed in mpm_holidays.values():
                         overlays(art, closed)
                 """
 
-                if datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays.keys() or \
-                        michiganHolidays.get(f"{single_date}") in mpm_holidays.keys():
+                if (
+                    datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
+                    or michiganHolidays.get(f"{single_date}") in mpm_holidays
+                ):
                     for art, closed in mpm_holidays.values():
                         overlays(art, closed)
 
