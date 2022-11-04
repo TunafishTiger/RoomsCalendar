@@ -46,6 +46,7 @@ NEWYEARSEVE: Final = "art/NewYearsEve.png"
 """
 
 mpm_holidays = {
+    "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
     "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
     "2022-02-14": ("art/ValentinesDay.png", False),
@@ -91,25 +92,6 @@ def printing_end_date(answer_):
     else:
         printingEndDate_ = date(yearWeWantToPrintFor, answerAsNumber + 1, 0o1)
     return printingEndDate_
-
-
-"""
-def overlays(art_to_use_, closure_):
-    Imprint closure and/or holiday artwork.
-    if art_to_use_:
-        calendarSheet.paste(
-            Image.open(art_to_use_).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(art_to_use_).convert("RGBA"),
-        )
-    if closure_:
-        calendarSheet.paste(
-            Image.open(STATUS_CLOSED).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(STATUS_CLOSED).convert("RGBA"),
-        )
-    calendarSheet.save(calendarSheetFilename, format="png")
-"""
 
 
 def overlays(art_to_use_, closure_):
@@ -227,7 +209,7 @@ if __name__ == "__main__":
                 """
                 if (
                     datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
-                    or michiganHolidays.get(f"{single_date}") in mpm_holidays
+                    or michiganHolidays.get(single_date) in mpm_holidays
                 ):
                     for art, closed in mpm_holidays.values():
                         overlays(art, closed)
@@ -235,7 +217,7 @@ if __name__ == "__main__":
 
                 if (
                     datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
-                    or michiganHolidays.get(f"{single_date}") in mpm_holidays
+                    or michiganHolidays.get(single_date) in mpm_holidays
                 ):
                     for art, closed in mpm_holidays.values():
                         overlays(art, closed)
