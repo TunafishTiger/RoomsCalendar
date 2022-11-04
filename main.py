@@ -27,24 +27,6 @@ SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
 WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
 DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
-"""
-#  Define artwork that can be overlayed.
-NEWYEARSDAY: Final = "art/NewYearsDay.png"
-MLKDAY: Final = "art/MLKDay.png"
-VALENTINESDAY: Final = "art/ValentinesDay.png"
-GOODFRIDAY: Final = "art/GoodFriday.png"
-MEMORIALDAY: Final = "art/MemorialDay.png"
-JUNETEENTH: Final = "art/Juneteenth.png"
-INDEPENDENCEDAY: Final = "art/IndependenceDay.png"
-LABORDAY: Final = "art/LaborDay.png"
-VETERANSDAY: Final = "art/VeteransDay.png"
-HALLOWEEN: Final = "art/Halloween.png"
-THANKSGIVING: Final = "art/Thanksgiving.png"
-CHRISTMASEVE: Final = "art/ChristmasEve.png"
-CHRISTMASDAY: Final = "art/ChristmasDay.png"
-NEWYEARSEVE: Final = "art/NewYearsEve.png"
-"""
-
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
@@ -211,16 +193,16 @@ if __name__ == "__main__":
                     datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
                     or michiganHolidays.get(single_date) in mpm_holidays
                 ):
-                    for art, closed in mpm_holidays.values():
+                    try:
+                        art, closed = mpm_holidays[datetime.strftime(single_date, "%Y-%m-%d")]
+                        overlays(art, closed)
+                    except KeyError:
+                        art, closed = mpm_holidays[michiganHolidays.get(single_date)]
                         overlays(art, closed)
                 """
 
-                if (
-                    datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
-                    or michiganHolidays.get(single_date) in mpm_holidays
-                ):
-                    for art, closed in mpm_holidays.values():
-                        overlays(art, closed)
+                if sth := mpm_holidays.get(michiganHolidays.get(single_date), mpm_holidays.get(single_date)):
+                    overlays(*sth)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendarSheet.save(calendarSheetFilename, format="pdf")
