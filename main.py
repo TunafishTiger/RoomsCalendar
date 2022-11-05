@@ -122,6 +122,25 @@ def standard_week(single_date_):
     return calendarSheet_
 
 
+def draw_dates(calendarsheet_):
+    draw_dates_ = ImageDraw.Draw(calendarsheet_)
+    draw_dates_.text(
+        (5000, 460),
+        single_date.strftime("%A"),
+        (0, 0, 0),
+        anchor="rs",
+        font=WEEKDAYNAME_FONT,
+    )
+    draw_dates_.text(
+        (5000, 650),
+        single_date.strftime("%B, %d, %Y"),
+        (0, 0, 0),
+        anchor="rs",
+        font=DATESTAMP_FONT,
+    )
+    return calendarsheet_
+
+
 if __name__ == "__main__":
 
     #  Initialize console from RICH.
@@ -172,36 +191,13 @@ if __name__ == "__main__":
                 calendarSheet = standard_week(single_date)
 
                 #  Draw correct dates as we compose the calendar page.
-                draw_dates = ImageDraw.Draw(calendarSheet)
-                draw_dates.text(
-                    (5000, 460),
-                    single_date.strftime("%A"),
-                    (0, 0, 0),
-                    anchor="rs",
-                    font=WEEKDAYNAME_FONT,
-                )
-                draw_dates.text(
-                    (5000, 650),
-                    single_date.strftime("%B, %d, %Y"),
-                    (0, 0, 0),
-                    anchor="rs",
-                    font=DATESTAMP_FONT,
-                )
+                draw_dates(calendarSheet)
 
-                """
-                if (
-                    datetime.strftime(single_date, "%Y-%m-%d") in mpm_holidays
-                    or michiganHolidays.get(single_date) in mpm_holidays
+                #  Study.
+                if sth := mpm_holidays.get(
+                        michiganHolidays.get(single_date),
+                        mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d"))
                 ):
-                    try:
-                        art, closed = mpm_holidays[datetime.strftime(single_date, "%Y-%m-%d")]
-                        overlays(art, closed)
-                    except KeyError:
-                        art, closed = mpm_holidays[michiganHolidays.get(single_date)]
-                        overlays(art, closed)
-                """
-
-                if sth := mpm_holidays.get(michiganHolidays.get(single_date), mpm_holidays.get(single_date)):
                     overlays(*sth)
 
                 #  Save our transformed calendar page onto the filesystem.
