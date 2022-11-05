@@ -55,7 +55,7 @@ mpm_holidays = {
 
 
 def year_we_want_to_print_for(answer_):
-    """Declare helper function to establish when we are, what we want printed."""
+    """Establish when we are, what we want printed."""
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
@@ -67,7 +67,7 @@ def year_we_want_to_print_for(answer_):
 
 
 def printing_end_date(answer_):
-    """Declare helper function to derive an end date for our calendar."""
+    """Derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if answer_ in "December":
         printingEndDate_ = date(yearWeWantToPrintFor + 1, 0o1, 0o1)
@@ -106,20 +106,20 @@ def standard_week(single_date_):
     """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
     match single_date_.weekday():
         case 6:
-            calendarSheet_ = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
-            calendarSheet_.paste(
+            calendarsheet_ = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendarsheet_.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
                 mask=Image.open(STATUS_CLOSED).convert("RGBA"),
             )
-            calendarSheet_.save(calendarSheetFilename, format="png")
+            calendarsheet_.save(calendarSheetFilename, format="png")
         case 5:
-            calendarSheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendarsheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
         case 4:
-            calendarSheet_ = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+            calendarsheet_ = Image.open(FRIDAY_HOURS).convert("RGB").copy()
         case _:
-            calendarSheet_ = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
-    return calendarSheet_
+            calendarsheet_ = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+    return calendarsheet_
 
 
 def draw_dates(calendarsheet_):
@@ -195,8 +195,8 @@ if __name__ == "__main__":
 
                 #  Study.
                 if sth := mpm_holidays.get(
-                        michiganHolidays.get(single_date),
-                        mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d"))
+                    michiganHolidays.get(single_date),
+                    mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
                 ):
                     overlays(*sth)
 
