@@ -123,6 +123,7 @@ def standard_week(single_date_):
 
 
 def draw_dates(calendarsheet_):
+    """Draw dates on each day of the calendar."""
     draw_dates_ = ImageDraw.Draw(calendarsheet_)
     draw_dates_.text(
         (5000, 460),
@@ -138,7 +139,6 @@ def draw_dates(calendarsheet_):
         anchor="rs",
         font=DATESTAMP_FONT,
     )
-    return calendarsheet_
 
 
 if __name__ == "__main__":
@@ -188,6 +188,7 @@ if __name__ == "__main__":
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
+                #  Figure out which image should be the base of our calendar based on day of the week.
                 calendarSheet = standard_week(single_date)
 
                 #  Draw correct dates as we compose the calendar page.
