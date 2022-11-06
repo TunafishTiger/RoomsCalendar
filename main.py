@@ -1,5 +1,6 @@
 #  RoomsCalendar
 #  main.py
+#  Sean Gibson (c) 2022
 
 import os
 from datetime import date, datetime, timedelta
