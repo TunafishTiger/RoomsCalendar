@@ -28,6 +28,8 @@ SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
 WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
 DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
+#  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
+"""Holiday name or date; artwork location; whether closed or not."""
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
