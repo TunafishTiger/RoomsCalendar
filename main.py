@@ -34,18 +34,18 @@ mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
     "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
-    "2022-02-14": ("art/ValentinesDay.png", False),
+    "02-14": ("art/ValentinesDay.png", False),
     "Good Friday": ("art/GoodFriday.png", True),
-    "2022-04-16": ("art/GoodFriday.png", True),
+    "04-16": ("art/GoodFriday.png", True),
     "Memorial Day": ("art/MemorialDay.png", True),
-    "2022-05-28": (None, True),
-    "2022-06-19": ("art/Juneteenth.png", False),
+    "05-28": (None, True),
+    "06-19": ("art/Juneteenth.png", False),
     "Independence Day": ("art/IndependenceDay.png", True),
     "Independence Day (Observed)": (None, True),
     "Labor Day": ("art/LaborDay.png", True),
-    "2022-09-03": (None, True),
-    "2022-09-05": (None, True),
-    "2022-10-31": ("art/Halloween.png", False),
+    "09-03": (None, True),
+    "09-05": (None, True),
+    "10-31": ("art/Halloween.png", False),
     "Veterans Day": ("art/VeteransDay.png", True),
     "Veterans Day (Observed)": (None, True),
     "Thanksgiving": ("art/Thanksgiving.png", True),
@@ -60,7 +60,7 @@ mpm_holidays = {
 def year_we_want_to_print_for(answer_):
     """Establish when we are, what we want printed."""
     current_month = datetime.today().month
-    #  If we're in December and ask for January, treat it as next year's January.
+    #  If we're in December and ask for January, treat it as next year's month.
     #  Else, January of current year.
     if answer_ in "January" and str(current_month) in "December":
         year_we_want_to_print_for_ = datetime.today().year + 1
@@ -200,7 +200,7 @@ if __name__ == "__main__":
                 #  Study.
                 if sth := mpm_holidays.get(
                     michiganHolidays.get(single_date),
-                    mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
+                    mpm_holidays.get(datetime.strftime(single_date, "%m-%d")),
                 ):
                     overlays(*sth)
 
