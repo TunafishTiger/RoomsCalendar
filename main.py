@@ -57,7 +57,7 @@ mpm_holidays = {
 }
 
 
-def year_we_want_to_print_for(answer_):
+def year_to_print_for(answer_):
     """Establish when we are, what we want printed."""
     current_month = datetime.today().month
     #  If we're in December and ask for January, treat it as next year's January.
@@ -73,9 +73,9 @@ def printing_end_date(answer_):
     """Derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if answer_ in "December":
-        printingEndDate_ = date(yearWeWantToPrintFor + 1, 0o1, 0o1)
+        printingEndDate_ = date(yearToPrintFor + 1, 0o1, 0o1)
     else:
-        printingEndDate_ = date(yearWeWantToPrintFor, answerAsNumber + 1, 0o1)
+        printingEndDate_ = date(yearToPrintFor, answerAsNumber + 1, 0o1)
     return printingEndDate_
 
 
@@ -169,12 +169,12 @@ if __name__ == "__main__":
             answer = answer.capitalize()
             answerAsNumber = int(datetime.strptime(answer, "%B").month)
 
-            yearWeWantToPrintFor = year_we_want_to_print_for(answer)
-            printingStartDate = date(yearWeWantToPrintFor, answerAsNumber, 0o1)
+            yearToPrintFor = year_to_print_for(answer)
+            printingStartDate = date(yearToPrintFor, answerAsNumber, 0o1)
             printingEndDate = printing_end_date(answer)
 
             #  Initialize a list of major holidays specific to Michigan.
-            michiganHolidays = holidays.US(subdiv="MI", years=yearWeWantToPrintFor)
+            michiganHolidays = holidays.US(subdiv="MI", years=yearToPrintFor)
 
             #  Initialize PDF file merger.
             merger = PdfFileMerger()
@@ -212,7 +212,7 @@ if __name__ == "__main__":
                 merger.append(calendarSheetFilename)
 
             #  Derive a filename for our new multi-page PDF file.
-            calendar_month_name = f"{answer}_{yearWeWantToPrintFor}"
+            calendar_month_name = f"{answer}_{yearToPrintFor}"
 
             #  Write multi-page PDF to filesystem.
             merger.write(f"months/{calendar_month_name}.pdf")
@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
             #  Fin.
             console.print(
-                f"\nThe pages for [cyan]{answer} {yearWeWantToPrintFor}[/] are"
+                f"\nThe pages for [cyan]{answer} {yearToPrintFor}[/] are"
                 f" being sent to the Staff RICOH IM C4500.\n"
                 f"You can close the window and go to collect the calendar.\n"
                 f"\n",
