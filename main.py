@@ -63,10 +63,10 @@ def year_to_print_for(answer_):
     #  If we're in December and ask for January, treat it as next year's January.
     #  Else, January of current year.
     if answer_ in "January" and str(current_month) in "December":
-        year_we_want_to_print_for_ = datetime.today().year + 1
+        year_to_print_for_ = datetime.today().year + 1
     else:
-        year_we_want_to_print_for_ = datetime.today().year
-    return year_we_want_to_print_for_
+        year_to_print_for_ = datetime.today().year
+    return year_to_print_for_
 
 
 def printing_end_date(answer_):
