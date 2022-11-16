@@ -147,10 +147,7 @@ def draw_dates(calendarsheet_):
     )
 
 
-if __name__ == "__main__":
-
-    #  Initialize console from RICH.
-    console = Console()
+def main():
 
     console.print(
         "\n",
@@ -163,6 +160,14 @@ if __name__ == "__main__":
         "\n",
         width=80,
     )
+
+
+if __name__ == "__main__":
+
+    #  Initialize console from RICH.
+    console = Console()
+
+    main()
 
     #  Begin 1 infinite loop.
     while True:
