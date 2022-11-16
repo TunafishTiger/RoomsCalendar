@@ -29,7 +29,10 @@ WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
 DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
-"""Holiday name or date; artwork location; whether closed or not."""
+"""
+    Holiday name or date; artwork location; whether closed or not.
+    Reset dates each year as soon as the new calendar is available for January.
+"""
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
