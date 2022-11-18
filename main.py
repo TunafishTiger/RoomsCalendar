@@ -1,6 +1,15 @@
 #  RoomsCalendar
 #  main.py
-#  Sean Gibson (c) 2022
+#  Sean Gibson (c) 2022-2023
+
+"""
+   Software to programmatically create a calendared logbook for study room usage.
+   Always applies dates correctly, and includes support for both standard and special
+   library-defined holidays, as well as predefined building closure dates.
+
+   Replaces a manually curated Word document that was abusing the mail-merge feature.
+   Requested by Sheliah Snipes in order to greatly reduce her workload of tedious tasks.
+"""
 
 import os
 from datetime import date, datetime, timedelta
@@ -31,7 +40,7 @@ DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
 """
     Holiday name or date; artwork location; whether closed or not.
-    Reset dates each year as soon as the new calendar is available for January.
+    Reset dates each year as soon as the new calendar is available for February.
 """
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
@@ -60,12 +69,12 @@ mpm_holidays = {
 }
 
 
-def year_to_print_for(answerAsNumber_):
+def year_to_print_for(answer_):
     """Establish when we are, what we want printed."""
 
     #  If we're in November or later and ask for January, treat it as next year's January.
     #  Else, January of current year.
-    if datetime.today().month >= 11 and answerAsNumber_ <= 0o1:
+    if datetime.today().month >= 11 and answer_ <= 0o1:
         year_to_print_for_ = datetime.today().year + 1
     else:
         year_to_print_for_ = datetime.today().year
@@ -217,7 +226,7 @@ if __name__ == "__main__":
                 calendarSheet.save(calendarSheetFilename, format="pdf")
 
                 #  At the end of each loop:
-                #  append the file we've just saved into a new multipage PDF.
+                #  append the new file we've just saved into a multipage PDF.
                 merger.append(calendarSheetFilename)
 
             #  Derive a filename for our new multi-page PDF file.
