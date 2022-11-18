@@ -60,15 +60,16 @@ mpm_holidays = {
 }
 
 
-def year_to_print_for(answer_):
+def year_to_print_for(answerAsNumber_):
     """Establish when we are, what we want printed."""
-    #  If current month older than answer, raise error.
-    if datetime.today().month > answer_:
-        raise ValueError
-    else:
-        pass
 
-    return datetime.today().year
+    #  If we're in November or later and ask for January, treat it as next year's January.
+    #  Else, January of current year.
+    if datetime.today().month >= 11 and answerAsNumber_ <= 0o1:
+        year_to_print_for_ = datetime.today().year + 1
+    else:
+        year_to_print_for_ = datetime.today().year
+    return year_to_print_for_
 
 
 def printing_end_date(answer_):
@@ -189,7 +190,7 @@ if __name__ == "__main__":
 
         #  Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
-            console.print("\n... again...\n")
+            console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
         else:
             for single_date in daterange_to_print(printingStartDate, printingEndDate):

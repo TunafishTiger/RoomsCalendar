@@ -1,3 +1,6 @@
 
 G_RoomSchedule_Template_Designer.psd
 *.psd
+/months/January_2023.pdf
+/.vscode/launch.json
+/.idea/*
