@@ -62,14 +62,13 @@ mpm_holidays = {
 
 def year_to_print_for(answer_):
     """Establish when we are, what we want printed."""
-    current_month = datetime.today().month
-    #  If we're in December and ask for January, treat it as next year's January.
-    #  Else, January of current year.
-    if answer_ in "January" and str(current_month) in "December":
-        year_to_print_for_ = datetime.today().year + 1
+    #  If current month older than answer, raise error.
+    if datetime.today().month > answer_:
+        raise ValueError
     else:
-        year_to_print_for_ = datetime.today().year
-    return year_to_print_for_
+        pass
+
+    return datetime.today().year
 
 
 def printing_end_date(answer_):
@@ -175,9 +174,10 @@ if __name__ == "__main__":
             #  Require one question and map native language to month integers.
             answer = Prompt.ask("What month should be printed?")
             answer = answer.capitalize()
-            answerAsNumber = int(datetime.strptime(answer, "%B").month)
 
-            yearToPrintFor = year_to_print_for(answer)
+            answerAsNumber = int(datetime.strptime(answer, "%B").month)
+            yearToPrintFor = year_to_print_for(answerAsNumber)
+
             printingStartDate = date(yearToPrintFor, answerAsNumber, 0o1)
             printingEndDate = printing_end_date(answer)
 
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
         #  Nuh-uh-uh. You didn't say the magic word.
         except ValueError:
-            console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
+            console.print("\n... again...\n")
 
         else:
             for single_date in daterange_to_print(printingStartDate, printingEndDate):
