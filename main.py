@@ -46,27 +46,37 @@ mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
     "New Year's Day (Observed)": (None, True),
     "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
-    "2022-02-14": ("art/ValentinesDay.png", False),
-    "Good Friday": ("art/GoodFriday.png", True),
-    "2022-04-16": ("art/GoodFriday.png", True),
+    "2023-02-14": ("art/ValentinesDay.png", False),
+    "Washington's Birthday": (None, True),
+    "2023-04-14": (None, True),
+    "2023-04-15": (None, True),
     "Memorial Day": ("art/MemorialDay.png", True),
-    "2022-05-28": (None, True),
-    "2022-06-19": ("art/Juneteenth.png", False),
+    "2023-05-29": (None, True),
+    "2023-06-19": ("art/Juneteenth.png", False),
     "Independence Day": ("art/IndependenceDay.png", True),
     "Independence Day (Observed)": (None, True),
+    "2023-09-02": (None, True),
+    "2023-09-04": (None, True),
     "Labor Day": ("art/LaborDay.png", True),
-    "2022-09-03": (None, True),
-    "2022-09-05": (None, True),
-    "2022-10-31": ("art/Halloween.png", False),
+    "2023-10-09": ("art/IndigenousPeoplesDay.png", True),
+    "2023-10-31": ("art/Halloween.png", False),
     "Veterans Day": ("art/VeteransDay.png", True),
     "Veterans Day (Observed)": (None, True),
     "Thanksgiving": ("art/Thanksgiving.png", True),
-    "Day After Thanksgiving": (None, True),
+    "Day After Thanksgiving": ("art/Thanksgiving.png", True),
+    "2023-11-24": ("art/Thanksgiving.png", True),
+    "2023-11-25": ("art/Thanksgiving.png", True),
+    "2023-12-23": (None, True),
     "Christmas Eve": ("art/ChristmasEve.png", True),
     "Christmas Eve (Observed)": (None, True),
     "Christmas Day": ("art/ChristmasDay.png", True),
+    "2023-12-26": (None, True),
+    "2023-12-29": (None, True),
+    "2023-12-30": (None, True),
     "New Year's Eve": ("art/NewYearsEve.png", True),
 }
+
+version = "ver. 2023.a"
 
 
 def year_to_print_for(answer_):
@@ -74,7 +84,7 @@ def year_to_print_for(answer_):
 
     #  If we're in November or later and ask for January, treat it as next year's January.
     #  Else, January of current year.
-    if datetime.today().month >= 11 and answer_ <= 0o1:
+    if datetime.today().month >= 11 and answer_ <= 0o3:
         year_to_print_for_ = datetime.today().year + 1
     else:
         year_to_print_for_ = datetime.today().year
@@ -161,8 +171,9 @@ def main():
     console.print(
         "\n",
         Panel(
-            " \nThis program creates the calendar sheets for our room schedule.\n"
-            " (Just type the name of a month, like [cyan b]June[/], and [green bold]press enter[/].)\n",
+            f" \nThis program creates the calendar sheets for our room schedule.\n"
+            f"(Just type the name of a month, like [cyan b]\"June\"[/], and [green bold]press enter[/].)\n"
+            f"\n\n[i]{version}[/i]",
             title="Caroline Kennedy Library",
             subtitle=" :books: :books: :books: :books: :books: :books: ",
         ),
@@ -259,7 +270,7 @@ if __name__ == "__main__":
             #  Fin.
             console.print(
                 f"\nThe pages for [cyan]{answer} {yearToPrintFor}[/] are"
-                f" being sent to the Staff RICOH IM C4500.\n"
+                f" being sent to the Staff [i]RICOH IM C4500.[/i]\n"
                 f"You can close the window and go to collect the calendar.\n"
                 f"\n",
             )
