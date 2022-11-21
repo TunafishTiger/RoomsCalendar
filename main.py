@@ -40,7 +40,7 @@ DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
 """
     Holiday name or date; artwork location; whether closed or not.
-    Reset dates each year as soon as the new calendar is available for February.
+    Reset dates each year as soon as the new calendar is available.
 """
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
@@ -76,7 +76,7 @@ mpm_holidays = {
     "New Year's Eve": ("art/NewYearsEve.png", True),
 }
 
-version = "ver. 2023.a"
+version = "ver. 2023.b"
 
 
 def year_to_print_for(answer_):
@@ -84,50 +84,50 @@ def year_to_print_for(answer_):
 
     #  If we're in November or later and ask for January, treat it as next year's January.
     #  Else, January of current year.
-    if datetime.today().month >= 11 and answer_ <= 0o3:
+    if datetime.today().month >= 11 and answer_ <= 0o2:
         year_to_print_for_ = datetime.today().year + 1
     else:
         year_to_print_for_ = datetime.today().year
     return year_to_print_for_
 
 
-def printing_end_date(answer_):
+def printing_end_date(answer_, year_to_print_for_, answer_as_number):
     """Derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if answer_ in "December":
-        printingEndDate_ = date(yearToPrintFor + 1, 0o1, 0o1)
+        printingEndDate_ = date(year_to_print_for_ + 1, 0o1, 0o1)
     else:
-        printingEndDate_ = date(yearToPrintFor, answerAsNumber + 1, 0o1)
+        printingEndDate_ = date(year_to_print_for_, answer_as_number + 1, 0o1)
     return printingEndDate_
 
 
-def overlays(art_to_use_, closure_):
+def overlays(calendar_sheet, calendar_sheet_filename, art_to_use_, closure_):
     """Imprint closure and/or holiday artwork."""
     if art_to_use_:
-        calendarSheet.paste(
+        calendar_sheet.paste(
             Image.open(art_to_use_).convert("RGBA"),
             (0, 0),
             mask=Image.open(art_to_use_).convert("RGBA"),
         )
     if closure_:
-        calendarSheet.paste(
+        calendar_sheet.paste(
             Image.open(STATUS_CLOSED).convert("RGBA"),
             (0, 0),
             mask=Image.open(STATUS_CLOSED).convert("RGBA"),
         )
-    calendarSheet.save(calendarSheetFilename, format="png")
+    calendar_sheet.save(calendar_sheet_filename, format="png")
 
 
 def daterange_to_print(first_date, last_date):
     """Compute deltas. Wrap iteration in console UI output."""
     for n in track(
         range(int((last_date - first_date).days)),
-        description="[i]Compiling calendar...[/]",
+        description="[i].. Compiling calendar...[/]",
     ):
         yield first_date + timedelta(n)
 
 
-def standard_week(single_date_):
+def standard_week(single_date_, calendar_sheet_filename):
     """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
     match single_date_.weekday():
         case 6:
@@ -137,7 +137,7 @@ def standard_week(single_date_):
                 (0, 0),
                 mask=Image.open(STATUS_CLOSED).convert("RGBA"),
             )
-            calendarsheet_.save(calendarSheetFilename, format="png")
+            calendarsheet_.save(calendar_sheet_filename, format="png")
         case 5:
             calendarsheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
         case 4:
@@ -147,7 +147,7 @@ def standard_week(single_date_):
     return calendarsheet_
 
 
-def draw_dates(calendarsheet_):
+def draw_dates(calendarsheet_, single_date):
     """Draw dates on each day of the calendar."""
     draw_dates_ = ImageDraw.Draw(calendarsheet_)
     draw_dates_.text(
@@ -166,7 +166,29 @@ def draw_dates(calendarsheet_):
     )
 
 
+def sendprintjob(calendar_month_name):
+    """
+    We use CUPS for printing, which should be available for all UNIX-type systems.
+    Relies on configuring Windows Subsystem for Linux as a suitable environment in the office.
+    Further configuration of the networked printer takes place there. Here we simply send
+    our print job.
+    """
+    lpr(
+        [
+            "-o media=Custom.11x17in",
+            "-o sides=one-sided",
+            "-o print-quality=5",
+            "-# 1",
+            # "-r",
+            f"months/{calendar_month_name}.pdf",
+        ]
+    )
+
+
 def main():
+
+    #  Initialize console from RICH.
+    console = Console()
 
     console.print(
         "\n",
@@ -181,14 +203,6 @@ def main():
         width=80,
     )
 
-
-if __name__ == "__main__":
-
-    #  Initialize console from RICH.
-    console = Console()
-
-    main()
-
     #  Begin 1 infinite loop.
     while True:
         try:
@@ -200,7 +214,7 @@ if __name__ == "__main__":
             yearToPrintFor = year_to_print_for(answerAsNumber)
 
             printingStartDate = date(yearToPrintFor, answerAsNumber, 0o1)
-            printingEndDate = printing_end_date(answer)
+            printingEndDate = printing_end_date(answer, yearToPrintFor, answerAsNumber)
 
             #  Initialize a list of major holidays specific to Michigan.
             michiganHolidays = holidays.US(subdiv="MI", years=yearToPrintFor)
@@ -220,18 +234,18 @@ if __name__ == "__main__":
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
-                #  Figure out which image should be the base of our calendar based on day of the week.
-                calendarSheet = standard_week(single_date)
+                #  Figure out which image should be the base of our calendar, based on day of the week.
+                calendarSheet = standard_week(single_date, calendarSheetFilename)
 
                 #  Draw correct dates as we compose the calendar page.
-                draw_dates(calendarSheet)
+                draw_dates(calendarSheet, single_date)
 
                 #  Study.
                 if sth := mpm_holidays.get(
                     michiganHolidays.get(single_date),
                     mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
                 ):
-                    overlays(*sth)
+                    overlays(calendarSheet, calendarSheetFilename, *sth)
 
                 #  Save our transformed calendar page onto the filesystem.
                 calendarSheet.save(calendarSheetFilename, format="pdf")
@@ -252,20 +266,7 @@ if __name__ == "__main__":
             for file in os.scandir("pages"):
                 os.remove(file.path)
 
-            #  We use CUPS for printing, which should be available for all UNIX-type systems.
-            #  Relies on configuring Windows Subsystem for Linux as a suitable environment in the office.
-            #  Further configuration of the networked printer takes place there. Here we simply send
-            #  our print job.
-            lpr(
-                [
-                    "-o media=Custom.11x17in",
-                    "-o sides=one-sided",
-                    "-o print-quality=5",
-                    "-# 1",
-                    # "-r",
-                    f"months/{calendar_month_name}.pdf",
-                ]
-            )
+            sendprintjob(calendar_month_name)
 
             #  Fin.
             console.print(
@@ -276,3 +277,7 @@ if __name__ == "__main__":
             )
 
             break
+
+
+if __name__ == "__main__":
+    main()
