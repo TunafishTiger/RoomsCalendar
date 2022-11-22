@@ -4,11 +4,11 @@
 
 """
    Software to programmatically create a calendared logbook for study room usage.
-   Always applies dates correctly, and includes support for both standard and special
+   Always applies dates correctly and includes support for both standard and special
    library-defined holidays, as well as predefined building closure dates.
 
    Replaces a manually curated Word document that was abusing the mail-merge feature.
-   Requested by Sheliah Snipes in order to greatly reduce her workload of tedious tasks.
+   Requested by Sheliah Snipes in order to greatly reduce her workload.
 """
 
 import os
@@ -76,7 +76,7 @@ mpm_holidays = {
     "New Year's Eve": ("art/NewYearsEve.png", True),
 }
 
-version = "ver. 2023.b"
+version = "ver. 2023.a"
 
 
 def year_to_print_for(answer_):
