@@ -3,7 +3,7 @@
 #  Sean Gibson (c) 2022-2023
 
 """
-   Software to programmatically create a calendared logbook for study room usage.
+   Software to create a calendared logbook for study room usage.
    Always applies dates correctly and includes support for both standard and special
    library-defined holidays, as well as predefined building closure dates.
 
@@ -194,7 +194,7 @@ def main():
         "\n",
         Panel(
             f" \nThis program creates the calendar sheets for our room schedule.\n"
-            f"(Just type the name of a month, like [cyan b]\"June\"[/], and [green bold]press enter[/].)\n"
+            f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n'
             f"\n\n[i]{version}[/i]",
             title="Caroline Kennedy Library",
             subtitle=" :books: :books: :books: :books: :books: :books: ",
@@ -258,8 +258,10 @@ def main():
             calendar_month_name = f"{answer}_{yearToPrintFor}"
 
             #  Write multi-page PDF to filesystem.
-            merger.write(f"months/{calendar_month_name}.pdf")
-            merger.close()
+            try:
+                merger.write(f"months/{calendar_month_name}.pdf")
+            finally:
+                merger.close()
 
             #  Tidy up.
             #  Delete sheet images from their holding directory.
