@@ -8,7 +8,7 @@
    library-defined holidays, as well as predefined building closure dates.
 
    Replaces a manually curated Word document that was abusing the mail-merge feature.
-   Requested by Sheliah Snipes in order to greatly reduce her workload.
+   Requested by Sheliah S. in order to greatly reduce her workload.
 """
 
 import os
@@ -76,7 +76,8 @@ mpm_holidays = {
     "New Year's Eve": ("art/NewYearsEve.png", True),
 }
 
-version = "ver. 2023.a"
+
+version = "ver. 2023.b"
 
 
 def year_to_print_for(answer_):
@@ -206,7 +207,7 @@ def main():
     #  Begin 1 infinite loop.
     while True:
         try:
-            #  Require one question and map native language to month integers.
+            #  Require one question and map language to month integers.
             answer = Prompt.ask("What month should be printed?")
             answer = answer.capitalize()
 
@@ -251,7 +252,7 @@ def main():
                 calendarSheet.save(calendarSheetFilename, format="pdf")
 
                 #  At the end of each loop:
-                #  append the new file we've just saved into a multipage PDF.
+                #  append the new file we've just saved into a multi-page PDF.
                 merger.append(calendarSheetFilename)
 
             #  Derive a filename for our new multi-page PDF file.
