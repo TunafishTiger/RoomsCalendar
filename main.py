@@ -3,12 +3,12 @@
 #  Sean Gibson (c) 2022-2023
 
 """
-   Software to create a calendared logbook for study room usage.
-   Always applies dates correctly and includes support for both standard and special
-   library-defined holidays, as well as predefined building closure dates.
+    Software to create a calendared logbook for study room usage.
+    Always applies dates correctly and includes support for both standard and special
+    library-defined holidays, as well as predefined building closure dates.
 
-   Replaces a manually curated Word document that was abusing the mail-merge feature.
-   Requested by Sheliah S. in order to greatly reduce her workload.
+    Replaces a manually curated Word document that was abusing the mail-merge feature.
+    Requested by Sheliah S. in order to greatly reduce her workload.
 """
 
 import os
@@ -207,7 +207,7 @@ def main():
     #  Begin 1 infinite loop.
     while True:
         try:
-            #  Require one question and map language to month integers.
+            #  Require one question, map language to month integer, derive start and end dates.
             answer = Prompt.ask("What month should be printed?")
             answer = answer.capitalize()
 
@@ -241,7 +241,7 @@ def main():
                 #  Draw correct dates as we compose the calendar page.
                 draw_dates(calendarSheet, single_date)
 
-                #  Study.
+                #  Walrus operator.
                 if sth := mpm_holidays.get(
                     michiganHolidays.get(single_date),
                     mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
