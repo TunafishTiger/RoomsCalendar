@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta
 from typing import Final
 
 import holidays
-from PIL import Image, ImageDraw, ImageFont
+from Pillow import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfFileMerger
 from rich.console import Console
 from rich.panel import Panel
