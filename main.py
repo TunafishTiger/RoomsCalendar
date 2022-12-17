@@ -77,7 +77,7 @@ mpm_holidays = {
 }
 
 
-version = "ver. 2023.b"
+version = "ver. 2023.B"
 
 
 def year_to_print_for(answer_):
