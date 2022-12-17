@@ -241,7 +241,7 @@ def main():
                 #  Draw correct dates as we compose the calendar page.
                 draw_dates(calendarSheet, single_date)
 
-                #  Walrus operator.
+                #  Assignment operator.
                 if sth := mpm_holidays.get(
                     michiganHolidays.get(single_date),
                     mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
