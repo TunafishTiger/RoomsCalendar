@@ -3,7 +3,7 @@
 #  Sean Gibson (c) 2022-2023
 
 """
-    Software to create a calendared logbook for study room usage.
+    A tiny Python program to create a calendared logbook for study room usage.
     Always applies dates correctly and includes support for both standard and special
     library-defined holidays, as well as predefined building closure dates.
 
