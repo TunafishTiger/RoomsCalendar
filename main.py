@@ -4,7 +4,7 @@
 
 """
     A tiny Python program to create a calendared logbook for study room usage.
-    Always applies dates correctly and includes support for both standard and special
+    Always applies dates correctly; includes support for both standard and special
     library-defined holidays, as well as predefined building closure dates.
 
     Replaces a manually curated Word document that was abusing the mail-merge feature.
@@ -50,8 +50,10 @@ mpm_holidays = {
     "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
     "2023-02-14": ("art/ValentinesDay.png", False),
     "Washington's Birthday": (None, True),
-    "2023-04-14": (None, True),
-    "2023-04-15": (None, True),
+    "2023-04-07": (None, True),
+    "2023-04-08": (None, True),
+    "2023-04-09": (None, True),
+    "2023-05-27": (None, True),
     "Memorial Day": ("art/MemorialDay.png", True),
     "2023-05-29": (None, True),
     "2023-06-19": ("art/Juneteenth.png", False),
@@ -206,7 +208,7 @@ def main():
         width=80,
     )
 
-    #  Begin 1 infinite loop.
+    #  Begin loop.
     while True:
         try:
             #  Require one question, map language to month integer, derive start and end dates.
