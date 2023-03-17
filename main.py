@@ -239,7 +239,7 @@ def main():
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
-                #  Figure out which image should be the base of our calendar, based on day of the week.
+                #  Figure out which image should be the basis for our calendar page, based on day of the week.
                 var_calendar_sheet = standard_week(var_single_date, var_calendar_sheet_filename)
 
                 #  Draw correct dates as we compose the calendar page.
