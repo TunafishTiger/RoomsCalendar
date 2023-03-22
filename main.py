@@ -52,7 +52,7 @@ mpm_holidays = {
     "Washington's Birthday": (None, True),
     "2023-04-07": (None, True),
     "2023-04-08": (None, True),
-    "2023-04-09": (None, True),
+    "2023-04-09": ("art/EasterSunday.png", True),
     "2023-05-27": (None, True),
     "Memorial Day": ("art/MemorialDay.png", True),
     "2023-05-29": (None, True),
@@ -81,7 +81,7 @@ mpm_holidays = {
 }
 
 
-var_version = "ver. 2023.D"
+var_version = "version 2023: E"
 
 
 def year_to_print_for(answer_):
@@ -198,11 +198,12 @@ def main():
     console.print(
         "\n",
         Panel(
-            f" \nThis program creates the calendar sheets for our room schedule.\n"
-            f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n'
-            f"\n\n[i]{var_version}[/i]",
-            title="Caroline Kennedy Library",
-            subtitle=" :books: :books: :books: :books: :books: :books: ",
+            f" \nA Python program to create a calendared logbook for study room usage. "
+            f"Always applies dates correctly; includes support for both standard and special "
+            f"library-defined holidays, as well as predefined building closure dates.\n\n"
+            f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n',
+            title="CAROLINE KENNEDY LIBRARY",
+            subtitle=f" :books: :books: :books: [i]{var_version}[/i] :books: :books: :books: ",
         ),
         "\n",
         width=80,
