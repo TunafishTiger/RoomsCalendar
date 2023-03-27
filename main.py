@@ -200,7 +200,7 @@ def main():
         Panel(
             f'\n'
             f'A Python program to create a calendared logbook for study room usage. '
-            f'Always applies dates correctly; includes support for both standard and special '
+            f'It always applies dates correctly, and it includes support for both standard and special '
             f'library-defined holidays, as well as predefined building closure dates.\n\n'
             f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n',
             title='CAROLINE KENNEDY LIBRARY',
