@@ -196,16 +196,17 @@ def main():
     console = Console()
 
     console.print(
-        "\n",
+        '\n',
         Panel(
-            f" \nA Python program to create a calendared logbook for study room usage. "
-            f"Always applies dates correctly; includes support for both standard and special "
-            f"library-defined holidays, as well as predefined building closure dates.\n\n"
+            f'\n'
+            f'A Python program to create a calendared logbook for study room usage. '
+            f'Always applies dates correctly; includes support for both standard and special '
+            f'library-defined holidays, as well as predefined building closure dates.\n\n'
             f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n',
-            title="CAROLINE KENNEDY LIBRARY",
-            subtitle=f" :books: :books: :books: [i]{var_version}[/i] :books: :books: :books: ",
+            title='CAROLINE KENNEDY LIBRARY',
+            subtitle=f' :books: :books: :books: [i]{var_version}[/i] :books: :books: :books: ',
         ),
-        "\n",
+        '\n',
         width=80,
     )
 
@@ -278,10 +279,11 @@ def main():
 
             #  Fin.
             console.print(
-                f"\nThe pages for [cyan]{var_answer} {var_year_to_print_for}[/] are"
-                f" being sent to the Staff [i]RICOH IM C4500.[/i]\n"
-                f"You can close the window and go to collect the calendar.\n"
-                f"\n"
+                f'\n'
+                f'The pages for [cyan]{var_answer} {var_year_to_print_for}[/] are '
+                f'being sent to the Staff [i]RICOH IM C4500.[/i]\n'
+                f'You can close the window and go to collect the calendar.\n'
+                f'\n'
             )
 
             break
