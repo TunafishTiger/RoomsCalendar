@@ -196,7 +196,7 @@ def main():
     console = Console()
 
     console.print(
-        '\n',
+        f'\n',
         Panel(
             f'\n'
             f'A Python program to create a calendared logbook for study room usage. '
@@ -206,7 +206,7 @@ def main():
             title='CAROLINE KENNEDY LIBRARY',
             subtitle=f' :books: :books: :books: [i]{var_version}[/i] :books: :books: :books: ',
         ),
-        '\n',
+        f'\n',
         width=80,
     )
 
