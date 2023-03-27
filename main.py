@@ -282,8 +282,8 @@ def main():
                 f'\n'
                 f'The pages for [cyan]{var_answer} {var_year_to_print_for}[/] are '
                 f'being sent to the Staff [i]RICOH IM C4500.[/i]\n'
-                f'You can close the window and go to collect the calendar.\n'
-                f'\n'
+                f'You can close the window and go to collect the calendar.'
+                f'\n\n'
             )
 
             break
