@@ -175,7 +175,7 @@ def sendprintjob(calendar_month_name_):
     """
     We use CUPS for printing, which should be available for all UNIX-type systems.
     Relies on configuring Windows Subsystem for Linux as a suitable environment in the office.
-    Further configuration of the networked printer takes place there. Here we simply send
+    Further configuration of the networked printer takes place there. Here, we simply send
     our print job.
     """
     lpr(
