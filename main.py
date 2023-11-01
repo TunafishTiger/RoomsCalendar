@@ -170,7 +170,7 @@ def draw_dates(calendarsheet, single_date):
     )
 
 
-def sendprintjob(calendar_month_name):
+def send_print_job(calendar_month_name):
     """
     We use CUPS for printing, which should be available for all UNIX-like systems.
     Relies on configuring Windows Subsystem for Linux as a suitable environment in the office.
@@ -274,7 +274,7 @@ def main():
             for file in os.scandir("pages"):
                 os.remove(file.path)
 
-            sendprintjob(calendar_month_name)
+            send_print_job(calendar_month_name)
 
             #  Fin.
             console.print(
