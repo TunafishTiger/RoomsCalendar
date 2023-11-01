@@ -65,7 +65,6 @@ mpm_holidays = {
     "2023-10-09": ("art/IndigenousPeoplesDay.png", True),
     "2023-10-31": ("art/Halloween.png", False),
     "Veterans Day": ("art/VeteransDay.png", True),
-    "Veterans Day (Observed)": (None, True),
     "Thanksgiving": ("art/Thanksgiving.png", True),
     "Day After Thanksgiving": ("art/Thanksgiving.png", True),
     "2023-11-24": ("art/Thanksgiving.png", True),
