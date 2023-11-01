@@ -81,7 +81,7 @@ mpm_holidays = {
 }
 
 
-version = "version 2023: last revised Wed Mar 29"
+version = "version 2023: last revised Tue Oct 31"
 
 
 def figure_year_to_print_for(month_name):
