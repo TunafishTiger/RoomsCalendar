@@ -41,46 +41,38 @@ DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 
 """
     Holiday name or date; artwork location; whether closed or not.
-    Reset dates each year as soon as the new calendar is available.
+    Reset dates each December as soon as the new calendar is available.
 """
 
 mpm_holidays = {
     "New Year's Day": ("art/NewYearsDay.png", True),
-    "New Year's Day (Observed)": (None, True),
+    "2024-01-02": (None, True),
     "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
-    "2023-02-14": ("art/ValentinesDay.png", False),
+    "2024-02-14": ("art/ValentinesDay.png", False),
     "Washington's Birthday": (None, True),
-    "2023-04-07": (None, True),
-    "2023-04-08": (None, True),
-    "2023-04-09": ("art/EasterSunday.png", True),
-    "2023-05-27": (None, True),
+    "2024-03-29": (None, True),
+    "2024-03-30": (None, True),
+    "2024-03-31": ("art/EasterSunday.png", True),
     "Memorial Day": ("art/MemorialDay.png", True),
-    "2023-05-29": (None, True),
     "2023-06-19": ("art/Juneteenth.png", False),
     "Independence Day": ("art/IndependenceDay.png", True),
-    "Independence Day (Observed)": (None, True),
-    "2023-09-02": (None, True),
-    "2023-09-04": (None, True),
+    "2024-08-31": (None, True),
     "Labor Day": ("art/LaborDay.png", True),
-    "2023-10-09": ("art/IndigenousPeoplesDay.png", True),
-    "2023-10-31": ("art/Halloween.png", False),
+    "2024-10-04": ("art/IndigenousPeoplesDay.png", True),
+    "2024-10-31": ("art/Halloween.png", False),
     "Veterans Day": ("art/VeteransDay.png", True),
     "Thanksgiving": ("art/Thanksgiving.png", True),
     "Day After Thanksgiving": ("art/Thanksgiving.png", True),
-    "2023-11-24": ("art/Thanksgiving.png", True),
-    "2023-11-25": ("art/Thanksgiving.png", True),
-    "2023-12-23": (None, True),
+    "2024-11-30": ("art/Thanksgiving.png", True),
+    "2024-12-23": (None, True),
     "Christmas Eve": ("art/ChristmasEve.png", True),
     "Christmas Eve (Observed)": (None, True),
     "Christmas Day": ("art/ChristmasDay.png", True),
-    "2023-12-26": (None, True),
-    "2023-12-29": (None, True),
-    "2023-12-30": (None, True),
+    "2024-12-30": (None, True),
     "New Year's Eve": ("art/NewYearsEve.png", True),
 }
 
-
-version = "version 2023: last revised Tue Oct 31"
+version = "version 2024: last revised Fri Dec 8"
 
 
 def figure_year_to_print_for(month_name):
@@ -201,7 +193,7 @@ def main():
             f'A Python :snake: program to create a calendared logbook for tracking study room usage. '
             f'It always applies dates correctly, and it includes support for both standard and special '
             f'library-defined holidays, as well as predefined building closure dates.\n\n'
-            f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n',
+            f'(Just type the name of a month, like [cyan bold]"June"[/], and [green bold]press enter[/].)\n',
             title='CAROLINE KENNEDY LIBRARY',
             subtitle=f' :books: :books: :books: [i]{version}[/i] :books: :books: :books: ',
         ),
