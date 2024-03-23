@@ -1,5 +1,5 @@
 import unittest
-from main import year_to_print_for
+from main import figure_year_to_print_for
 
 class TestYearToPrintFor(unittest.TestCase):
     def test_something(self):
