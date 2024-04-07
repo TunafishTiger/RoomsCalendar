@@ -81,7 +81,7 @@ mpm_holidays = {
 }
 
 
-var_version = "version 2023: last revised Wed Mar 29"
+var_version = "version 2024: last revised Wed Mar 29"
 
 
 def year_to_print_for(answer_):
