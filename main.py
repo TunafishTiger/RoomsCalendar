@@ -81,7 +81,7 @@ mpm_holidays = {
 }
 
 
-var_version = "version 2024: last revised Wed Mar 29"
+version = "version 2024: last revised Wed Mar 29"
 
 
 def year_to_print_for(answer_):
@@ -100,10 +100,10 @@ def printing_end_date(answer_, year_to_print_for_, answer_as_number_):
     """Derive an end date for our calendar."""
     #  Always compute December with a range ending on Jan. 1 of next year.
     if answer_ in "December":
-        var_printing_end_date = date(year_to_print_for_ + 1, 0o1, 0o1)
+        printing_end_date = date(year_to_print_for_ + 1, 0o1, 0o1)
     else:
-        var_printing_end_date = date(year_to_print_for_, answer_as_number_ + 1, 0o1)
-    return var_printing_end_date
+        printing_end_date = date(year_to_print_for_, answer_as_number_ + 1, 0o1)
+    return printing_end_date
 
 
 def overlays(calendar_sheet_, calendar_sheet_filename_, art_to_use_, building_closure_):
@@ -204,7 +204,7 @@ def main():
             f'library-defined holidays, as well as predefined building closure dates.\n\n'
             f'(Just type the name of a month, like [cyan b]"June"[/], and [green bold]press enter[/].)\n',
             title='CAROLINE KENNEDY LIBRARY',
-            subtitle=f' :books: :books: :books: [i]{var_version}[/i] :books: :books: :books: ',
+            subtitle=f' :books: :books: :books: [i]{version}[/i] :books: :books: :books: ',
         ),
         f'\n',
         width=80,
@@ -214,17 +214,17 @@ def main():
     while True:
         try:
             #  Require one question, map language to month integer, derive start and end dates.
-            var_answer = Prompt.ask("What month should be printed?")
-            var_answer = var_answer.capitalize()
+            answer = Prompt.ask("What month should be printed?")
+            answer = answer.capitalize()
 
-            var_answer_as_number = int(datetime.strptime(var_answer, "%B").month)
-            var_year_to_print_for = year_to_print_for(var_answer_as_number)
+            answer_as_number = int(datetime.strptime(answer, "%B").month)
+            year_to_print_for = year_to_print_for(answer_as_number)
 
-            var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 0o1)
-            var_printing_end_date = printing_end_date(var_answer, var_year_to_print_for, var_answer_as_number)
+            printing_start_date = date(year_to_print_for, answer_as_number, 0o1)
+            printing_end_date = printing_end_date(answer, year_to_print_for, answer_as_number)
 
             #  Initialize a list of major holidays specific to Michigan.
-            var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
+            michigan_holidays = holidays.US(subdiv="MI", years=year_to_print_for)
 
             #  Initialize PDF file merger.
             merger = PdfMerger()
@@ -234,39 +234,39 @@ def main():
             console.print("\n[i]I'm sorry. Please express the name of a month.\n\n")
 
         else:
-            for var_single_date in daterange_to_print(var_printing_start_date, var_printing_end_date):
+            for single_date in daterange_to_print(printing_start_date, printing_end_date):
 
                 #  Define a filename scheme.
-                var_calendar_sheet_filename = var_single_date.strftime(
+                calendar_sheet_filename = single_date.strftime(
                     "pages/Calendar %A %b %d %Y.pdf"
                 )
 
                 #  Figure out which image should be the basis for our calendar page, based on day of the week.
-                var_calendar_sheet = standard_week(var_single_date, var_calendar_sheet_filename)
+                calendar_sheet = standard_week(single_date, calendar_sheet_filename)
 
                 #  Draw correct dates as we compose the calendar page.
-                draw_dates(var_calendar_sheet, var_single_date)
+                draw_dates(calendar_sheet, single_date)
 
                 #  Assignment operator.
                 if sth := mpm_holidays.get(
-                    var_michigan_holidays.get(var_single_date),
-                    mpm_holidays.get(datetime.strftime(var_single_date, "%Y-%m-%d")),
+                    michigan_holidays.get(single_date),
+                    mpm_holidays.get(datetime.strftime(single_date, "%Y-%m-%d")),
                 ):
-                    overlays(var_calendar_sheet, var_calendar_sheet_filename, *sth)
+                    overlays(calendar_sheet, calendar_sheet_filename, *sth)
 
                 #  Save our transformed calendar page onto the filesystem.
-                var_calendar_sheet.save(var_calendar_sheet_filename, format="pdf")
+                calendar_sheet.save(calendar_sheet_filename, format="pdf")
 
                 #  At the end of each loop:
                 #  append the new file we've just saved into a multi-page PDF.
-                merger.append(var_calendar_sheet_filename)
+                merger.append(calendar_sheet_filename)
 
             #  Derive a filename for our new multi-page PDF file.
-            var_calendar_month_name = f"{var_answer}_{var_year_to_print_for}"
+            calendar_month_name = f"{answer}_{year_to_print_for}"
 
             #  Write multi-page PDF to filesystem.
             try:
-                merger.write(f"months/{var_calendar_month_name}.pdf")
+                merger.write(f"months/{calendar_month_name}.pdf")
             finally:
                 merger.close()
 
@@ -275,12 +275,12 @@ def main():
             for file in os.scandir("pages"):
                 os.remove(file.path)
 
-            sendprintjob(var_calendar_month_name)
+            sendprintjob(calendar_month_name)
 
             #  Fin.
             console.print(
                 f'\n'
-                f'The pages for [cyan]{var_answer} {var_year_to_print_for}[/] are '
+                f'The pages for [cyan]{answer} {year_to_print_for}[/] are '
                 f'being sent to the Staff [i]RICOH IM C4500.[/i]\n'
                 f'You can close the window and go to collect the calendar.'
                 f'\n\n'
