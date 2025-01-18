@@ -1,6 +1,6 @@
 #  RoomsCalendar
 #  main.py
-#  Sean Gibson (c) 2022-2023
+#  Sean Gibson (c) 2022-2025
 
 """
     A tiny Python program to create a calendared logbook for study room usage.
