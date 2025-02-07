@@ -29,13 +29,10 @@ STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
 WEEKDAY_HOURS: Final = "0_Asset_WeekdayHours.png"
 FRIDAY_HOURS: Final = "1_Asset_FridayHours.png"
 SATURDAY_HOURS: Final = "2_Asset_SaturdayHours.png"
-SATURDAY_HOURS_EXTENDED: Final = "2_Asset_SaturdayHours_Extended.png"
 SUNDAY_HOURS: Final = "3_Asset_SundayHours.png"
-SUNDAY_HOURS_EXTENDED: Final = "3_Asset_SundayHours_Extended.png"
 
 #  Define our fonts and sizes.
-WEEKDAYNAME_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 160)
-DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
+DATESTRING_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
 
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
 
@@ -45,43 +42,43 @@ DATESTAMP_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 124)
 """
 
 mpm_holidays = {
-    "New Year's Day": ("art/NewYearsDay.png", True),
+    "New Year's Day": (None, True),
     "New Year's Day (Observed)": (None, True),
-    "Martin Luther King Jr. Day": ("art/MLKDay.png", True),
-    "2023-02-14": ("art/ValentinesDay.png", False),
+    "Martin Luther King Jr. Day": (None, True),
+    "2023-02-14": (None, False),
     "Washington's Birthday": (None, True),
     "2023-04-07": (None, True),
     "2023-04-08": (None, True),
-    "2023-04-09": ("art/EasterSunday.png", True),
+    "2023-04-09": (None, True),
     "2023-05-27": (None, True),
-    "Memorial Day": ("art/MemorialDay.png", True),
+    "Memorial Day": (None, True),
     "2023-05-29": (None, True),
-    "2023-06-19": ("art/Juneteenth.png", False),
-    "Independence Day": ("art/IndependenceDay.png", True),
+    "2023-06-19": (None, False),
+    "Independence Day": (None, True),
     "Independence Day (Observed)": (None, True),
     "2023-09-02": (None, True),
     "2023-09-04": (None, True),
-    "Labor Day": ("art/LaborDay.png", True),
-    "2023-10-09": ("art/IndigenousPeoplesDay.png", True),
-    "2023-10-31": ("art/Halloween.png", False),
-    "Veterans Day": ("art/VeteransDay.png", True),
+    "Labor Day": (None, True),
+    "2023-10-09": (None, True),
+    "2023-10-31": (None, False),
+    "Veterans Day": (None, True),
     "Veterans Day (Observed)": (None, True),
-    "Thanksgiving": ("art/Thanksgiving.png", True),
-    "Day After Thanksgiving": ("art/Thanksgiving.png", True),
-    "2023-11-24": ("art/Thanksgiving.png", True),
-    "2023-11-25": ("art/Thanksgiving.png", True),
+    "Thanksgiving": (None, True),
+    "Day After Thanksgiving": (None, True),
+    "2023-11-24": (None, True),
+    "2023-11-25": (None, True),
     "2023-12-23": (None, True),
-    "Christmas Eve": ("art/ChristmasEve.png", True),
+    "Christmas Eve": (None, True),
     "Christmas Eve (Observed)": (None, True),
-    "Christmas Day": ("art/ChristmasDay.png", True),
+    "Christmas Day": (None, True),
     "2023-12-26": (None, True),
     "2023-12-29": (None, True),
     "2023-12-30": (None, True),
-    "New Year's Eve": ("art/NewYearsEve.png", True),
+    "New Year's Eve": (None, True),
 }
 
 
-var_version = "version 2024: last revised Sat Dec 21"
+var_version = "version 2025: last revised Fri Feb 7"
 
 
 def year_to_print_for(answer_):
@@ -136,7 +133,7 @@ def standard_week(single_date_, calendar_sheet_filename_):
     """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
     match single_date_.weekday():
         case 6:
-            calendar_sheet_ = Image.open(SUNDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SUNDAY_HOURS).convert("RGB").copy()
             calendar_sheet_.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
@@ -144,7 +141,7 @@ def standard_week(single_date_, calendar_sheet_filename_):
             )
             calendar_sheet_.save(calendar_sheet_filename_, format="png")
         case 5:
-            calendar_sheet_ = Image.open(SATURDAY_HOURS_EXTENDED).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SATURDAY_HOURS).convert("RGB").copy()
         case 4:
             calendar_sheet_ = Image.open(FRIDAY_HOURS).convert("RGB").copy()
         case _:
@@ -156,18 +153,11 @@ def draw_dates(calendarsheet_, single_date_):
     """Draw dates on each day of the calendar."""
     draw_dates_ = ImageDraw.Draw(calendarsheet_)
     draw_dates_.text(
-        (5000, 460),
-        single_date_.strftime("%A"),
+        (3234, 114),
+        single_date_.strftime("%A — %B, %d, %Y"),
         (0, 0, 0),
         anchor="rs",
-        font=WEEKDAYNAME_FONT,
-    )
-    draw_dates_.text(
-        (5000, 650),
-        single_date_.strftime("%B, %d, %Y"),
-        (0, 0, 0),
-        anchor="rs",
-        font=DATESTAMP_FONT,
+        font=DATESTRING_FONT,
     )
 
 
@@ -180,7 +170,7 @@ def sendprintjob(calendar_month_name_):
     """
     lpr(
         [
-            "-o media=Custom.11x17in",
+            "-o media=A4",
             "-o sides=one-sided",
             "-o print-quality=5",
             "-# 1",
