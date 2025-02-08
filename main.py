@@ -24,12 +24,20 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
+study_room_mode = False
+
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
+#  Study Room assets
 SR_WEEKDAY_HOURS: Final = "SR_0_Asset_WeekdayHours.png"
 SR_FRIDAY_HOURS: Final = "SR_1_Asset_FridayHours.png"
 SR_SATURDAY_HOURS: Final = "SR_2_Asset_SaturdayHours.png"
 SR_SUNDAY_HOURS: Final = "SR_3_Asset_SundayHours.png"
+#  Program Room assets
+PR_WEEKDAY_HOURS: Final = "PR_0_Asset_WeekdayHours.png"
+PR_FRIDAY_HOURS: Final = "PR_1_Asset_FridayHours.png"
+PR_SATURDAY_HOURS: Final = "PR_2_Asset_SaturdayHours.png"
+PR_SUNDAY_HOURS: Final = "PR_3_Asset_SundayHours.png"
 
 #  Define our fonts and sizes.
 DATE_STRING_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
@@ -131,21 +139,38 @@ def daterange_to_print(first_date_, last_date_):
 
 def standard_week(single_date_, calendar_sheet_filename_):
     """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
-    match single_date_.weekday():
-        case 6:
-            calendar_sheet_ = Image.open(SR_SUNDAY_HOURS).convert("RGB").copy()
-            calendar_sheet_.paste(
-                Image.open(STATUS_CLOSED).convert("RGBA"),
-                (0, 0),
-                mask=Image.open(STATUS_CLOSED).convert("RGBA"),
-            )
-            calendar_sheet_.save(calendar_sheet_filename_, format="png")
-        case 5:
-            calendar_sheet_ = Image.open(SR_SATURDAY_HOURS).convert("RGB").copy()
-        case 4:
-            calendar_sheet_ = Image.open(SR_FRIDAY_HOURS).convert("RGB").copy()
-        case _:
-            calendar_sheet_ = Image.open(SR_WEEKDAY_HOURS).convert("RGB").copy()
+    if study_room_mode:
+        match single_date_.weekday():
+            case 6:
+                calendar_sheet_ = Image.open(SR_SUNDAY_HOURS).convert("RGB").copy()
+                calendar_sheet_.paste(
+                    Image.open(STATUS_CLOSED).convert("RGBA"),
+                    (0, 0),
+                    mask=Image.open(STATUS_CLOSED).convert("RGBA"),
+                )
+                calendar_sheet_.save(calendar_sheet_filename_, format="png")
+            case 5:
+                calendar_sheet_ = Image.open(SR_SATURDAY_HOURS).convert("RGB").copy()
+            case 4:
+                calendar_sheet_ = Image.open(SR_FRIDAY_HOURS).convert("RGB").copy()
+            case _:
+                calendar_sheet_ = Image.open(SR_WEEKDAY_HOURS).convert("RGB").copy()
+    else:
+        match single_date_.weekday():
+            case 6:
+                calendar_sheet_ = Image.open(PR_SUNDAY_HOURS).convert("RGB").copy()
+                calendar_sheet_.paste(
+                    Image.open(STATUS_CLOSED).convert("RGBA"),
+                    (0, 0),
+                    mask=Image.open(STATUS_CLOSED).convert("RGBA"),
+                )
+                calendar_sheet_.save(calendar_sheet_filename_, format="png")
+            case 5:
+                calendar_sheet_ = Image.open(PR_SATURDAY_HOURS).convert("RGB").copy()
+            case 4:
+                calendar_sheet_ = Image.open(PR_FRIDAY_HOURS).convert("RGB").copy()
+            case _:
+                calendar_sheet_ = Image.open(PR_WEEKDAY_HOURS).convert("RGB").copy()
     return calendar_sheet_
 
 
