@@ -26,10 +26,10 @@ from sh import lpr
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
-WEEKDAY_HOURS: Final = "0_Asset_WeekdayHours.png"
-FRIDAY_HOURS: Final = "1_Asset_FridayHours.png"
-SATURDAY_HOURS: Final = "2_Asset_SaturdayHours.png"
-SUNDAY_HOURS: Final = "3_Asset_SundayHours.png"
+SR_WEEKDAY_HOURS: Final = "SR_0_Asset_WeekdayHours.png"
+SR_FRIDAY_HOURS: Final = "SR_1_Asset_FridayHours.png"
+SR_SATURDAY_HOURS: Final = "SR_2_Asset_SaturdayHours.png"
+SR_SUNDAY_HOURS: Final = "SR_3_Asset_SundayHours.png"
 
 #  Define our fonts and sizes.
 DATESTRING_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
@@ -133,7 +133,7 @@ def standard_week(single_date_, calendar_sheet_filename_):
     """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
     match single_date_.weekday():
         case 6:
-            calendar_sheet_ = Image.open(SUNDAY_HOURS).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SR_SUNDAY_HOURS).convert("RGB").copy()
             calendar_sheet_.paste(
                 Image.open(STATUS_CLOSED).convert("RGBA"),
                 (0, 0),
@@ -141,11 +141,11 @@ def standard_week(single_date_, calendar_sheet_filename_):
             )
             calendar_sheet_.save(calendar_sheet_filename_, format="png")
         case 5:
-            calendar_sheet_ = Image.open(SATURDAY_HOURS).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SR_SATURDAY_HOURS).convert("RGB").copy()
         case 4:
-            calendar_sheet_ = Image.open(FRIDAY_HOURS).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SR_FRIDAY_HOURS).convert("RGB").copy()
         case _:
-            calendar_sheet_ = Image.open(WEEKDAY_HOURS).convert("RGB").copy()
+            calendar_sheet_ = Image.open(SR_WEEKDAY_HOURS).convert("RGB").copy()
     return calendar_sheet_
 
 
