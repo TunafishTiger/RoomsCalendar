@@ -32,7 +32,7 @@ SR_SATURDAY_HOURS: Final = "SR_2_Asset_SaturdayHours.png"
 SR_SUNDAY_HOURS: Final = "SR_3_Asset_SundayHours.png"
 
 #  Define our fonts and sizes.
-DATESTRING_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
+DATE_STRING_FONT: Final = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
 
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
 
@@ -157,7 +157,7 @@ def draw_dates(calendarsheet_, single_date_):
         single_date_.strftime("%A — %b, %d, %Y"),
         (0, 0, 0),
         anchor="rs",
-        font=DATESTRING_FONT,
+        font=DATE_STRING_FONT,
     )
 
 
