@@ -153,8 +153,8 @@ def draw_dates(calendarsheet_, single_date_):
     """Draw dates on each day of the calendar."""
     draw_dates_ = ImageDraw.Draw(calendarsheet_)
     draw_dates_.text(
-        (3234, 114),
-        single_date_.strftime("%A — %B, %d, %Y"),
+        (3274, 114),
+        single_date_.strftime("%A — %b, %d, %Y"),
         (0, 0, 0),
         anchor="rs",
         font=DATESTRING_FONT,
