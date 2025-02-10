@@ -10,6 +10,7 @@ from sh import lpr
 
 #  Set a default program mode.
 study_room_mode = True
+mode_label = "Program Room" if not study_room_mode else "Study Room"
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED = "4_Asset_ClosedToday.png"
@@ -109,7 +110,7 @@ def overlays(calendar_sheet_, calendar_sheet_filename_, art_to_use_, building_cl
 
 
 def daterange_to_print(first_date_, last_date_):
-    for n in track(range(int((last_date_ - first_date_).days)), description="Generating calendar..."):
+    for n in track(range(int((last_date_ - first_date_).days)), description="Creating calendar..."):
         yield first_date_ + timedelta(n)
 
 
@@ -171,6 +172,8 @@ def main():
     console = Console()
     month_name = args.month.capitalize()
 
+    console.print(f"Hello. You are running {var_version} in {mode_label} mode.")
+
     if args.program_room:
         study_room_mode = False
 
@@ -185,7 +188,6 @@ def main():
 
     merger = PdfMerger()
     var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
-    mode_label = "ProgramRoom" if not study_room_mode else "StudyRoom"
 
     for var_single_date in daterange_to_print(var_printing_start_date, var_printing_end_date):
         var_calendar_sheet_filename = var_single_date.strftime("pages/Calendar %A %b %d %Y.pdf")
@@ -218,7 +220,8 @@ def main():
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"Hello: The {mode_label} calendar for {month_name} {var_year_to_print_for} is being sent to the printer.")
+    console.print(f"Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}")
+    console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.")
 
 
 if __name__ == "__main__":
