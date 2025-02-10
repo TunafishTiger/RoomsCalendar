@@ -10,7 +10,6 @@ from sh import lpr
 
 #  Set a default program mode.
 study_room_mode = True
-mode_label = "Program Room" if not study_room_mode else "Study Room"
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED = "4_Asset_ClosedToday.png"
@@ -173,10 +172,11 @@ def main():
     console = Console()
     month_name = args.month.capitalize()
 
-    console.print(f"Hello. You are running {var_version} in {mode_label} mode.")
-
     if args.program_room:
         study_room_mode = False
+
+        mode_label = "Program Room" if not study_room_mode else "Study Room"
+        console.print(f"Hello. You are running {var_version} in {mode_label} mode.")
 
     try:
         var_answer_as_number = datetime.strptime(month_name, "%B").month
@@ -200,10 +200,11 @@ def main():
         draw_dates(var_calendar_sheet, var_single_date)
 
         #  Assignment operator.
-        if sth := mpm_holidays.get(
-                var_michigan_holidays.get(var_single_date),
-                mpm_holidays.get(datetime.strftime(var_single_date, "%Y-%m-%d")),
-        ):
+        holiday_name = var_michigan_holidays.get(var_single_date)
+        formatted_date = var_single_date.strftime("%Y-%m-%d")
+
+        sth = mpm_holidays.get(holiday_name) or mpm_holidays.get(formatted_date)
+        if sth:
             overlays(var_calendar_sheet, var_calendar_sheet_filename, *sth)
 
         #  Save our transformed calendar page onto the filesystem.
