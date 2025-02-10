@@ -60,8 +60,8 @@ mpm_holidays = {
     "Christmas Eve": (None, True),
     "Christmas Eve (Observed)": (None, True),
     "Christmas Day": (None, True),
-    "2023-12-26": (None, True),
-    "2023-12-27": (None, True),
+    "2025-12-26": (None, True),
+    "2025-12-27": (None, True),
     "New Year's Eve": (None, True),
 }
 
