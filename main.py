@@ -165,7 +165,7 @@ def check_image_exists(image_path):
 
 def sendprintjob(calendar_month_name_):
     if not shutil.which("lpr"):
-        console.print(f"Warning: lpr command not found. Print job not sent.")
+        console.print(f"[bold red]Warning: lpr command not found. Print job not sent.[/bold red]")
     else:
         lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
 
@@ -188,14 +188,14 @@ def main():
         var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 1)
         var_printing_end_date = printing_end_date(month_name, var_year_to_print_for, var_answer_as_number)
     except ValueError:
-        console.print("Invalid month name. Please enter a valid month.")
+        console.print("[bold red]Invalid month name. Please enter a valid month.[/bold red]")
         return
 
     merger = PdfMerger()
     var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
 
     if not os.path.exists("SF-Pro-Text-Black.ttf"):
-        raise FileNotFoundError("SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.")
+        raise FileNotFoundError("[bold red]SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.[/bold red]")
 
     # Check if assets are available.
     check_image_exists(STATUS_CLOSED)
