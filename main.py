@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.progress import track
 from sh import lpr
 
+#  Set a default program mode.
 study_room_mode = True
 
 #  Define basic elements to construct our calendar.
@@ -29,10 +30,8 @@ DATE_STRING_FONT = ImageFont.truetype("SF-Pro-Text-Black.ttf", 80)
 
 #  Define a dictionary of holidays and special dates, some of which we are closed on or imprint artwork for.
 
-"""
-    Holiday name or date; artwork location; whether closed or not.
-    Reset dates each year as soon as the new calendar is available.
-"""
+#  Holiday name or date; artwork location; whether closed or not.
+#  Reset dates each year as soon as the new calendar is available.
 
 mpm_holidays = {
     "New Year's Day": (None, True),
@@ -70,7 +69,7 @@ mpm_holidays = {
     "New Year's Eve": (None, True),
 }
 
-var_version = "version 2025: last revised Fri Feb 7"
+var_version = "version 2025: last revised Mon Feb 10"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
@@ -115,7 +114,7 @@ def daterange_to_print(first_date_, last_date_):
 
 
 def standard_week(single_date_, calendar_sheet_filename_):
-    """Create a mutable calendar sheet by first recognizing the current day of the standard week."""
+    """Create a mutable calendar sheet by first recognizing the program mode, then current day of the standard week."""
     if study_room_mode:
         match single_date_.weekday():
             case 6:
@@ -186,6 +185,7 @@ def main():
 
     merger = PdfMerger()
     var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
+    mode_label = "ProgramRoom" if not study_room_mode else "StudyRoom"
 
     for var_single_date in daterange_to_print(var_printing_start_date, var_printing_end_date):
         var_calendar_sheet_filename = var_single_date.strftime("pages/Calendar %A %b %d %Y.pdf")
@@ -208,8 +208,9 @@ def main():
 
         merger.append(var_calendar_sheet_filename)
 
-    mode_label = "ProgramRoom" if not study_room_mode else "StudyRoom"
     var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
+    os.makedirs("months", exist_ok=True)
+    merger.write(f"months/{var_calendar_month_name}.pdf")
     merger.close()
 
 
@@ -217,7 +218,7 @@ def main():
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"Mode: {mode_label} -- Calendar for {month_name} {var_year_to_print_for} is being sent to the printer.")
+    console.print(f"Hello: The {mode_label} calendar for {month_name} {var_year_to_print_for} is being sent to the printer.")
 
 
 if __name__ == "__main__":
