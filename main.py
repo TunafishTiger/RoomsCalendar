@@ -160,7 +160,8 @@ def draw_dates(calendarsheet_, single_date_):
 
 def check_image_exists(image_path):
     if not os.path.exists(image_path):
-        raise FileNotFoundError(f"Missing required image: {image_path}")
+        console.print(f"[bold red]Error:[/bold red] Missing required image: {image_path}")
+        exit(1)
 
 def sendprintjob(calendar_month_name_):
     if not shutil.which("lpr"):
@@ -241,9 +242,8 @@ def main():
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}")
+    console.print(f"[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]")
     console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.")
-
 
 if __name__ == "__main__":
     main()
