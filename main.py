@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfMerger
 from rich.console import Console
 from rich.progress import track
+import shutil
 from sh import lpr
 
 #  Set a default program mode.
@@ -162,8 +163,15 @@ def draw_dates(calendarsheet_, single_date_):
         font=DATE_STRING_FONT,
     )
 
+def check_image_exists(image_path):
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"Missing required image: {image_path}")
+
 def sendprintjob(calendar_month_name_):
-    lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
+    if not shutil.which("lpr"):
+        console.print(f"Warning: lpr command not found. Print job not sent.")
+    else:
+        lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
 
 
 def main():
@@ -189,6 +197,22 @@ def main():
 
     merger = PdfMerger()
     var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
+
+    if not os.path.exists("SF-Pro-Text-Black.ttf"):
+        raise FileNotFoundError("SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.")
+
+    # Check if assets are available.
+    check_image_exists(STATUS_CLOSED)
+
+    check_image_exists(SR_WEEKDAY_HOURS)
+    check_image_exists(SR_FRIDAY_HOURS)
+    check_image_exists(SR_SATURDAY_HOURS)
+    check_image_exists(SR_SUNDAY_HOURS)
+
+    check_image_exists(PR_WEEKDAY_HOURS)
+    check_image_exists(PR_FRIDAY_HOURS)
+    check_image_exists(PR_SATURDAY_HOURS)
+    check_image_exists(PR_SUNDAY_HOURS)
 
     for var_single_date in daterange_to_print(var_printing_start_date, var_printing_end_date):
         var_calendar_sheet_filename = var_single_date.strftime("pages/Calendar %A %b %d %Y.pdf")
