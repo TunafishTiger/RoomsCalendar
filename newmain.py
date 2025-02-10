@@ -73,9 +73,10 @@ mpm_holidays = {
 var_version = "version 2025: last revised Fri Feb 7"
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Generate a calendar for study room usage.")
+    parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
     parser.add_argument("month", type=str, nargs="?", default=datetime.today().strftime("%B"),
                         help="Month to print (e.g., 'June'). Defaults to the current month.")
+    parser.add_argument("--program-room", action="store_true", help="Run in program room mode instead of study room mode.")
     return parser.parse_args()
 
 
@@ -166,9 +167,13 @@ def sendprintjob(calendar_month_name_):
 
 
 def main():
+    global study_room_mode
     args = parse_arguments()
     console = Console()
     month_name = args.month.capitalize()
+
+    if args.program_room:
+        study_room_mode = False
 
     try:
         var_answer_as_number = datetime.strptime(month_name, "%B").month
