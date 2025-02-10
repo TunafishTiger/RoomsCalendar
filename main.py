@@ -12,6 +12,7 @@
 """
 
 import os
+import argparse
 from datetime import date, datetime, timedelta
 from typing import Final
 
@@ -24,7 +25,7 @@ from rich.progress import track
 from rich.prompt import Prompt
 from sh import lpr
 
-study_room_mode = False
+study_room_mode = True
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED: Final = "4_Asset_ClosedToday.png"
@@ -229,14 +230,14 @@ def main():
     while True:
         try:
             #  Require one question, map language to month integer, derive start and end dates.
-            var_answer = Prompt.ask("What month should be printed?")
-            var_answer = var_answer.capitalize()
+            month_name = Prompt.ask("What month should be printed?")
+            month_name = month_name.capitalize()
 
-            var_answer_as_number = int(datetime.strptime(var_answer, "%B").month)
+            var_answer_as_number = int(datetime.strptime(month_name, "%B").month)
             var_year_to_print_for = year_to_print_for(var_answer_as_number)
 
             var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 0o1)
-            var_printing_end_date = printing_end_date(var_answer, var_year_to_print_for, var_answer_as_number)
+            var_printing_end_date = printing_end_date(month_name, var_year_to_print_for, var_answer_as_number)
 
             #  Initialize a list of major holidays specific to Michigan.
             var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
@@ -277,7 +278,7 @@ def main():
                 merger.append(var_calendar_sheet_filename)
 
             #  Derive a filename for our new multi-page PDF file.
-            var_calendar_month_name = f"{var_answer}_{var_year_to_print_for}"
+            var_calendar_month_name = f"{month_name}_{var_year_to_print_for}"
 
             #  Write multi-page PDF to filesystem.
             try:
@@ -295,7 +296,7 @@ def main():
             #  Fin.
             console.print(
                 f'\n'
-                f'The pages for [cyan]{var_answer} {var_year_to_print_for}[/] are '
+                f'The pages for [cyan]{month_name} {var_year_to_print_for}[/] are '
                 f'being sent to the Staff [i]RICOH IM C4500.[/i]\n'
                 f'You can close the window and go to collect the calendar.'
                 f'\n\n'
