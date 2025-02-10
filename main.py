@@ -70,7 +70,7 @@ mpm_holidays = {
     "New Year's Eve": (None, True),
 }
 
-var_version = "version 2025: last revised Mon Feb 10"
+var_version = "2025 (last revised Mon Feb 10)"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
@@ -183,8 +183,8 @@ def main():
     if args.program_room:
         study_room_mode = False
 
-        mode_label = "Program Room" if not study_room_mode else "Study Room"
-        console.print(f"Hello. You are running {var_version} in {mode_label} mode.")
+    mode_label = "Program Room" if not study_room_mode else "Study Room"
+    console.print(f"Running version {var_version} in {mode_label} mode.")
 
     try:
         var_answer_as_number = datetime.strptime(month_name, "%B").month
