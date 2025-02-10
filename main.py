@@ -75,8 +75,9 @@ var_version = "version 2025: last revised Mon Feb 10"
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
     parser.add_argument("month", type=str, nargs="?", default=(datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
-                        help="Month to print (e.g., 'June'). Defaults to the next month if none is given.")
-    parser.add_argument("--program-room", action="store_true", help="Run in program room mode instead of study room mode.")
+                        help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given.")
+    parser.add_argument("-pr", "--program-room", action="store_true",
+                        help="Run in program room mode instead of study room mode.")
     return parser.parse_args()
 
 
