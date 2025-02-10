@@ -209,8 +209,10 @@ def main():
         merger.append(var_calendar_sheet_filename)
 
     var_calendar_month_name = f"{month_name}_{var_year_to_print_for}"
-    merger.write(f"months/{var_calendar_month_name}.pdf")
+    mode_label = "ProgramRoom" if not study_room_mode else "StudyRoom"
+    var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
     merger.close()
+
 
     for file in os.scandir("pages"):
         os.remove(file.path)
