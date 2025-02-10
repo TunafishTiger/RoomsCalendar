@@ -208,7 +208,6 @@ def main():
 
         merger.append(var_calendar_sheet_filename)
 
-    var_calendar_month_name = f"{month_name}_{var_year_to_print_for}"
     mode_label = "ProgramRoom" if not study_room_mode else "StudyRoom"
     var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
     merger.close()
@@ -218,7 +217,7 @@ def main():
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"Calendar for {month_name} {var_year_to_print_for} is being sent to the printer.")
+    console.print(f"Mode: {mode_label} -- Calendar for {month_name} {var_year_to_print_for} is being sent to the printer.")
 
 
 if __name__ == "__main__":
