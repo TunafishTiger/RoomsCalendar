@@ -183,7 +183,8 @@ def main():
     mode_label = "Program Room" if not study_room_mode else "Study Room"
 
     console.print(
-        f"Running version [blue]{var_version}[/blue] in [italic]{mode_label}[/italic] mode.\n"
+        f"\n"
+        f"Running version {var_version} in [italic]{mode_label}[/italic] mode.\n"
     )
 
     try:
