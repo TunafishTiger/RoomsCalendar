@@ -5,6 +5,7 @@ import holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfMerger
 from rich.console import Console
+from rich.panel import Panel
 from rich.progress import track
 import shutil
 from sh import lpr
@@ -180,7 +181,10 @@ def main():
         study_room_mode = False
 
     mode_label = "Program Room" if not study_room_mode else "Study Room"
-    console.print(f"Running version {var_version} in {mode_label} mode.")
+
+    console.print(
+        f"Running version [blue]{var_version}[/blue] in [italic]{mode_label}[/italic] mode.\n"
+    )
 
     try:
         var_answer_as_number = datetime.strptime(month_name, "%B").month
@@ -242,8 +246,8 @@ def main():
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]")
-    console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.")
+    console.print(f"\n\n[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]")
+    console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.\n\n")
 
 if __name__ == "__main__":
     main()
