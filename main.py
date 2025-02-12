@@ -5,7 +5,6 @@ import holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfMerger
 from rich.console import Console
-from rich.panel import Panel
 from rich.progress import track
 import shutil
 from sh import lpr
