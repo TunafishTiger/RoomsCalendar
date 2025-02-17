@@ -9,9 +9,6 @@ from rich.progress import track
 import shutil
 from sh import lpr
 
-#  Set a default program mode.
-study_room_mode = True
-
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED = "4_Asset_ClosedToday.png"
 #  Study Room assets
@@ -110,18 +107,12 @@ def daterange_to_print(first_date_, last_date_):
         yield first_date_ + timedelta(n)
 
 
-def standard_week(single_date_, calendar_sheet_filename_):
-    """Create a mutable calendar sheet by first recognizing the program mode, then current day of the standard week."""
+def standard_week(single_date_, study_room_mode):
+    """Create a mutable calendar sheet based on the mode and current day of the week."""
     if study_room_mode:
         match single_date_.weekday():
             case 6:
                 calendar_sheet_ = Image.open(SR_SUNDAY_HOURS).convert("RGB").copy()
-                calendar_sheet_.paste(
-                    Image.open(STATUS_CLOSED).convert("RGBA"),
-                    (0, 0),
-                    mask=Image.open(STATUS_CLOSED).convert("RGBA"),
-                )
-                calendar_sheet_.save(calendar_sheet_filename_, format="png")
             case 5:
                 calendar_sheet_ = Image.open(SR_SATURDAY_HOURS).convert("RGB").copy()
             case 4:
@@ -132,12 +123,6 @@ def standard_week(single_date_, calendar_sheet_filename_):
         match single_date_.weekday():
             case 6:
                 calendar_sheet_ = Image.open(PR_SUNDAY_HOURS).convert("RGB").copy()
-                calendar_sheet_.paste(
-                    Image.open(STATUS_CLOSED).convert("RGBA"),
-                    (0, 0),
-                    mask=Image.open(STATUS_CLOSED).convert("RGBA"),
-                )
-                calendar_sheet_.save(calendar_sheet_filename_, format="png")
             case 5:
                 calendar_sheet_ = Image.open(PR_SATURDAY_HOURS).convert("RGB").copy()
             case 4:
@@ -170,8 +155,7 @@ def sendprintjob(calendar_month_name_):
         lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
 
 
-def main():
-    global study_room_mode
+def main(study_room_mode=True):
     args = parse_arguments()
     console = Console()
     month_name = args.month.capitalize()
@@ -250,4 +234,5 @@ def main():
     console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.\n")
 
 if __name__ == "__main__":
-    main()
+    args = parse_arguments()
+    main(study_room_mode=args.study_room_mode)
