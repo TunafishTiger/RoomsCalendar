@@ -68,6 +68,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
     parser.add_argument("month", type=str, nargs="?", default=(datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
                         help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given.")
+    parser.add_argument("-sr", "--study-room", action="store_true",
+                        help="Run in study room mode instead of study room mode.")
     parser.add_argument("-pr", "--program-room", action="store_true",
                         help="Run in program room mode instead of study room mode.")
     return parser.parse_args()
@@ -145,7 +147,7 @@ def draw_dates(calendarsheet_, single_date_):
 
 def check_image_exists(image_path):
     if not os.path.exists(image_path):
-        print(f"[bold red]Error:[/bold red] Missing required image: {image_path}")
+        print(f"Error: Missing required image: {image_path}")
         exit(1)
 
 def sendprintjob(calendar_month_name_):
@@ -235,4 +237,4 @@ def main(study_room_mode=True):
 
 if __name__ == "__main__":
     args = parse_arguments()
-    main(study_room_mode=args.study_room_mode)
+    main(study_room_mode=True)
