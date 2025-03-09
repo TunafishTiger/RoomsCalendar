@@ -1,4 +1,4 @@
-import argparse
+import typer
 import os
 from datetime import date, datetime, timedelta
 import holidays
@@ -8,6 +8,8 @@ from rich.console import Console
 from rich.progress import track
 import shutil
 from sh import lpr
+
+app = typer.Typer()
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED = "4_Asset_ClosedToday.png"
@@ -63,17 +65,6 @@ mpm_holidays = {
 }
 
 var_version = "2025"
-
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Generate a calendar for study room or program room usage.")
-    parser.add_argument("month", type=str, nargs="?", default=(datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
-                        help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given.")
-    parser.add_argument("-sr", "--study-room", action="store_true",
-                        help="Run in study room mode instead of study room mode.")
-    parser.add_argument("-pr", "--program-room", action="store_true",
-                        help="Run in program room mode instead of study room mode.")
-    return parser.parse_args()
-
 
 def year_to_print_for(answer_):
     if datetime.today().month >= 11 and answer_ <= 2:
@@ -156,13 +147,17 @@ def sendprintjob(calendar_month_name_):
     else:
         lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
 
+@app.command()
+def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
+    help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given."),
+    study_room_mode: bool = typer.Option(True, "--study-room", "-sr", help="Run in study room mode."),
+    program_room_mode: bool = typer.Option(False, "--program-room", "-pr", help="Run in program room mode."),
+):
 
-def main(study_room_mode=True):
-    args = parse_arguments()
     console = Console()
-    month_name = args.month.capitalize()
+    month_name = month.capitalize()
 
-    if args.program_room:
+    if program_room_mode:
         study_room_mode = False
 
     mode_label = "Program Room" if not study_room_mode else "Study Room"
@@ -236,5 +231,4 @@ def main(study_room_mode=True):
     console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.\n")
 
 if __name__ == "__main__":
-    args = parse_arguments()
-    main(study_room_mode=True)
+    app()
