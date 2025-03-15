@@ -213,12 +213,12 @@ def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedel
             overlays(var_calendar_sheet, var_calendar_sheet_filename, *sth)
 
         #  Save our transformed calendar page onto the filesystem.
+        os.makedirs("pages", exist_ok=True)
         var_calendar_sheet.save(var_calendar_sheet_filename, format="pdf")
 
         merger.append(var_calendar_sheet_filename)
 
     var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
-    os.makedirs("pages", exist_ok=True)
     os.makedirs("months", exist_ok=True)
     merger.write(f"months/{var_calendar_month_name}.pdf")
     merger.close()
