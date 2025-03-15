@@ -64,7 +64,7 @@ mpm_holidays = {
     "New Year's Eve": (None, True),
 }
 
-var_version = "2025 Test"
+var_version = "2025"
 
 def year_to_print_for(answer_):
     if datetime.today().month >= 11 and answer_ <= 2:
@@ -218,6 +218,7 @@ def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedel
         merger.append(var_calendar_sheet_filename)
 
     var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
+    os.makedirs("pages", exist_ok=True)
     os.makedirs("months", exist_ok=True)
     merger.write(f"months/{var_calendar_month_name}.pdf")
     merger.close()
