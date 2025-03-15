@@ -64,7 +64,7 @@ mpm_holidays = {
     "New Year's Eve": (None, True),
 }
 
-var_version = "2025"
+var_version = "2025 Test"
 
 def year_to_print_for(answer_):
     if datetime.today().month >= 11 and answer_ <= 2:
