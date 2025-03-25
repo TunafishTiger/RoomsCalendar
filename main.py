@@ -66,6 +66,7 @@ mpm_holidays = {
 
 var_version = "2025"
 
+
 def year_to_print_for(answer_):
     if datetime.today().month >= 11 and answer_ <= 2:
         return datetime.today().year + 1
@@ -96,7 +97,9 @@ def overlays(calendar_sheet_, calendar_sheet_filename_, art_to_use_, building_cl
 
 
 def daterange_to_print(first_date_, last_date_):
-    for n in track(range(int((last_date_ - first_date_).days)), description="Creating calendar..."):
+    for n in track(
+        range(int((last_date_ - first_date_).days)), description="Creating calendar..."
+    ):
         yield first_date_ + timedelta(n)
 
 
@@ -136,22 +139,42 @@ def draw_dates(calendarsheet_, single_date_):
         font=DATE_STRING_FONT,
     )
 
+
 def check_image_exists(image_path):
     if not os.path.exists(image_path):
         print(f"Error: Missing required image: {image_path}")
         exit(1)
 
+
 def sendprintjob(calendar_month_name_):
     if not shutil.which("lpr"):
-        print(f"[bold red]Warning: lpr command not found. Print job not sent.[/bold red]")
+        print(
+            "[bold red]Warning: lpr command not found. Print job not sent.[/bold red]"
+        )
     else:
-        lpr(["-o media=A4", "-o sides=one-sided", "-o print-quality=5", "-# 1", f"months/{calendar_month_name_}.pdf"])
+        lpr(
+            [
+                "-o media=A4",
+                "-o sides=one-sided",
+                "-o print-quality=5",
+                "-# 1",
+                f"months/{calendar_month_name_}.pdf",
+            ]
+        )
+
 
 @app.command()
-def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
-    help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given."),
-    study_room_mode: bool = typer.Option(True, "--study-room", "-sr", help="Run in study room mode."),
-    program_room_mode: bool = typer.Option(False, "--program-room", "-pr", help="Run in program room mode."),
+def main(
+    month: str = typer.Argument(
+        (datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
+        help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given.",
+    ),
+    study_room_mode: bool = typer.Option(
+        True, "--study-room", "-sr", help="Run in study room mode."
+    ),
+    program_room_mode: bool = typer.Option(
+        False, "--program-room", "-pr", help="Run in program room mode."
+    ),
 ):
 
     console = Console()
@@ -163,24 +186,29 @@ def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedel
     mode_label = "Program Room" if not study_room_mode else "Study Room"
 
     console.print(
-        f"\n"
-        f"Running version {var_version} in [italic]{mode_label}[/italic] mode.\n"
+        f"\n" f"Running version {var_version} in [italic]{mode_label}[/italic] mode.\n"
     )
 
     try:
         var_answer_as_number = datetime.strptime(month_name, "%B").month
         var_year_to_print_for = year_to_print_for(var_answer_as_number)
         var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 1)
-        var_printing_end_date = printing_end_date(month_name, var_year_to_print_for, var_answer_as_number)
+        var_printing_end_date = printing_end_date(
+            month_name, var_year_to_print_for, var_answer_as_number
+        )
     except ValueError:
-        console.print("[bold red]Invalid month name. Please enter a valid month.[/bold red]")
+        console.print(
+            "[bold red]Invalid month name. Please enter a valid month.[/bold red]"
+        )
         return
 
     merger = PdfMerger()
     var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
 
     if not os.path.exists("SF-Pro-Text-Black.ttf"):
-        raise FileNotFoundError("[bold red]SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.[/bold red]")
+        raise FileNotFoundError(
+            "[bold red]SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.[/bold red]"
+        )
 
     # Check if assets are available.
     check_image_exists(STATUS_CLOSED)
@@ -195,8 +223,12 @@ def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedel
     check_image_exists(PR_SATURDAY_HOURS)
     check_image_exists(PR_SUNDAY_HOURS)
 
-    for var_single_date in daterange_to_print(var_printing_start_date, var_printing_end_date):
-        var_calendar_sheet_filename = var_single_date.strftime("pages/Calendar %A %b %d %Y.pdf")
+    for var_single_date in daterange_to_print(
+        var_printing_start_date, var_printing_end_date
+    ):
+        var_calendar_sheet_filename = var_single_date.strftime(
+            "pages/Calendar %A %b %d %Y.pdf"
+        )
 
         #  Figure out which image should be the basis for our calendar page, based on day of the week.
         var_calendar_sheet = standard_week(var_single_date, var_calendar_sheet_filename)
@@ -223,13 +255,17 @@ def main(month: str = typer.Argument((datetime.today().replace(day=28) + timedel
     merger.write(f"months/{var_calendar_month_name}.pdf")
     merger.close()
 
-
     for file in os.scandir("pages"):
         os.remove(file.path)
 
     sendprintjob(var_calendar_month_name)
-    console.print(f"\n[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]")
-    console.print(f"Now sending to Office Ricoh C4500. Please find your prints there.\n")
+    console.print(
+        f"\n[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]"
+    )
+    console.print(
+        "Now sending to Office Ricoh C4500. Please find your prints there.\n"
+    )
+
 
 if __name__ == "__main__":
     app()
