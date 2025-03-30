@@ -1,12 +1,17 @@
-import typer
+#
+# Textual version.
+#
+
 import os
+import shutil
 from datetime import date, datetime, timedelta
+
 import holidays
+import typer
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfMerger
 from rich.console import Console
 from rich.progress import track
-import shutil
 from sh import lpr
 
 app = typer.Typer()
