@@ -1,15 +1,18 @@
-import typer
+import asyncio
 import os
+import shutil
 from datetime import date, datetime, timedelta
+
 import holidays
 from PIL import Image, ImageDraw, ImageFont
 from PyPDF2 import PdfMerger
-from rich.console import Console
-from rich.progress import track
-import shutil
 from sh import lpr
-
-app = typer.Typer()
+from textual import on, work
+from textual.app import App, ComposeResult
+from textual.containers import Container, Horizontal, Vertical
+from textual.reactive import reactive
+from textual.widgets import Button, Footer, Select, Static, ProgressBar
+from textual.worker import get_current_worker
 
 #  Define basic elements to construct our calendar.
 STATUS_CLOSED = "4_Asset_ClosedToday.png"
@@ -97,9 +100,7 @@ def overlays(calendar_sheet_, calendar_sheet_filename_, art_to_use_, building_cl
 
 
 def daterange_to_print(first_date_, last_date_):
-    for n in track(
-        range(int((last_date_ - first_date_).days)), description="Creating calendar..."
-    ):
+    for n in range(int((last_date_ - first_date_).days)):
         yield first_date_ + timedelta(n)
 
 
@@ -142,130 +143,384 @@ def draw_dates(calendarsheet_, single_date_):
 
 def check_image_exists(image_path):
     if not os.path.exists(image_path):
-        print(f"Error: Missing required image: {image_path}")
-        exit(1)
+        return False
+    return True
 
 
 def sendprintjob(calendar_month_name_):
     if not shutil.which("lpr"):
-        print(
-            "[bold red]Warning: lpr command not found. Print job not sent.[/bold red]"
-        )
+        return False
     else:
-        lpr(
-            [
-                "-o media=A4",
-                "-o sides=one-sided",
-                "-o print-quality=5",
-                "-# 1",
-                f"months/{calendar_month_name_}.pdf",
+        try:
+            lpr("-o", "media=Letter",
+                "-o", "sides=one-sided",
+                "-o", "print-quality=5",
+                "-#", "1",
+                f"months/{calendar_month_name_}.pdf")
+            return True
+        except Exception as e:
+            print(f"Error sending print job: {str(e)}")
+            return False
+
+
+class RoomsCalendarApp(App):
+    """A Textual app to generate room calendars."""
+
+    theme = "catppuccin-latte"
+
+    CSS = """
+    Screen {
+        background: #0000b5;
+        color: white;
+    }
+
+    #main-container {
+        layout: vertical;
+        padding: 1 2;
+        height: 100%;
+        background: #0000b5;
+        color: white;
+    }
+
+    #title {
+        text-align: center;
+        text-style: bold;
+        width: 100%;
+        margin-bottom: 1;
+        color: white;
+    }
+
+    #options-container {
+        layout: horizontal;
+        height: auto;
+        margin-bottom: 1;
+    }
+
+    .option-group {
+        width: 50%;
+        height: auto;
+        padding: 1;
+        border: solid white;
+        margin-right: 1;
+        background: #0000b5;
+        color: white;
+    }
+
+    .option-label {
+        text-style: bold;
+        margin-bottom: 1;
+        color: white;
+    }
+
+    #status-container {
+        height: auto;
+        margin-top: 1;
+        margin-bottom: 1;
+    }
+
+    #status-message {
+        height: auto;
+        padding: 1;
+        border: solid white;
+        background: #0000b5;
+        color: white;
+    }
+
+    #progress-container {
+        height: auto;
+        margin-top: 1;
+    }
+
+    #generate-button {
+        margin-top: 1;
+        width: 100%;
+        background: #0000b5;
+        color: white;
+        border: solid white;
+    }
+
+    #print-button {
+        margin-top: 1;
+        width: 100%;
+        background: #0000b5;
+        color: white;
+        border: solid white;
+    }
+
+    Button:hover {
+        background: #0000d5;
+    }
+
+    Select {
+        background: #0000b5;
+        color: white;
+        border: solid white;
+    }
+
+    Select > .option {
+        background: #0000b5;
+        color: white;
+    }
+
+    Select > .option--highlighted {
+        background: #0000d5;
+    }
+
+    Footer {
+        background: #0000b5;
+        color: white;
+    }
+
+    ProgressBar {
+        color: white;
+    }
+
+    #progress-text {
+        text-align: center;
+        margin-top: 1;
+        color: white;
+    }
+
+    .success {
+        color: #aaffaa;
+    }
+
+    .error {
+        color: #ffaaaa;
+    }
+    """
+
+    TITLE = "Rooms Calendar Generator"
+    BINDINGS = [("q", "quit", "Quit")]
+
+    # Reactive variables
+    status_message = reactive("Ready to generate calendar")
+    progress_value = reactive(0.0)
+    calendar_month_name = reactive("")
+    can_print = reactive(False)
+
+    def compose(self) -> ComposeResult:
+        """Create child widgets for the app."""
+        # Get next month as default
+        next_month = (datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B")
+
+        # Create month options
+        month_options = [
+            (month, month) for month in [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
             ]
-        )
+        ]
 
+        # Create room type options
+        room_options = [
+            ("Study Room", True),
+            ("Program Room", False)
+        ]
 
-@app.command()
-def main(
-    month: str = typer.Argument(
-        (datetime.today().replace(day=28) + timedelta(days=4)).strftime("%B"),
-        help="Enter name of month to print (e.g., 'June'). Defaults to the next month if none is given.",
-    ),
-    study_room_mode: bool = typer.Option(
-        True, "--study-room", "-sr", help="Run in study room mode."
-    ),
-    program_room_mode: bool = typer.Option(
-        False, "--program-room", "-pr", help="Run in program room mode."
-    ),
-):
+        with Container(id="main-container"):
+            yield Static("Rooms Calendar Generator", id="title")
 
-    console = Console()
-    month_name = month.capitalize()
+            with Horizontal(id="options-container"):
+                with Vertical(classes="option-group"):
+                    yield Static("Select Month:", classes="option-label")
+                    yield Select(month_options, value=next_month, id="month-select")
 
-    if program_room_mode:
-        study_room_mode = False
+                with Vertical(classes="option-group"):
+                    yield Static("Select Room Type:", classes="option-label")
+                    yield Select(room_options, value=True, id="room-type-select")
 
-    mode_label = "Program Room" if not study_room_mode else "Study Room"
+            yield Button("Generate & Print Calendar", id="generate-button")
 
-    console.print(
-        f"\n" f"Running version {var_version} in [italic]{mode_label}[/italic] mode.\n"
-    )
+            with Container(id="status-container"):
+                yield Static(self.status_message, id="status-message")
 
-    try:
-        var_answer_as_number = datetime.strptime(month_name, "%B").month
-        var_year_to_print_for = year_to_print_for(var_answer_as_number)
-        var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 1)
-        var_printing_end_date = printing_end_date(
-            month_name, var_year_to_print_for, var_answer_as_number
-        )
-    except ValueError:
-        console.print(
-            "[bold red]Invalid month name. Please enter a valid month.[/bold red]"
-        )
-        return
+            with Container(id="progress-container"):
+                yield ProgressBar(total=100, id="progress-bar")
+                yield Static("0%", id="progress-text")
 
-    merger = PdfMerger()
-    var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
+        yield Footer()
 
-    if not os.path.exists("SF-Pro-Text-Black.ttf"):
-        raise FileNotFoundError(
-            "[bold red]SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory.[/bold red]"
-        )
+    def on_mount(self) -> None:
+        """Called when the app is mounted."""
+        self.query_one("#progress-bar").update(progress=0)
+        self.query_one("#progress-text").update("0%")
 
-    # Check if assets are available.
-    check_image_exists(STATUS_CLOSED)
+    @on(Button.Pressed, "#generate-button")
+    def generate_calendar(self) -> None:
+        """Handle the generate button press."""
+        self.status_message = "Checking assets..."
+        self.query_one("#status-message").update(self.status_message)
+        self.query_one("#generate-button").disabled = True
+        self.can_print = False
 
-    check_image_exists(SR_WEEKDAY_HOURS)
-    check_image_exists(SR_FRIDAY_HOURS)
-    check_image_exists(SR_SATURDAY_HOURS)
-    check_image_exists(SR_SUNDAY_HOURS)
+        # Start the generation process in a worker
+        self.generate_calendar_worker()
 
-    check_image_exists(PR_WEEKDAY_HOURS)
-    check_image_exists(PR_FRIDAY_HOURS)
-    check_image_exists(PR_SATURDAY_HOURS)
-    check_image_exists(PR_SUNDAY_HOURS)
+    @work(exclusive=True)
+    async def generate_calendar_worker(self) -> None:
+        """Generate the calendar in a background worker."""
+        worker = get_current_worker()
 
-    for var_single_date in daterange_to_print(
-        var_printing_start_date, var_printing_end_date
-    ):
-        var_calendar_sheet_filename = var_single_date.strftime(
-            "pages/Calendar %A %b %d %Y.pdf"
-        )
+        # Get selected values
+        month_select = self.query_one("#month-select")
+        room_type_select = self.query_one("#room-type-select")
 
-        #  Figure out which image should be the basis for our calendar page, based on day of the week.
-        var_calendar_sheet = standard_week(var_single_date, var_calendar_sheet_filename)
+        month_name = month_select.value
+        study_room_mode = room_type_select.value
+        mode_label = "Study Room" if study_room_mode else "Program Room"
 
-        #  Draw correct dates as we compose the calendar page.
-        draw_dates(var_calendar_sheet, var_single_date)
+        # Update status
+        self.status_message = f"Running version {var_version} in {mode_label} mode."
+        self.query_one("#status-message").update(self.status_message)
 
-        #  Assignment operator.
-        holiday_name = var_michigan_holidays.get(var_single_date)
-        formatted_date = var_single_date.strftime("%Y-%m-%d")
+        # Check for required font
+        if not os.path.exists("SF-Pro-Text-Black.ttf"):
+            self.status_message = "Error: SF-Pro-Text-Black.ttf not found. Please ensure the font is in the working directory."
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").add_class("error")
+            self.query_one("#generate-button").disabled = False
+            return
 
-        sth = mpm_holidays.get(holiday_name) or mpm_holidays.get(formatted_date)
-        if sth:
-            overlays(var_calendar_sheet, var_calendar_sheet_filename, *sth)
+        # Check for required assets
+        assets_to_check = [
+            STATUS_CLOSED,
+            SR_WEEKDAY_HOURS, SR_FRIDAY_HOURS, SR_SATURDAY_HOURS, SR_SUNDAY_HOURS,
+            PR_WEEKDAY_HOURS, PR_FRIDAY_HOURS, PR_SATURDAY_HOURS, PR_SUNDAY_HOURS
+        ]
 
-        #  Save our transformed calendar page onto the filesystem.
-        os.makedirs("pages", exist_ok=True)
-        var_calendar_sheet.save(var_calendar_sheet_filename, format="pdf")
+        for asset in assets_to_check:
+            if not check_image_exists(asset):
+                self.status_message = f"Error: Missing required image: {asset}"
+                self.query_one("#status-message").update(self.status_message)
+                self.query_one("#status-message").add_class("error")
+                self.query_one("#generate-button").disabled = False
+                return
 
-        merger.append(var_calendar_sheet_filename)
+        try:
+            # Process dates
+            var_answer_as_number = datetime.strptime(month_name, "%B").month
+            var_year_to_print_for = year_to_print_for(var_answer_as_number)
+            var_printing_start_date = date(var_year_to_print_for, var_answer_as_number, 1)
+            var_printing_end_date = printing_end_date(
+                month_name, var_year_to_print_for, var_answer_as_number
+            )
 
-    var_calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
-    os.makedirs("months", exist_ok=True)
-    merger.write(f"months/{var_calendar_month_name}.pdf")
-    merger.close()
+            # Update status
+            self.status_message = f"Generating calendar for {month_name} {var_year_to_print_for}..."
+            self.query_one("#status-message").update(self.status_message)
 
-    for file in os.scandir("pages"):
-        os.remove(file.path)
+            # Initialize PDF merger
+            merger = PdfMerger()
+            var_michigan_holidays = holidays.US(subdiv="MI", years=var_year_to_print_for)
 
-    sendprintjob(var_calendar_month_name)
-    console.print(
-        f"\n[bold green]Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}[/bold green]"
-    )
-    console.print(
-        "Now sending to Office Ricoh C4500. Please find your prints there.\n"
-    )
+            # Create directories
+            os.makedirs("pages", exist_ok=True)
+            os.makedirs("months", exist_ok=True)
+
+            # Calculate total days for progress tracking
+            total_days = (var_printing_end_date - var_printing_start_date).days
+
+            # Generate calendar pages
+            for i, var_single_date in enumerate(daterange_to_print(
+                    var_printing_start_date, var_printing_end_date
+            )):
+                # Update progress
+                progress_percent = (i / total_days) * 100
+                self.query_one("#progress-bar").update(progress=progress_percent)
+                self.query_one("#progress-text").update(f"{progress_percent:.1f}%")
+
+                # Add a small delay to make progress bar movement visible
+                await asyncio.sleep(0.05)
+
+                # Check if worker should stop
+                if worker.is_cancelled:
+                    self.status_message = "Calendar generation cancelled."
+                    self.query_one("#status-message").update(self.status_message)
+                    self.query_one("#generate-button").disabled = False
+                    return
+
+                var_calendar_sheet_filename = var_single_date.strftime(
+                    "pages/Calendar %A %b %d %Y.pdf"
+                )
+
+                # Figure out which image should be the basis for our calendar page
+                var_calendar_sheet = standard_week(var_single_date, study_room_mode)
+
+                # Draw correct dates
+                draw_dates(var_calendar_sheet, var_single_date)
+
+                # Check for holidays
+                holiday_name = var_michigan_holidays.get(var_single_date)
+                formatted_date = var_single_date.strftime("%Y-%m-%d")
+
+                sth = mpm_holidays.get(holiday_name) or mpm_holidays.get(formatted_date)
+                if sth:
+                    overlays(var_calendar_sheet, var_calendar_sheet_filename, *sth)
+
+                # Save the calendar page
+                var_calendar_sheet.save(var_calendar_sheet_filename, format="pdf")
+
+                # Add to merger
+                merger.append(var_calendar_sheet_filename)
+
+            # Complete the progress bar
+            self.query_one("#progress-bar").update(progress=100)
+            self.query_one("#progress-text").update("100.0%")
+
+            # Save the merged PDF
+            self.calendar_month_name = f"{mode_label}_{month_name}_{var_year_to_print_for}"
+            merger.write(f"months/{self.calendar_month_name}.pdf")
+            merger.close()
+
+            # Clean up temporary files
+            for file in os.scandir("pages"):
+                os.remove(file.path)
+
+            # Update status
+            self.status_message = f"Successfully created {mode_label} calendar for {month_name} {var_year_to_print_for}. Now sending to printer..."
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").remove_class("error")
+
+            # Set can_print flag and call print_calendar_worker
+            self.can_print = True
+            self.print_calendar_worker()
+
+        except Exception as e:
+            self.status_message = f"Error: {str(e)}"
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").add_class("error")
+
+        # Re-enable generate button
+        self.query_one("#generate-button").disabled = False
+
+    @work(thread=True)
+    def print_calendar_worker(self) -> None:
+        """Print the calendar in a background worker."""
+        if not self.calendar_month_name:
+            return
+
+        # Check if the PDF file exists
+        pdf_path = f"months/{self.calendar_month_name}.pdf"
+        if not os.path.exists(pdf_path):
+            self.status_message = f"Error: PDF file not found at {pdf_path}"
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").add_class("error")
+            return
+
+        # Try to send the print job
+        success = sendprintjob(self.calendar_month_name)
+
+        if success:
+            self.status_message = "Calendar sent to Office Ricoh C4500. Please find your prints there."
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").add_class("success")
+        else:
+            self.status_message = "Error: Could not send to printer. Check if lpr command is available and printer is connected."
+            self.query_one("#status-message").update(self.status_message)
+            self.query_one("#status-message").add_class("error")
 
 
 if __name__ == "__main__":
-    app()
+    app = RoomsCalendarApp()
+    app.run()
