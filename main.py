@@ -170,16 +170,16 @@ class RoomsCalendarApp(App):
 
     CSS = """
     Screen {
-        background: #0000b5;
-        color: white;
+        background: #f9dd51;
+        color: black;
     }
 
     #main-container {
         layout: vertical;
         padding: 1 2;
         height: 100%;
-        background: #0000b5;
-        color: white;
+        background: #f9dd51;
+        color: black;
     }
 
     #title {
@@ -187,7 +187,7 @@ class RoomsCalendarApp(App):
         text-style: bold;
         width: 100%;
         margin-bottom: 1;
-        color: white;
+        color: black;
     }
 
     #options-container {
@@ -200,16 +200,16 @@ class RoomsCalendarApp(App):
         width: 50%;
         height: auto;
         padding: 1;
-        border: solid white;
+        border: solid black;
         margin-right: 1;
-        background: #0000b5;
-        color: white;
+        background: #f9dd51;
+        color: black;
     }
 
     .option-label {
         text-style: bold;
         margin-bottom: 1;
-        color: white;
+        color: black;
     }
 
     #status-container {
@@ -221,9 +221,9 @@ class RoomsCalendarApp(App):
     #status-message {
         height: auto;
         padding: 1;
-        border: solid white;
-        background: #0000b5;
-        color: white;
+        border: solid black;
+        background: #f9dd51;
+        color: black;
     }
 
     #progress-container {
@@ -234,51 +234,51 @@ class RoomsCalendarApp(App):
     #generate-button {
         margin-top: 1;
         width: 100%;
-        background: #0000b5;
-        color: white;
-        border: solid white;
+        background: #f9dd51;
+        color: black;
+        border: solid black;
     }
 
     #print-button {
         margin-top: 1;
         width: 100%;
-        background: #0000b5;
-        color: white;
-        border: solid white;
+        background: #f9dd51;
+        color: black;
+        border: solid black;
     }
 
     Button:hover {
-        background: #0000d5;
+        background: #e9cd41;
     }
 
     Select {
-        background: #0000b5;
-        color: white;
-        border: solid white;
+        background: #f9dd51;
+        color: black;
+        border: solid black;
     }
 
     Select > .option {
-        background: #0000b5;
-        color: white;
+        background: #f9dd51;
+        color: black;
     }
 
     Select > .option--highlighted {
-        background: #0000d5;
+        background: #e9cd41;
     }
 
     Footer {
-        background: #0000b5;
-        color: white;
+        background: #f9dd51;
+        color: black;
     }
 
     ProgressBar {
-        color: white;
+        color: black;
     }
 
     #progress-text {
         text-align: center;
         margin-top: 1;
-        color: white;
+        color: black;
     }
 
     .success {

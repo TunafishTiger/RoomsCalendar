@@ -1,0 +1,17 @@
+[project]
+name = "roomscalendar"
+version = "0.1.0"
+description = "Small Python program to compute calendared logbooks for a library's study room and program room usage."
+requires-python = ">=3.13"
+dependencies = [
+    "argparse>=1.4.0",
+    "click>=8.1.8",
+    "holidays>=0.71",
+    "pillow>=11.2.1",
+    "pypdf2>=3.0.1",
+    "python-dateutil>=2.9.0.post0",
+    "rich>=14.0.0",
+    "sh>=2.2.2",
+    "textual>=3.2.0",
+    "typer>=0.15.3",
+]

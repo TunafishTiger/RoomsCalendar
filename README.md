@@ -1,2 +1,87 @@
 # RoomsCalendar
-Small Python program to compute calendared logbooks for a library's study room and program room usage.
+
+A Django web application for generating calendars for library study rooms and program rooms.
+
+## Description
+
+This application allows users to generate calendars for library study rooms and program rooms. It creates PDF calendars
+for a specified month and year, with different layouts based on the day of the week and room type. The application also
+handles holidays and special dates.
+
+## Features
+
+- Generate calendars for study rooms or program rooms
+- Select month and year for calendar generation
+- Download generated calendars as PDF files
+- View calendar generation history
+- Handle holidays and special dates
+
+## Installation
+
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd RoomsCalendar
+   ```
+
+2. Install dependencies:
+   ```
+   pip install django holidays pillow pypdf2
+   ```
+
+3. Run migrations:
+   ```
+   python manage.py migrate
+   ```
+
+4. Collect static files:
+   ```
+   python manage.py collectstatic
+   ```
+
+5. Run the development server:
+   ```
+   # Option 1: Using the manage.py script
+   python manage.py runserver
+
+   # Option 2: Using the provided shell script
+   ./start_django_server.sh
+   ```
+
+6. Access the application at http://127.0.0.1:8000/
+
+## Usage
+
+1. Select the room type (Study Room or Program Room)
+2. Select the month and year for the calendar
+3. Click "Generate & Download Calendar"
+4. The calendar will be generated and you'll be redirected to a success page
+5. Click "Download Calendar" to download the PDF
+
+## Project Structure
+
+- `calendar_generator/`: Django app for calendar generation
+    - `models.py`: Database models for holidays and calendar generation
+    - `forms.py`: Form for calendar generation
+    - `views.py`: Views for handling web requests and calendar generation
+    - `urls.py`: URL routing for the app
+- `roomscalendar/`: Django project settings
+- `static/`: Static files (images, fonts)
+- `templates/`: HTML templates
+- `media/`: User-uploaded and generated files
+
+## Transformation from Textual to Django
+
+This project was transformed from a Textual TUI (Terminal User Interface) application to a Django web application. The
+transformation involved:
+
+1. Creating a Django project and app structure
+2. Migrating the calendar generation logic from the Textual app to Django views
+3. Creating models to store calendar generation data
+4. Creating forms for user input
+5. Creating templates for the web interface
+6. Setting up URL routing
+7. Configuring static files and media handling
+
+The core calendar generation functionality remains the same, but the user interface has been transformed from a
+terminal-based UI to a web-based UI.
