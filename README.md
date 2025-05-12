@@ -13,6 +13,7 @@ handles holidays and special dates.
 - Generate calendars for study rooms or program rooms
 - Select month and year for calendar generation
 - Download generated calendars as PDF files
+- Print calendars directly to a printer
 - View calendar generation history
 - Handle holidays and special dates
 
@@ -57,6 +58,7 @@ handles holidays and special dates.
 3. Click "Generate & Download Calendar"
 4. The calendar will be generated and you'll be redirected to a success page
 5. Click "Download Calendar" to download the PDF
+6. Click "Print Calendar" to send the calendar directly to the printer
 
 ## Project Structure
 

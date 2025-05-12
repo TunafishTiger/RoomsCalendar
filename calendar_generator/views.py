@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import render, redirect
+from sh import lpr, ErrorReturnCode
 
 from .forms import CalendarGenerationForm
 from .models import CalendarGeneration
@@ -114,6 +115,34 @@ def download_calendar(request, calendar_id):
             response = FileResponse(open(file_path, 'rb'), content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
             return response
+        else:
+            messages.error(request, "Calendar file not found.")
+            return redirect('home')
+    except CalendarGeneration.DoesNotExist:
+        messages.error(request, "Calendar not found.")
+        return redirect('home')
+
+
+def print_calendar(request, calendar_id):
+    """Send the generated calendar to the printer."""
+    try:
+        calendar = CalendarGeneration.objects.get(id=calendar_id)
+        file_path = calendar.pdf_file.path
+
+        if os.path.exists(file_path):
+            try:
+                # Send the PDF to the printer using lpr command
+                lpr("-o", "media=Letter",
+                    "-o", "sides=one-sided",
+                    "-o", "print-quality=5",
+                    "-#", "1",
+                    file_path)
+
+                messages.success(request, "Calendar sent to printer successfully.")
+                return redirect('calendar_success', calendar_id=calendar.id)
+            except ErrorReturnCode as e:
+                messages.error(request, f"Error sending to printer: {str(e)}")
+                return redirect('calendar_success', calendar_id=calendar.id)
         else:
             messages.error(request, "Calendar file not found.")
             return redirect('home')
