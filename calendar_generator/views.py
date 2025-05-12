@@ -50,6 +50,7 @@ mpm_holidays = {
     "2025-10-13": (None, True),
     "Veterans Day": (None, True),
     "Veterans Day (Observed)": (None, True),
+    "2025-11-27": (None, True),
     "Thanksgiving": (None, True),
     "Day After Thanksgiving": (None, True),
     "2025-11-29": (None, True),
@@ -271,6 +272,9 @@ def generate_calendar(room_type, month, year):
         sth = mpm_holidays.get(holiday_name) or mpm_holidays.get(formatted_date)
         if sth:
             overlays(calendar_sheet, calendar_sheet_filename, *sth)
+        # Check if it's Sunday and apply STATUS_CLOSED overlay
+        elif single_date.weekday() == 6:  # 6 represents Sunday
+            overlays(calendar_sheet, calendar_sheet_filename, None, True)
 
         # Save the calendar page
         calendar_sheet.save(calendar_sheet_filename, format="pdf")
