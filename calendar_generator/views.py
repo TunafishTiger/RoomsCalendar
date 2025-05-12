@@ -87,6 +87,10 @@ def home(request):
                 calendar.pdf_file = pdf_path.replace(str(settings.MEDIA_ROOT) + '/', '')
                 calendar.save()
 
+                # Add success message
+                messages.success(request,
+                                 f"Your calendar for {calendar.get_month_display()} {calendar.year} has been generated successfully.")
+
                 # Redirect to the success page
                 return redirect('calendar_success', calendar_id=calendar.id)
             except Exception as e:

@@ -101,10 +101,29 @@
 
             {% if messages %}
             <div class="messages">
+                {% comment %}Check if there are any success messages{% endcomment %}
                 {% for message in messages %}
+                {% if message.tags == 'success' %}
+                {% comment %}If we found a success message, display all success messages in one box{% endcomment %}
+                <div class="alert alert-success">
+                    {% for success_message in messages %}
+                    {% if success_message.tags == 'success' %}
+                    <p>{{ success_message }}</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% comment %}Exit the loop after displaying all success messages{% endcomment %}
+                {% if forloop.counter %}{% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% comment %}Display all non-success messages in separate boxes{% endcomment %}
+                {% for message in messages %}
+                {% if message.tags != 'success' %}
                 <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
                     {{ message }}
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
             {% endif %}

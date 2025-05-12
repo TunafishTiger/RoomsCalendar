@@ -6,9 +6,6 @@
 <div class="card">
     <h2 class="mb-4 text-center">Calendar Generated Successfully!</h2>
 
-    <div class="alert alert-success mb-4">
-        <p>Your calendar for {{ calendar.get_month_display }} {{ calendar.year }} has been generated successfully.</p>
-    </div>
 
     <div class="d-grid gap-3">
         <a href="{% url 'download_calendar' calendar.id %}" class="btn btn-primary btn-lg">Download Calendar</a>
