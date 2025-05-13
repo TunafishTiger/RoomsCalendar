@@ -16,6 +16,28 @@ handles holidays and special dates.
 - Print calendars directly to a printer
 - View calendar generation history
 - Handle holidays and special dates
+- Support for multi-day holiday ranges
+
+## Holiday Management
+
+The application supports managing holidays through the admin interface. Holidays can be single-day or span multiple
+days.
+
+### Managing Holidays in Admin
+
+Navigate to `/admin/calendar_generator/holiday/` to manage holidays.
+
+### Available Management Commands
+
+- `populate_holidays`: Populates the database with initial holiday data
+  ```
+  python manage.py populate_holidays
+  ```
+
+- `create_holiday_range`: Creates a holiday with a date range
+  ```
+  python manage.py create_holiday_range "Holiday Name" "YYYY-MM-DD" "YYYY-MM-DD" --closed --artwork="path/to/artwork.png"
+  ```
 
 ## Installation
 
@@ -87,3 +109,21 @@ transformation involved:
 
 The core calendar generation functionality remains the same, but the user interface has been transformed from a
 terminal-based UI to a web-based UI.
+
+## Troubleshooting
+
+### OperationalError when accessing the admin interface
+
+If you encounter an `OperationalError` when accessing the admin interface, it might be due to pending migrations. Run:
+
+```
+python manage.py migrate
+```
+
+To check the status of migrations, you can use the custom management command:
+
+```
+python manage.py check_migrations
+```
+
+This will show which migrations have been applied and which are pending.

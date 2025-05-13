@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from sh import lpr, ErrorReturnCode
 
 from .forms import CalendarGenerationForm
-from .models import CalendarGeneration
+from .models import CalendarGeneration, Holiday
 
 # Define constants for assets
 STATUS_CLOSED = "images/4_Asset_ClosedToday.png"
@@ -29,38 +29,51 @@ PR_SUNDAY_HOURS = "images/PR_3_Asset_SundayHours.png"
 # Define font
 DATE_STRING_FONT_PATH = os.path.join(settings.STATIC_ROOT, 'fonts', 'SF-Pro-Text-Black.ttf')
 
-# Define holidays dictionary
-mpm_holidays = {
-    "New Year's Day": (None, True),
-    "New Year's Day (Observed)": (None, True),
-    "Martin Luther King Jr. Day": (None, True),
-    "2025-02-14": (None, False),
-    "2025-02-17": (None, True),
-    "Washington's Birthday": (None, False),
-    "2025-04-18": (None, True),
-    "2025-04-19": (None, True),
-    "2025-05-24": (None, True),
-    "Memorial Day": (None, True),
-    "2025-06-07": (None, True),
-    "2025-06-19": (None, True),
-    "Independence Day": (None, True),
-    "2025-07-05": (None, True),
-    "2025-08-30": (None, True),
-    "Labor Day": (None, True),
-    "2025-10-13": (None, True),
-    "Veterans Day": (None, True),
-    "Veterans Day (Observed)": (None, True),
-    "2025-11-27": (None, True),
-    "Thanksgiving": (None, True),
-    "Day After Thanksgiving": (None, True),
-    "2025-11-29": (None, True),
-    "Christmas Eve": (None, True),
-    "Christmas Eve (Observed)": (None, True),
-    "Christmas Day": (None, True),
-    "2025-12-26": (None, True),
-    "2025-12-27": (None, True),
-    "New Year's Eve": (None, True),
-}
+
+# Function to get holiday information from the database
+def get_holiday_info(holiday_name=None, date_str=None):
+    """
+    Get holiday information from the database.
+
+    Args:
+        holiday_name (str, optional): The name of the holiday.
+        date_str (str, optional): The date string in YYYY-MM-DD format.
+
+    Returns:
+        tuple: A tuple containing (artwork_path, is_closed) or None if no holiday is found.
+    """
+    try:
+        # Try to find by name first
+        if holiday_name:
+            holiday = Holiday.objects.filter(name=holiday_name).first()
+            if holiday:
+                return (holiday.artwork_path, holiday.is_closed)
+
+        # Then try to find by date
+        if date_str:
+            try:
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+                # Check for exact date match
+                holiday = Holiday.objects.filter(date=date_obj).first()
+                if holiday:
+                    return (holiday.artwork_path, holiday.is_closed)
+
+                # Check if date falls within a date range
+                range_holiday = Holiday.objects.filter(
+                    date__lte=date_obj,
+                    end_date__gte=date_obj
+                ).first()
+                if range_holiday:
+                    return (range_holiday.artwork_path, range_holiday.is_closed)
+
+            except ValueError:
+                pass
+
+        return None
+    except Exception as e:
+        print(f"Error getting holiday info: {e}")
+        return None
 
 
 def home(request):
@@ -269,9 +282,9 @@ def generate_calendar(room_type, month, year):
         holiday_name = michigan_holidays.get(single_date)
         formatted_date = single_date.strftime("%Y-%m-%d")
 
-        sth = mpm_holidays.get(holiday_name) or mpm_holidays.get(formatted_date)
-        if sth:
-            overlays(calendar_sheet, calendar_sheet_filename, *sth)
+        holiday_info = get_holiday_info(holiday_name, formatted_date)
+        if holiday_info:
+            overlays(calendar_sheet, calendar_sheet_filename, *holiday_info)
         # Check if it's Sunday and apply STATUS_CLOSED overlay
         elif single_date.weekday() == 6:  # 6 represents Sunday
             overlays(calendar_sheet, calendar_sheet_filename, None, True)

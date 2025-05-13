@@ -3,13 +3,16 @@ from django.utils import timezone
 
 
 class Holiday(models.Model):
-    """Model representing a holiday or special date."""
+    """Model representing a holiday or special date range."""
     name = models.CharField(max_length=100)
-    date = models.DateField()
+    date = models.DateField(help_text="Start date of the holiday")
+    end_date = models.DateField(blank=True, null=True, help_text="End date of the holiday (if it spans multiple days)")
     is_closed = models.BooleanField(default=False)
     artwork_path = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
+        if self.end_date and self.end_date != self.date:
+            return f"{self.name} ({self.date} to {self.end_date})"
         return f"{self.name} ({self.date})"
 
 
