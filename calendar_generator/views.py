@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from sh import lpr, ErrorReturnCode
+from sh
 
 from .forms import CalendarGenerationForm
 from .models import CalendarGeneration, Holiday
@@ -153,7 +153,7 @@ def print_calendar(request, calendar_id):
         if os.path.exists(file_path):
             try:
                 # Send the PDF to the printer using lpr command
-                lpr("-o", "media=Letter",
+                sh.lpr("-o", "media=Letter",
                     "-o", "sides=one-sided",
                     "-o", "print-quality=5",
                     "-#", "1",
