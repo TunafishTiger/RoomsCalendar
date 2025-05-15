@@ -29,15 +29,6 @@
             {% endif %}
         </div>
 
-        <div class="mb-3">
-            <label for="{{ form.year.id_for_label }}" class="form-label">{{ form.year.label }}</label>
-            {{ form.year }}
-            {% if form.year.errors %}
-            <div class="text-danger">
-                {{ form.year.errors }}
-            </div>
-            {% endif %}
-        </div>
 
         <div class="d-grid">
             <button type="submit" class="btn btn-primary btn-lg">Generate & Download Calendar</button>

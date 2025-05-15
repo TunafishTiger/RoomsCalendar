@@ -85,6 +85,9 @@ def home(request):
         if form.is_valid():
             calendar = form.save(commit=False)
 
+            # Set the year internally based on the selected month
+            calendar.year = year_to_print_for(calendar.month)
+
             # Create directories if they don't exist
             os.makedirs(os.path.join(settings.MEDIA_ROOT, 'pages'), exist_ok=True)
             os.makedirs(os.path.join(settings.MEDIA_ROOT, 'calendars'), exist_ok=True)
