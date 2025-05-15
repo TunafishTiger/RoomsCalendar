@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from sh import ErrorReturnCode
+from sh import lpr, ErrorReturnCode
 
 from .forms import CalendarGenerationForm
 from .models import CalendarGeneration, Holiday
