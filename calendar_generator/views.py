@@ -11,8 +11,12 @@ from django.shortcuts import render, redirect
 
 # Try to import sh module, provide fallback if not available.
 try:
+    import sh
     from sh import lpr, ErrorReturnCode
 except ImportError:
+    # Define fallback for sh module
+    sh = None
+
     # Define fallback for lpr function
     def lpr(*args, **kwargs):
         raise Exception("The 'sh' module is not installed. Please install it using 'pip install sh'.")
@@ -162,6 +166,11 @@ def print_calendar(request, calendar_id):
         file_path = calendar.pdf_file.path
 
         if os.path.exists(file_path):
+            # Check if sh module is available
+            if sh is None:
+                messages.error(request, "The 'sh' module is not installed. Please install it using 'pip install sh'.")
+                return redirect('calendar_success', calendar_id=calendar.id)
+
             try:
                 # Send the PDF to the printer using lpr command
                 lpr("-o", "media=Letter",
@@ -174,6 +183,9 @@ def print_calendar(request, calendar_id):
                 return redirect('calendar_success', calendar_id=calendar.id)
             except ErrorReturnCode as e:
                 messages.error(request, f"Error sending to printer: {str(e)}")
+                return redirect('calendar_success', calendar_id=calendar.id)
+            except Exception as e:
+                messages.error(request, f"Error: {str(e)}")
                 return redirect('calendar_success', calendar_id=calendar.id)
         else:
             messages.error(request, "Calendar file not found.")
