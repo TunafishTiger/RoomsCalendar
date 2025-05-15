@@ -164,7 +164,7 @@ def print_calendar(request, calendar_id):
         if os.path.exists(file_path):
             try:
                 # Send the PDF to the printer using lpr command
-                lpr("-o", "media=Letter",
+                sh.lpr("-o", "media=Letter",
                     "-o", "sides=one-sided",
                     "-o", "print-quality=5",
                     "-#", "1",
