@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import render, redirect
 
-# Try to import sh module, provide fallback if not available
+# Try to import sh module, provide fallback if not available.
 try:
     from sh import lpr, ErrorReturnCode
 except ImportError:
