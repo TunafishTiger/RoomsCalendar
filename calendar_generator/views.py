@@ -8,7 +8,18 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from sh import lpr, ErrorReturnCode
+
+# Try to import sh module, provide fallback if not available
+try:
+    from sh import lpr, ErrorReturnCode
+except ImportError:
+    # Define fallback for lpr function
+    def lpr(*args, **kwargs):
+        raise Exception("The 'sh' module is not installed. Please install it using 'pip install sh'.")
+
+    # Define fallback for ErrorReturnCode
+    class ErrorReturnCode(Exception):
+        pass
 
 from .forms import CalendarGenerationForm
 from .models import CalendarGeneration, Holiday
