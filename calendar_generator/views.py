@@ -172,14 +172,30 @@ def print_calendar(request, calendar_id):
                 return redirect('calendar_success', calendar_id=calendar.id)
 
             try:
-                # Send the PDF to the printer using lpr command
-                lpr("-o", "media=Letter",
-                    "-o", "sides=one-sided",
-                    "-o", "print-quality=5",
-                    "-#", "1",
-                    file_path)
+                # Get the network printer name from settings
+                network_printer = getattr(settings, 'NETWORK_PRINTER_NAME', None)
 
-                messages.success(request, "Calendar sent to printer successfully.")
+                # Send the PDF to the printer using lpr command
+                if network_printer:
+                    # If network printer is configured, specify it with -P option
+                    lpr("-P", network_printer,
+                        "-o", "media=Letter",
+                        "-o", "sides=one-sided",
+                        "-o", "print-quality=5",
+                        "-#", "1",
+                        file_path)
+                else:
+                    # Fall back to default printer if no network printer is configured
+                    lpr("-o", "media=Letter",
+                        "-o", "sides=one-sided",
+                        "-o", "print-quality=5",
+                        "-#", "1",
+                        file_path)
+
+                if network_printer:
+                    messages.success(request, f"Calendar sent to {network_printer} printer successfully. Please find your prints there.")
+                else:
+                    messages.success(request, "Calendar sent to default printer successfully.")
                 return redirect('calendar_success', calendar_id=calendar.id)
             except ErrorReturnCode as e:
                 messages.error(request, f"Error sending to printer: {str(e)}")

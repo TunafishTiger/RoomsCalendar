@@ -81,6 +81,8 @@ Navigate to `/admin/calendar_generator/holiday/` to manage holidays.
 4. The calendar will be generated and you'll be redirected to a success page
 5. Click "Download Calendar" to download the PDF
 6. Click "Print Calendar" to send the calendar directly to the printer
+   - The application is configured to print to a networked printer named 'Office-Ricoh-C4500'
+   - You can change the printer name in the settings.py file by modifying the NETWORK_PRINTER_NAME setting
 
 ## Project Structure
 
@@ -127,3 +129,21 @@ python manage.py check_migrations
 ```
 
 This will show which migrations have been applied and which are pending.
+
+### Printing Issues
+
+If you encounter issues with printing to the networked printer:
+
+1. Verify that the printer name in settings.py (NETWORK_PRINTER_NAME) matches the actual printer name on your network
+2. Ensure that the printer is turned on and connected to the network
+3. Check that the user running the Django application has permission to print to the networked printer
+4. If using Linux, make sure CUPS is properly configured with the networked printer
+5. Check the printer queue for any stuck jobs that might be blocking new print jobs
+
+You can test the printer connection from the command line using:
+
+```
+lpr -P Office-Ricoh-C4500 -o media=Letter test_file.pdf
+```
+
+Replace 'Office-Ricoh-C4500' with your actual printer name and 'test_file.pdf' with a test PDF file.
