@@ -312,7 +312,8 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
             mask=closure_image,
         )
 
-    calendar_sheet.save(calendar_sheet_filename, format="png")
+    # Return the modified calendar sheet instead of saving it
+    return calendar_sheet
 
 
 def generate_calendar(room_type, month, year):
@@ -353,10 +354,10 @@ def generate_calendar(room_type, month, year):
 
         holiday_info = get_holiday_info(holiday_name, formatted_date)
         if holiday_info:
-            overlays(calendar_sheet, calendar_sheet_filename, *holiday_info)
+            calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, *holiday_info)
         # Check if it's Sunday and apply STATUS_CLOSED overlay
         elif single_date.weekday() == 6:  # 6 represents Sunday
-            overlays(calendar_sheet, calendar_sheet_filename, None, True)
+            calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, None, True)
 
         # Save the calendar page
         calendar_sheet.save(calendar_sheet_filename, format="pdf")
