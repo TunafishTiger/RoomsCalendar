@@ -62,6 +62,10 @@ def get_holiday_info(holiday_name=None, date_str=None):
         if holiday_name:
             holiday = Holiday.objects.filter(name=holiday_name).first()
             if holiday:
+                # Check if holiday has an uploaded artwork
+                if holiday.artwork and holiday.artwork.image:
+                    return (holiday.artwork.image.path, holiday.is_closed)
+                # Fall back to artwork_path if no uploaded artwork
                 return (holiday.artwork_path, holiday.is_closed)
 
         # Then try to find by date
@@ -72,6 +76,10 @@ def get_holiday_info(holiday_name=None, date_str=None):
                 # Check for exact date match
                 holiday = Holiday.objects.filter(date=date_obj).first()
                 if holiday:
+                    # Check if holiday has an uploaded artwork
+                    if holiday.artwork and holiday.artwork.image:
+                        return (holiday.artwork.image.path, holiday.is_closed)
+                    # Fall back to artwork_path if no uploaded artwork
                     return (holiday.artwork_path, holiday.is_closed)
 
                 # Check if date falls within a date range
@@ -80,6 +88,10 @@ def get_holiday_info(holiday_name=None, date_str=None):
                     end_date__gte=date_obj
                 ).first()
                 if range_holiday:
+                    # Check if holiday has an uploaded artwork
+                    if range_holiday.artwork and range_holiday.artwork.image:
+                        return (range_holiday.artwork.image.path, range_holiday.is_closed)
+                    # Fall back to artwork_path if no uploaded artwork
                     return (range_holiday.artwork_path, range_holiday.is_closed)
 
             except ValueError:
@@ -274,17 +286,30 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
     static_dir = os.path.join(settings.STATIC_ROOT)
 
     if art_to_use:
+        # Check if the art_to_use is an absolute path (from uploaded media)
+        if os.path.isabs(art_to_use):
+            # Use the absolute path directly
+            art_path = art_to_use
+        else:
+            # Use the relative path with static_dir
+            art_path = os.path.join(static_dir, art_to_use)
+
+        # Open the artwork and paste it onto the calendar sheet
+        artwork_image = Image.open(art_path).convert("RGBA")
         calendar_sheet.paste(
-            Image.open(os.path.join(static_dir, art_to_use)).convert("RGBA"),
+            artwork_image,
             (0, 0),
-            mask=Image.open(os.path.join(static_dir, art_to_use)).convert("RGBA"),
+            mask=artwork_image,
         )
+
     if building_closure:
+        closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
         calendar_sheet.paste(
-            Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA"),
+            closure_image,
             (0, 0),
-            mask=Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA"),
+            mask=closure_image,
         )
+
     calendar_sheet.save(calendar_sheet_filename, format="png")
 
 

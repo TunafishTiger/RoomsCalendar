@@ -2,6 +2,18 @@ from django.db import models
 from django.utils import timezone
 
 
+class ArtworkOverlay(models.Model):
+    """Model representing an artwork overlay that can be applied to calendars."""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='artwork/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Holiday(models.Model):
     """Model representing a holiday or special date range."""
     name = models.CharField(max_length=100)
@@ -9,6 +21,8 @@ class Holiday(models.Model):
     end_date = models.DateField(blank=True, null=True, help_text="End date of the holiday (if it spans multiple days)")
     is_closed = models.BooleanField(default=False)
     artwork_path = models.CharField(max_length=255, blank=True, null=True)
+    artwork = models.ForeignKey(ArtworkOverlay, on_delete=models.SET_NULL, blank=True, null=True, 
+                               help_text="Artwork overlay to use for this holiday")
 
     def __str__(self):
         if self.end_date and self.end_date != self.date:
