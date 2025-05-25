@@ -285,6 +285,7 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
     """Imprint closure and/or holiday artwork."""
     static_dir = os.path.join(settings.STATIC_ROOT)
 
+    # Apply artwork overlay if provided
     if art_to_use:
         # Check if the art_to_use is an absolute path (from uploaded media)
         if os.path.isabs(art_to_use):
@@ -302,6 +303,7 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
             mask=artwork_image,
         )
 
+    # Apply closure status overlay if specified
     if building_closure:
         closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
         calendar_sheet.paste(
