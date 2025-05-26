@@ -282,37 +282,57 @@ def draw_dates(calendarsheet, single_date):
 
 
 def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closure):
-    """Imprint closure and/or holiday artwork."""
+    """
+    Imprint closure and/or holiday artwork.
+
+    Returns:
+        PIL.Image: The modified calendar sheet with overlays applied
+    """
     static_dir = os.path.join(settings.STATIC_ROOT)
 
-    # Apply artwork overlay if provided
-    if art_to_use:
-        # Check if the art_to_use is an absolute path (from uploaded media)
+    # Convert calendar_sheet to RGBA mode to properly handle alpha channels
+    if calendar_sheet.mode != "RGBA":
+        calendar_sheet = calendar_sheet.convert("RGBA")
+
+    # Create a composite of artwork and closure status first if both are present
+    if art_to_use and building_closure:
+        # Determine the artwork path
         if os.path.isabs(art_to_use):
-            # Use the absolute path directly
             art_path = art_to_use
         else:
-            # Use the relative path with static_dir
             art_path = os.path.join(static_dir, art_to_use)
 
-        # Open the artwork and paste it onto the calendar sheet
         artwork_image = Image.open(art_path).convert("RGBA")
-        calendar_sheet.paste(
-            artwork_image,
-            (0, 0),
-            mask=artwork_image,
-        )
-
-    # Apply closure status overlay if specified
-    if building_closure:
         closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
-        calendar_sheet.paste(
-            closure_image,
-            (0, 0),
-            mask=closure_image,
-        )
 
-    # Return the modified calendar sheet instead of saving it
+        # Composite artwork and closure together first
+        # Create a new transparent image with the same size as the calendar sheet
+        combined_overlay = Image.new("RGBA", calendar_sheet.size, (0, 0, 0, 0))
+        combined_overlay = Image.alpha_composite(combined_overlay, artwork_image)
+        combined_overlay = Image.alpha_composite(combined_overlay, closure_image)
+
+        # Now composite the combined overlay onto the calendar sheet
+        calendar_sheet = Image.alpha_composite(calendar_sheet, combined_overlay)
+    else:
+        # Handle cases where only one overlay is present
+        if art_to_use:
+            # Determine the artwork path
+            if os.path.isabs(art_to_use):
+                art_path = art_to_use
+            else:
+                art_path = os.path.join(static_dir, art_to_use)
+
+            artwork_image = Image.open(art_path).convert("RGBA")
+            calendar_sheet = Image.alpha_composite(calendar_sheet, artwork_image)
+
+        if building_closure:
+            closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
+            calendar_sheet = Image.alpha_composite(calendar_sheet, closure_image)
+
+    # Save a PNG version for reference
+    calendar_sheet.save(calendar_sheet_filename, format="png")
+
+    # Return the modified calendar sheet
     return calendar_sheet
 
 
@@ -354,12 +374,18 @@ def generate_calendar(room_type, month, year):
 
         holiday_info = get_holiday_info(holiday_name, formatted_date)
         if holiday_info:
+            # Use the returned calendar sheet with overlays applied
             calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, *holiday_info)
         # Check if it's Sunday and apply STATUS_CLOSED overlay
         elif single_date.weekday() == 6:  # 6 represents Sunday
+            # Use the returned calendar sheet with overlays applied
             calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, None, True)
 
-        # Save the calendar page
+        # Convert back to RGB for PDF saving if needed
+        if calendar_sheet.mode == "RGBA":
+            calendar_sheet = calendar_sheet.convert("RGB")
+
+        # Save the calendar page with overlays
         calendar_sheet.save(calendar_sheet_filename, format="pdf")
 
         # Add to merger

@@ -84,18 +84,33 @@ def printing_end_date(answer_, year_to_print_for_, answer_as_number_):
 
 def overlays(calendar_sheet_, calendar_sheet_filename_, art_to_use_, building_closure_):
     """Imprint closure and/or holiday artwork."""
-    if art_to_use_:
-        calendar_sheet_.paste(
-            Image.open(art_to_use_).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(art_to_use_).convert("RGBA"),
-        )
-    if building_closure_:
-        calendar_sheet_.paste(
-            Image.open(STATUS_CLOSED).convert("RGBA"),
-            (0, 0),
-            mask=Image.open(STATUS_CLOSED).convert("RGBA"),
-        )
+    # Convert calendar_sheet to RGBA mode to properly handle alpha channels
+    if calendar_sheet_.mode != "RGBA":
+        calendar_sheet_ = calendar_sheet_.convert("RGBA")
+
+    # Create a composite of artwork and closure status first if both are present
+    if art_to_use_ and building_closure_:
+        artwork_image = Image.open(art_to_use_).convert("RGBA")
+        closure_image = Image.open(STATUS_CLOSED).convert("RGBA")
+
+        # Composite artwork and closure together first
+        # Create a new transparent image with the same size as the calendar sheet
+        combined_overlay = Image.new("RGBA", calendar_sheet_.size, (0, 0, 0, 0))
+        combined_overlay = Image.alpha_composite(combined_overlay, artwork_image)
+        combined_overlay = Image.alpha_composite(combined_overlay, closure_image)
+
+        # Now composite the combined overlay onto the calendar sheet
+        calendar_sheet_ = Image.alpha_composite(calendar_sheet_, combined_overlay)
+    else:
+        # Handle cases where only one overlay is present
+        if art_to_use_:
+            artwork_image = Image.open(art_to_use_).convert("RGBA")
+            calendar_sheet_ = Image.alpha_composite(calendar_sheet_, artwork_image)
+
+        if building_closure_:
+            closure_image = Image.open(STATUS_CLOSED).convert("RGBA")
+            calendar_sheet_ = Image.alpha_composite(calendar_sheet_, closure_image)
+
     calendar_sheet_.save(calendar_sheet_filename_, format="png")
 
 
