@@ -294,8 +294,8 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
     if calendar_sheet.mode != "RGBA":
         calendar_sheet = calendar_sheet.convert("RGBA")
 
-    # Create a composite of artwork and closure status first if both are present
-    if art_to_use and building_closure:
+    # Handle cases where one or both overlays are present
+    if art_to_use:
         # Determine the artwork path
         if os.path.isabs(art_to_use):
             art_path = art_to_use
@@ -303,31 +303,17 @@ def overlays(calendar_sheet, calendar_sheet_filename, art_to_use, building_closu
             art_path = os.path.join(static_dir, art_to_use)
 
         artwork_image = Image.open(art_path).convert("RGBA")
-        closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
+        calendar_sheet = Image.alpha_composite(calendar_sheet, artwork_image)
 
-        # Composite artwork and closure together first
-        # Create a new transparent image with the same size as the calendar sheet
-        combined_overlay = Image.new("RGBA", calendar_sheet.size, (0, 0, 0, 0))
-        combined_overlay = Image.alpha_composite(combined_overlay, artwork_image)
-        combined_overlay = Image.alpha_composite(combined_overlay, closure_image)
+    if building_closure:
+        # Determine the closure image path
+        if os.path.isabs(STATUS_CLOSED):
+            closure_path = STATUS_CLOSED
+        else:
+            closure_path = os.path.join(static_dir, STATUS_CLOSED)
 
-        # Now composite the combined overlay onto the calendar sheet
-        calendar_sheet = Image.alpha_composite(calendar_sheet, combined_overlay)
-    else:
-        # Handle cases where only one overlay is present
-        if art_to_use:
-            # Determine the artwork path
-            if os.path.isabs(art_to_use):
-                art_path = art_to_use
-            else:
-                art_path = os.path.join(static_dir, art_to_use)
-
-            artwork_image = Image.open(art_path).convert("RGBA")
-            calendar_sheet = Image.alpha_composite(calendar_sheet, artwork_image)
-
-        if building_closure:
-            closure_image = Image.open(os.path.join(static_dir, STATUS_CLOSED)).convert("RGBA")
-            calendar_sheet = Image.alpha_composite(calendar_sheet, closure_image)
+        closure_image = Image.open(closure_path).convert("RGBA")
+        calendar_sheet = Image.alpha_composite(calendar_sheet, closure_image)
 
     # Save a PNG version for reference
     calendar_sheet.save(calendar_sheet_filename, format="png")
@@ -371,15 +357,24 @@ def generate_calendar(room_type, month, year):
         # Check for holidays
         holiday_name = michigan_holidays.get(single_date)
         formatted_date = single_date.strftime("%Y-%m-%d")
-
+        
+        # Get holiday artwork and closure status
         holiday_info = get_holiday_info(holiday_name, formatted_date)
-        if holiday_info:
-            # Use the returned calendar sheet with overlays applied
-            calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, *holiday_info)
-        # Check if it's Sunday and apply STATUS_CLOSED overlay
-        elif single_date.weekday() == 6:  # 6 represents Sunday
-            # Use the returned calendar sheet with overlays applied
-            calendar_sheet = overlays(calendar_sheet, calendar_sheet_filename, None, True)
+        
+        # Determine if building should be marked as closed
+        is_sunday = single_date.weekday() == 6
+        should_show_closed = is_sunday or (holiday_info and holiday_info[1])
+        
+        # Get holiday artwork if it exists
+        holiday_artwork = holiday_info[0] if holiday_info else None
+        
+        # Apply overlays with both holiday artwork and closure status when applicable
+        calendar_sheet = overlays(
+            calendar_sheet,
+            calendar_sheet_filename,
+            holiday_artwork,
+            should_show_closed
+        )
 
         # Convert back to RGB for PDF saving if needed
         if calendar_sheet.mode == "RGBA":
