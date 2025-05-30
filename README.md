@@ -96,22 +96,6 @@ Navigate to `/admin/calendar_generator/holiday/` to manage holidays.
 - `templates/`: HTML templates
 - `media/`: User-uploaded and generated files
 
-## Transformation from Textual to Django
-
-This project was transformed from a Textual TUI (Terminal User Interface) application to a Django web application. The
-transformation involved:
-
-1. Creating a Django project and app structure
-2. Migrating the calendar generation logic from the Textual app to Django views
-3. Creating models to store calendar generation data
-4. Creating forms for user input
-5. Creating templates for the web interface
-6. Setting up URL routing
-7. Configuring static files and media handling
-
-The core calendar generation functionality remains the same, but the user interface has been transformed from a
-terminal-based UI to a web-based UI.
-
 ## Troubleshooting
 
 ### OperationalError when accessing the admin interface
